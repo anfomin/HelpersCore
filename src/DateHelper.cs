@@ -72,6 +72,18 @@ public static partial class DateHelper
 	}
 
 	/// <summary>
+	/// Enumerates months between two dates.
+	/// Yields first day of each month.
+	/// </summary>
+	/// <param name="begin">Starting date.</param>
+	/// <param name="end">Inclusive end date.</param>
+	public static IEnumerable<DateOnly> EnumerateMonths(DateOnly begin, DateOnly end)
+	{
+		for (var date = begin.GetMonthBegin(); date <= end; date = date.AddMonths(1))
+			yield return date;
+	}
+
+	/// <summary>
 	/// Returns date in 'yyyy-MM' format.
 	/// </summary>
 	public static string ToMonthString(this DateOnly date)
