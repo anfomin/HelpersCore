@@ -137,15 +137,25 @@ public static class DateTimeExtensions
 	/// <summary>
 	/// Returns time in format #HH:mm:ss.
 	/// </summary>
-	public static string ToHoursString(this TimeSpan time)
-		=> $"{(int)time.TotalHours:#00}:{time:mm\\:ss}";
+	/// <param name="roundSeconds">If true, rounds seconds to the nearest second.</param>
+	public static string ToHoursString(this TimeSpan time, bool roundSeconds = false)
+	{
+		if (roundSeconds && time.Milliseconds >= 500)
+			time += TimeSpan.FromMilliseconds(1000 - time.Milliseconds);
+		return $"{(int)time.TotalHours:#00}:{time:mm\\:ss}";
+	}
 
 	/// <summary>
 	/// Returns time in format #HH:mm:ss if longer than 1 hour.
-	/// Othersize returns time in format mm:ss.
+	/// Otherwise, returns time in format mm:ss.
 	/// </summary>
-	public static string ToShortString(this TimeSpan time)
-		=> time.TotalHours >= 1
-		? $"{(int)time.TotalHours:#00}:{time:mm\\:ss}"
-		: time.ToString(@"mm\:ss");
+	/// <param name="roundSeconds">If true, rounds seconds to the nearest second.</param>
+	public static string ToShortString(this TimeSpan time, bool roundSeconds = false)
+	{
+		if (roundSeconds && time.Milliseconds >= 500)
+			time += TimeSpan.FromMilliseconds(1000 - time.Milliseconds);
+		return time.TotalHours >= 1
+			? $"{(int)time.TotalHours:#00}:{time:mm\\:ss}"
+			: time.ToString(@"mm\:ss");
+	}
 }

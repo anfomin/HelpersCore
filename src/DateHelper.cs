@@ -17,6 +17,12 @@ public static partial class DateHelper
 		=> DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone));
 
 	/// <summary>
+	/// Returns the current date in specified time provider timezone.
+	/// </summary>
+	public static DateOnly GetToday(this TimeProvider timeProvider)
+		=> timeProvider.LocalTimeZone.GetToday();
+
+	/// <summary>
 	/// Returns minimum of two datetimes.
 	/// </summary>
 	public static DateTime Min(DateTime d1, DateTime d2)
