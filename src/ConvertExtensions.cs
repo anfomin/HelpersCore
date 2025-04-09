@@ -32,8 +32,7 @@ public static class ConvertExtensions
 	/// </summary>
 	/// <typeparam name="T">Type to convert to.</typeparam>
 	/// <param name="value">Object to convert.</param>
-	[return: MaybeNull]
-	public static T ConvertTo<T>(this object value)
+	public static T? ConvertTo<T>(this object value)
 	{
 		var type = typeof(T);
 		if (value == null)
@@ -62,7 +61,7 @@ public static class ConvertExtensions
 		if (converter != null && converter.CanConvertFrom(type))
 			return (T)converter.ConvertFrom(value)!;
 
-		// standart converter
+		// standard converter
 		return (T)Convert.ChangeType(value, type);
 	}
 }

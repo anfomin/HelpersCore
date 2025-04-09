@@ -5,7 +5,7 @@ namespace HelpersCore;
 public static partial class StringExtensions
 {
 	/// <summary>
-	/// Returns <c>null</c> for empty string. Otherwise returns string it self.
+	/// Returns <c>null</c> for empty string. Otherwise, returns string itself.
 	/// </summary>
 	public static string? NullIfEmpty(this string source)
 		=> source == string.Empty ? null : source;
@@ -66,7 +66,7 @@ public static partial class StringExtensions
 
 	/// <summary>
 	/// Prepends <paramref name="other"/> before <paramref name="source"/> if both are not null or empty.
-	/// Otherwise returns <paramref name="source"/> string.
+	/// Otherwise, returns <paramref name="source"/> string.
 	/// </summary>
 	public static string Prepend(this string source, string? other, string separator)
 		=> string.IsNullOrEmpty(source) || string.IsNullOrEmpty(other)

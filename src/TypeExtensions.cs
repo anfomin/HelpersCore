@@ -7,7 +7,7 @@ namespace HelpersCore;
 public static class TypeExtensions
 {
 	/// <summary>
-	/// Returns if type is included in <paramref name="others">.
+	/// Returns if type is included in <paramref name="others"/>.
 	/// </summary>
 	public static bool OneOf(this Type value, params IEnumerable<Type> others)
 		=> others.Contains(value);
@@ -47,7 +47,7 @@ public static class TypeExtensions
 	/// <summary>
 	/// Gets property display name. If <see cref="DisplayAttribute"/> or <see cref="DisplayNameAttribute"/> is not set then uses property name.
 	/// </summary>
-	/// <param name="propertyPath">Path to property separated by '.' or '?.'.
+	/// <param name="propertyPath">Path to property separated by '.' or '?.'.</param>
 	public static string GetDisplayName(this Type type, string propertyPath)
 	{
 		PropertyInfo? prop = null;

@@ -43,22 +43,21 @@ public static class EnumExtensions
 	/// Enums with <see cref="FlagsAttribute"/> are supported.
 	/// </summary>
 	/// <param name="val">Enum value.</param>
+	/// <param name="separator">Separator for flag enum values.</param>
 	/// <param name="getNameFunc">Function that should return display name from enum value and <see cref="DisplayAttribute"/>.</param>
 	static string GetDisplayNameInternal(this Enum val, string separator, Func<Enum, DisplayAttribute?, string> getNameFunc)
 	{
 		Type type = val.GetType();
 		if (type.IsEnumFlags() && !Enum.IsDefined(type, val))
 		{
-			var strs = new List<string>();
-			foreach (Enum? flag in Enum.GetValues(type))
-			{
-				long flagValue = Convert.ToInt64(flag);
-				if (flagValue != 0 && val.HasFlag(flag!))
+			var strs = Enum.GetValues(type)
+				.Cast<Enum>()
+				.Where(flag => Convert.ToInt64(flag) != 0 && val.HasFlag(flag!))
+				.Select(flag =>
 				{
 					var flagAttr = GetDisplayAttribute(flag!);
-					strs.Add(getNameFunc(val, flagAttr));
-				}
-			}
+					return getNameFunc(val, flagAttr);
+				});
 			return string.Join(separator, strs);
 		}
 

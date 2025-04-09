@@ -49,7 +49,7 @@ public static partial class DateHelper
 	/// <summary>
 	/// Returns datetime in range of minimum and maximum.
 	/// </summary>
-	/// <param name="min">Minumum datetime.</param>
+	/// <param name="min">Minimum datetime.</param>
 	/// <param name="max">Maximum datetime.</param>
 	public static DateTime Clamp(this DateTime dateTime, DateTime min, DateTime max)
 		=> dateTime.Ticks < min.Ticks ? min
@@ -59,7 +59,7 @@ public static partial class DateHelper
 	/// <summary>
 	/// Returns date in range of minimum and maximum.
 	/// </summary>
-	/// <param name="min">Minumum date.</param>
+	/// <param name="min">Minimum date.</param>
 	/// <param name="max">Maximum date.</param>
 	public static DateOnly Clamp(this DateOnly date, DateOnly min, DateOnly max)
 		=> date.DayNumber < min.DayNumber ? min
@@ -155,7 +155,7 @@ public static partial class DateHelper
 	/// <results>Parsed timespan.</results>
 	public static TimeSpan ParseShort(string? input)
 		=> TryParseShort(input, out var result) ? result
-		: throw new FormatException("Input string was not in corrent format");
+		: throw new FormatException("Input string was not in correct format");
 
 	[GeneratedRegex(@"^((?<min>\d{1,2}):)?(?<sec>\d{1,2})$")]
 	private static partial Regex TimeShortRegex { get; }

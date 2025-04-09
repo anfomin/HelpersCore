@@ -46,7 +46,7 @@ public static class EnumerableExtensions
 		=> source.Reverse().FirstOrNull(predicate);
 
 	/// <summary>
-	/// Returns item if list contains just one item. Otherwise null.
+	/// Returns item if list contains just one item. Otherwise, null.
 	/// </summary>
 	public static T? OneOrNull<T>(this IEnumerable<T> source)
 		where T : class
@@ -92,13 +92,13 @@ public static class EnumerableExtensions
 		=> source.Where(item => item.HasValue).Select(item => item!.Value);
 
 	/// <summary>
-	/// Determines whether a sequence does not contains elements.
+	/// Determines whether a sequence does not contain elements.
 	/// </summary>
 	public static bool None<TSource>(this IEnumerable<TSource> source)
 		=> !source.Any();
 
 	/// <summary>
-	/// Determines whether a sequence does not contains elements that satisfies <paramref name="predicate"/>.
+	/// Determines whether a sequence does not contain elements that satisfies <paramref name="predicate"/>.
 	/// </summary>
 	public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		=> !source.Any(predicate);

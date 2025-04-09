@@ -24,6 +24,7 @@ public static class StreamExtensions
 	/// <param name="source">Source stream.</param>
 	/// <param name="destination">Destination stream.</param>
 	/// <param name="progress">Copied size progress callback.</param>
+	/// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is None.</param>
 	public static Task CopyToAsync(this Stream source, Stream destination, Action<long> progress, CancellationToken cancellationToken = default)
 		=> CopyToAsync(source, destination, BufferSize, progress, cancellationToken);
 
@@ -33,6 +34,7 @@ public static class StreamExtensions
 	/// <param name="source">Source stream.</param>
 	/// <param name="destination">Destination stream.</param>
 	/// <param name="progress">Copied size async progress callback.</param>
+	/// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is None.</param>
 	public static Task CopyToAsync(this Stream source, Stream destination, Func<long, Task> progress, CancellationToken cancellationToken = default)
 		=> CopyToAsync(source, destination, BufferSize, progress, cancellationToken);
 
@@ -43,6 +45,7 @@ public static class StreamExtensions
 	/// <param name="destination">Destination stream.</param>
 	/// <param name="bufferSize">Buffer size to use.</param>
 	/// <param name="progress">Copied size progress callback.</param>
+	/// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is None.</param>
 	public static async Task CopyToAsync(this Stream source, Stream destination, int bufferSize, Action<long> progress, CancellationToken cancellationToken = default)
 	{
 		int read;
@@ -63,6 +66,7 @@ public static class StreamExtensions
 	/// <param name="destination">Destination stream.</param>
 	/// <param name="bufferSize">Buffer size to use.</param>
 	/// <param name="progress">Copied size async progress callback.</param>
+	/// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is None.</param>
 	public static async Task CopyToAsync(this Stream source, Stream destination, int bufferSize, Func<long, Task> progress, CancellationToken cancellationToken = default)
 	{
 		int read;

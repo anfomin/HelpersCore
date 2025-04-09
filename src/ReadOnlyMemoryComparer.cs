@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace HelpersCore;
 
 /// <summary>
@@ -20,6 +18,6 @@ public class ReadOnlyMemoryCharComparer(StringComparison comparisonType) : IComp
 	public bool Equals(ReadOnlyMemory<char> x, ReadOnlyMemory<char> y)
 		=> x.Span.Equals(y.Span, _comparisonType);
 
-	public int GetHashCode([DisallowNull] ReadOnlyMemory<char> obj)
+	public int GetHashCode(ReadOnlyMemory<char> obj)
 		=> string.GetHashCode(obj.Span, _comparisonType);
 }

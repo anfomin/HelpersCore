@@ -37,7 +37,7 @@ public static class DecimalExtensions
 	/// <summary>
 	/// Rounds decimal to specified decimal places.
 	/// </summary>
-	/// <param name="decimals">Decimal placees to round to.</param>
+	/// <param name="decimals">Decimal places to round to.</param>
 	/// <param name="mode">Rounding mode.</param>
 	public static decimal Round(this decimal value, int decimals = 0, MidpointRounding mode = MidpointRounding.AwayFromZero)
 		=> decimal.Round(value, decimals, mode);
