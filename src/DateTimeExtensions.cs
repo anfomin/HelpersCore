@@ -91,8 +91,14 @@ public static class DateTimeExtensions
 	/// <summary>
 	/// Truncates the <see cref="DateTime"/> to milliseconds.
 	/// </summary>
-	public static DateTime TruncateToMs(this DateTime dateTime)
-		=> dateTime.AddTicks(-(dateTime.Ticks % TimeSpan.FromMilliseconds(1).Ticks));
+	public static DateTime TruncateToMilliseconds(this DateTime dateTime)
+		=> new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond);
+
+	/// <summary>
+	/// Truncates the <see cref="DateTime"/> to seconds.
+	/// </summary>
+	public static DateTime TruncateToSeconds(this DateTime dateTime)
+		=> new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second);
 
 	/// <summary>
 	/// Converts <paramref name="dateTime"/> to <see cref="DateTimeOffset"/> with the specified <paramref name="offset"/>.
