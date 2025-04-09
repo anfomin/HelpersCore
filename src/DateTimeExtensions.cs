@@ -92,13 +92,13 @@ public static class DateTimeExtensions
 	/// Truncates the <see cref="DateTime"/> to milliseconds.
 	/// </summary>
 	public static DateTime TruncateToMilliseconds(this DateTime dateTime)
-		=> new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond);
+		=> new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond, dateTime.Kind);
 
 	/// <summary>
 	/// Truncates the <see cref="DateTime"/> to seconds.
 	/// </summary>
 	public static DateTime TruncateToSeconds(this DateTime dateTime)
-		=> new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second);
+		=> new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind);
 
 	/// <summary>
 	/// Converts <paramref name="dateTime"/> to <see cref="DateTimeOffset"/> with the specified <paramref name="offset"/>.
