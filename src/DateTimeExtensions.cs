@@ -81,6 +81,13 @@ public static class DateTimeExtensions
 		=> new(date.Year, 12, 31);
 
 	/// <summary>
+	/// Gets next <paramref name="dayOfWeek"/> after current date.
+	/// </summary>
+	/// <param name="dayOfWeek">Day of week.</param>
+	public static DateOnly GetNextDayOfWeek(this DateOnly date, DayOfWeek dayOfWeek)
+		=> date.AddDays((dayOfWeek - date.DayOfWeek + 7) % 7);
+
+	/// <summary>
 	/// Returns date with specified day of month.
 	/// If day is greater than days in month, returns last day of month.
 	/// </summary>
