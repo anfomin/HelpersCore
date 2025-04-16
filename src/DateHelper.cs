@@ -23,6 +23,14 @@ public static partial class DateHelper
 		=> timeProvider.LocalTimeZone.GetToday();
 
 	/// <summary>
+	/// Gets last day of the month.
+	/// </summary>
+	/// <param name="year">Date year.</param>
+	/// <param name="month">Date month.</param>
+	public static DateOnly GetMonthEnd(int year, int month)
+		=> new DateOnly(year, month, DateTime.DaysInMonth(year, month));
+
+	/// <summary>
 	/// Returns minimum of two datetimes.
 	/// </summary>
 	public static DateTime Min(DateTime d1, DateTime d2)
