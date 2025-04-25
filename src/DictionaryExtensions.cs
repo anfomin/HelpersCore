@@ -111,7 +111,7 @@ public static class DictionaryExtensions
 	}
 
 	/// <summary>
-	/// Provides key/value pair deconstruction.
+	/// Provides <see cref="KeyValuePair{TKey,TValue}"/> deconstruction.
 	/// </summary>
 	public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> pair, out TKey key, out TValue value)
 	{

@@ -83,7 +83,7 @@ public static partial class ConsoleEx
 		where TKey : notnull
 		=> SelectByKeyAsync(name,
 			items: items.Prepend(null),
-			keyFn: item => item == null ? default : keyFn(item),
+			keyFn: item => item == null ? default! : keyFn(item),
 			displayFn: item => displayFn != null ? displayFn(item)
 				: item == null ? Strings.Null
 				: item.ToString()

@@ -292,4 +292,13 @@ public static class EnumerableExtensions
 	/// <param name="include"><c>True</c> to add item to the set, <c>false</c> to remove item from the set.</param>
 	public static bool Toggle<T>(this ISet<T> set, T item, bool include)
 		=> include ? set.Add(item) : set.Remove(item);
+
+	/// <summary>
+	/// Provides <see cref="IGrouping{TKey,TElement}"/> deconstruction.
+	/// </summary>
+	public static void Deconstruct<TKey, TElement>(this IGrouping<TKey, TElement> pair, out TKey key, out IEnumerable<TElement> items)
+	{
+		key = pair.Key;
+		items = pair;
+	}
 }
