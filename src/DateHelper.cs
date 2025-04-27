@@ -1,8 +1,9 @@
-using System.Text.RegularExpressions;
-
 namespace HelpersCore;
 
-public static partial class DateHelper
+/// <summary>
+/// Provides helper methods for <see cref="DateTime"/> and <see cref="DateOnly"/>.
+/// </summary>
+public static class DateHelper
 {
 	/// <summary>
 	/// Returns the current date in UTC.
@@ -28,7 +29,7 @@ public static partial class DateHelper
 	/// <param name="year">Date year.</param>
 	/// <param name="month">Date month.</param>
 	public static DateOnly GetMonthEnd(int year, int month)
-		=> new DateOnly(year, month, DateTime.DaysInMonth(year, month));
+		=> new(year, month, DateTime.DaysInMonth(year, month));
 
 	/// <summary>
 	/// Returns minimum of two datetimes.
@@ -100,71 +101,42 @@ public static partial class DateHelper
 	/// <summary>
 	/// Returns date in 'yyyy-MM' format.
 	/// </summary>
-	public static string ToMonthString(this DateOnly date)
+	public static string ToYearMonthString(this DateOnly date)
 		=> date.ToString("yyyy-MM");
 
 	/// <summary>
 	/// Parses date in 'yyyy-MM' format.
 	/// </summary>
-	/// <param name="input">Source string to parse.</param>
+	/// <param name="s">Source string to parse.</param>
 	/// <param name="result">Parsed date if successful.</param>
 	/// <returns><c>True</c> if parse successful.</returns>
-	public static bool TryParseMonth(string? input, out DateOnly result)
+	public static bool TryParseYearMonth(ReadOnlySpan<char> s, out DateOnly result)
 	{
-		if (!string.IsNullOrEmpty(input))
+		int index = s.IndexOf('-');
+		if (index != -1
+			&& int.TryParse(s[..index], out int year)
+			&& int.TryParse(s[(index + 1)..], out int month)
+			&& year is >= 1 and <= 9999
+			&& month is >= 1 and <= 12)
 		{
-			var (p1, p2) = input.SplitFirst('-');
-			if (int.TryParse(p1, out int year)
-				&& int.TryParse(p2, out int month)
-				&& year is >= 1 and <= 9999
-				&& month is >= 1 and <= 12)
-			{
-				result = new DateOnly(year, month, 1);
-				return true;
-			}
+			result = new(year, month, 1);
+			return true;
 		}
-		result = DateOnly.MinValue;
+		result = default;
 		return false;
 	}
 
 	/// <summary>
-	/// Tries to parse time in 'mm:ss' format or fallbacks to <see cref="TimeSpan.TryParse"/> .
+	/// Parses date in 'yyyy-MM' format.
 	/// </summary>
-	/// <param name="input">Source string to parse.</param>
-	/// <param name="result">Parsed timespan if successful.</param>
+	/// <param name="s">Source string to parse.</param>
+	/// <param name="result">Parsed date if successful.</param>
 	/// <returns><c>True</c> if parse successful.</returns>
-	public static bool TryParseShort(string? input, out TimeSpan result)
+	public static bool TryParseYearMonth(string? s, out DateOnly result)
 	{
-		if (string.IsNullOrEmpty(input))
-		{
-			result = default;
-			return false;
-		}
-
-		var match = TimeShortRegex.Match(input);
-		if (!match.Success)
-			return TimeSpan.TryParse(input, out result);
-
-		int min = int.Parse(match.Groups["min"].Value);
-		int sec = int.Parse(match.Groups["sec"].Value);
-		if (min > 59 || sec > 59)
-		{
-			result = default;
-			return false;
-		}
-		result = new(0, min, sec);
-		return true;
+		if (!string.IsNullOrEmpty(s))
+			return TryParseYearMonth(s.AsSpan(), out result);
+		result = default;
+		return false;
 	}
-
-	/// <summary>
-	/// Parses time in 'mm:ss' format or fallbacks to <see cref="TimeSpan.Parse"/> .
-	/// </summary>
-	/// <param name="input">Source string to parse.</param>
-	/// <results>Parsed timespan.</results>
-	public static TimeSpan ParseShort(string? input)
-		=> TryParseShort(input, out var result) ? result
-		: throw new FormatException("Input string was not in correct format");
-
-	[GeneratedRegex(@"^((?<min>\d{1,2}):)?(?<sec>\d{1,2})$")]
-	private static partial Regex TimeShortRegex { get; }
 }

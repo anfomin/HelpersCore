@@ -22,7 +22,7 @@ public static class PathHelper
 	public static (string Name, string Extension) SplitExtension(string path)
 	{
 		string ext = Path.GetExtension(path);
-		return (path[0..^ext.Length], ext);
+		return (path[..^ext.Length], ext);
 	}
 
 	/// <summary>

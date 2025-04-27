@@ -1,8 +1,8 @@
-using System.Text.RegularExpressions;
+using System.Text;
 
 namespace HelpersCore;
 
-public static partial class StringExtensions
+public static class StringExtensions
 {
 	/// <summary>
 	/// Returns <c>null</c> for empty string. Otherwise, returns string itself.
@@ -28,7 +28,7 @@ public static partial class StringExtensions
 	public static (string First, string? Second) SplitFirst(this string source, char value)
 	{
 		int i = source.IndexOf(value);
-		return i == -1 ? (source, null) : (source[0..i], source[(i+1)..]);
+		return i == -1 ? (source, null) : (source[..i], source[(i+1)..]);
 	}
 
 	/// <summary>
@@ -37,7 +37,7 @@ public static partial class StringExtensions
 	public static (string First, string? Second) SplitLast(this string source, char value)
 	{
 		int i = source.LastIndexOf(value);
-		return i == -1 ? (source, null) : (source[0..i], source[(i+1)..]);
+		return i == -1 ? (source, null) : (source[..i], source[(i+1)..]);
 	}
 
 	/// <summary>
@@ -103,8 +103,13 @@ public static partial class StringExtensions
 	/// Removes all whitespace characters from string.
 	/// </summary>
 	public static string RemoveWhitespace(this string source)
-		=> RegexSpace.Replace(source, "");
-
-	[GeneratedRegex(@"\s+")]
-	private static partial Regex RegexSpace { get; }
+	{
+		StringBuilder sb = new(source.Length);
+		foreach (char c in source)
+		{
+			if (!char.IsWhiteSpace(c))
+				sb.Append(c);
+		}
+		return sb.ToString();
+	}
 }

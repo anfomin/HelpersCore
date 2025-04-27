@@ -23,11 +23,8 @@ public static class DictionaryExtensions
 	/// <param name="key">Key to get or create value for.</param>
 	/// <param name="factory">Factory function to create value.</param>
 	public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> factory)
-	{
-		if (dictionary.TryGetValue(key, out TValue? value))
-			return value;
-		return dictionary[key] = factory(key);
-	}
+		=> dictionary.TryGetValue(key, out TValue? value) ? value
+		: dictionary[key] = factory(key);
 
 	/// <summary>
 	/// Gets value by key. If key does not present then creates value using factory.
@@ -35,11 +32,8 @@ public static class DictionaryExtensions
 	/// <param name="key">Key to get or create value for.</param>
 	/// <param name="factory">Factory function to create value.</param>
 	public static async ValueTask<TValue> GetOrCreateAsync<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, Task<TValue>> factory)
-	{
-		if (dictionary.TryGetValue(key, out TValue? value))
-			return value;
-		return dictionary[key] = await factory(key);
-	}
+		=> dictionary.TryGetValue(key, out TValue? value) ? value
+		: dictionary[key] = await factory(key);
 
 	/// <summary>
 	/// Gets value by key. If key does not present then creates value using factory.
@@ -51,14 +45,11 @@ public static class DictionaryExtensions
 		TKey key,
 		Func<TKey, CancellationToken, Task<TValue>> factory,
 		CancellationToken cancellationToken)
-	{
-		if (dictionary.TryGetValue(key, out TValue? value))
-			return value;
-		return dictionary[key] = await factory(key, cancellationToken);
-	}
+		=> dictionary.TryGetValue(key, out TValue? value) ? value
+		: dictionary[key] = await factory(key, cancellationToken);
 
 	/// <summary>
-	/// Updates dictionary value. If <paramref name="value" /> is null then key is removed from dictionary.
+	/// Updates dictionary value. If <paramref name="value" /> is <c>null</c> then key is removed from dictionary.
 	/// </summary>
 	public static void SetOrRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue? value)
 		where TValue : class
@@ -82,7 +73,7 @@ public static class DictionaryExtensions
 	/// Updates dictionary with key/values from object public properties. Property name becomes dictionary key.
 	/// </summary>
 	/// <param name="obj">Object to get properties from.</param>
-	/// <param name="removeNulls"><c>True</c> to remove null values from dictionary.</param>
+	/// <param name="removeNulls"><c>True</c> to remove <c>null</c> values from dictionary.</param>
 	public static void Set(this IDictionary<string, object?> dictionary, object? obj, bool removeNulls = false)
 	{
 		if (obj is IDictionary objDic)
