@@ -93,7 +93,7 @@ public static class Validate
 	{
 		if (value == null)
 			throw new ArgumentNullException(name, message);
-		else if (value.None())
+		if (value.None())
 			throw new ArgumentException(message ?? $"{name ?? "Value"} is empty", name);
 		return value;
 	}
@@ -106,7 +106,7 @@ public static class Validate
 	{
 		if (value == null)
 			throw new ArgumentNullException(name, message);
-		else if (value == string.Empty)
+		if (value == string.Empty)
 			throw new ArgumentException(message ?? $"{name ?? "Value"} is empty", name);
 		return value;
 	}
@@ -120,7 +120,7 @@ public static class Validate
 	{
 		if (value == null)
 			throw new ArgumentNullException(name, message);
-		else if (value.Count == 0)
+		if (value.Count == 0)
 			throw new ArgumentException(message ?? $"{name ?? "Value"} does not contains any element", name);
 		return value;
 	}
