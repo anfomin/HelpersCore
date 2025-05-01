@@ -16,6 +16,7 @@ public static class MailExtensions
 	{
 		MailMessage message = new()
 		{
+			Subject = subject,
 			Body = bodyHtml,
 			IsBodyHtml = true
 		};
