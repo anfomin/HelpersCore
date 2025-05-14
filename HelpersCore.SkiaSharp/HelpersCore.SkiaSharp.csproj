@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../Common.props" />
+
+  <PropertyGroup>
+    <AssemblyName>HelpersCore.SkiaSharp</AssemblyName>
+    <PackageId>HelpersCore.SkiaSharp</PackageId>
+    <PackageTags>helpers skiasharp</PackageTags>
+    <Description>Common used helper methods for SkiaSharp.</Description>
+    <RootNamespace>HelpersCore</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../HelpersCore/HelpersCore.csproj" />
+    <PackageReference Include="SkiaSharp" Version="3.119.0" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.0" Condition="'$(OS)' == 'UNIX'" />
+  </ItemGroup>
+</Project>

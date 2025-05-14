@@ -3,6 +3,8 @@
     <File Path=".gitignore" />
     <File Path="publish.sh" />
     <File Path="LICENSE" />
+    <File Path="Common.props" />
   </Folder>
-  <Project Path="src/HelpersCore.csproj" />
+  <Project Path="HelpersCore/HelpersCore.csproj" />
+  <Project Path="HelpersCore.SkiaSharp/HelpersCore.SkiaSharp.csproj" />
 </Solution>
