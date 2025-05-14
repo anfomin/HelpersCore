@@ -1,7 +1,7 @@
 using System.Drawing;
 using SkiaSharp;
 
-namespace HelpersCore.SkiaSharp;
+namespace HelpersCore;
 
 public static class SKBitmapExtensions
 {

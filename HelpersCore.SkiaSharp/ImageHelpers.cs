@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using SkiaSharp;
 
-namespace HelpersCore.SkiaSharp;
+namespace HelpersCore;
 
 /// <summary>
 /// Provides helper methods for SkiaSharp imaging.
