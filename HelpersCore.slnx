@@ -6,5 +6,6 @@
     <File Path="Common.props" />
   </Folder>
   <Project Path="HelpersCore/HelpersCore.csproj" />
+  <Project Path="HelpersCore.ClosedXML/HelpersCore.ClosedXML.csproj" />
   <Project Path="HelpersCore.SkiaSharp/HelpersCore.SkiaSharp.csproj" />
 </Solution>

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="../Common.props" />
+
+	<PropertyGroup>
+		<AssemblyName>HelpersCore.ClosedXML</AssemblyName>
+		<PackageId>HelpersCore.ClosedXML</PackageId>
+		<PackageTags>helpers closedxml excel</PackageTags>
+		<Description>Common used helper methods for ClosedXML.</Description>
+		<RootNamespace>HelpersCore</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ClosedXML" Version="0.105.*" />
+	</ItemGroup>
+</Project>
