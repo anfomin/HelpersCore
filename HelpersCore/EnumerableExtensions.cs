@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Numerics;
 
 namespace HelpersCore;
 
@@ -238,20 +239,45 @@ public static class EnumerableExtensions
 		=> AllSame(source, r => r, out var _);
 
 	/// <summary>
-	/// Computes the sum of the sequence of nullable <see cref="decimal"/> values that are obtained
-	/// by invoking a transform function on each element of the input sequence.
-	/// If all element are null then returns null.
+	/// Computes a sum of the nullable values.
+	/// If all values are <c>null</c> then returns <c>null</c>.
 	/// </summary>
-	public static decimal? SumOrNull<T>(this IEnumerable<T> source, Func<T, decimal?> selector)
+	public static T? SumOrNull<T>(this IEnumerable<T?> source)
+		where T : struct, IAdditionOperators<T, T, T>
 	{
 		bool allNull = true;
-		decimal acc = 0;
+		T acc = default;
+		foreach (var value in source)
+		{
+			if (value is { } value2)
+			{
+				allNull = false;
+				acc += value2;
+			}
+		}
+		return allNull ? null : acc;
+	}
+
+	/// <summary>
+	/// Computes a sum of the sequence of nullable values that are obtained
+	/// by invoking a transform function on each element of the input sequence.
+	/// If all values are <c>null</c> then returns <c>null</c>.
+	/// </summary>
+	/// <param name="source">Source element.</param>
+	/// <param name="selector">Transform function to get summable value.</param>
+	public static TValue? SumOrNull<T, TValue>(this IEnumerable<T> source, Func<T, TValue?> selector)
+		where TValue : struct, IAdditionOperators<TValue, TValue, TValue>
+	{
+		bool allNull = true;
+		TValue acc = default;
 		foreach (var item in source)
 		{
 			var value = selector(item);
-			if (value is not null)
+			if (value is { } value2)
+			{
 				allNull = false;
-			acc += value ?? 0;
+				acc += value2;
+			}
 		}
 		return allNull ? null : acc;
 	}
