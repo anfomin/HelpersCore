@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace HelpersCore;
 
 /// <summary>
@@ -38,10 +40,26 @@ public static class DateHelper
 		=> d1.Ticks < d2.Ticks ? d1 : d2;
 
 	/// <summary>
+	/// Returns minimum of datetimes.
+	/// </summary>
+	/// <param name="dateTimes">Datetimes to get minimum of. Must contain at least one datetime.</param>
+	[OverloadResolutionPriority(-1)]
+	public static DateTime Min(params IReadOnlyCollection<DateTime> dateTimes)
+		=> dateTimes.Aggregate(Min);
+
+	/// <summary>
 	/// Returns minimum of two dates.
 	/// </summary>
 	public static DateOnly Min(DateOnly d1, DateOnly d2)
 		=> d1.DayNumber < d2.DayNumber ? d1 : d2;
+
+	/// <summary>
+	/// Returns minimum of dates.
+	/// </summary>
+	/// <param name="dates">Dates to get minimum of. Must contain at least one date.</param>
+	[OverloadResolutionPriority(-1)]
+	public static DateOnly Min(params IReadOnlyCollection<DateOnly> dates)
+		=> dates.Aggregate(Min);
 
 	/// <summary>
 	/// Returns maximum of two datetimes.
@@ -50,10 +68,26 @@ public static class DateHelper
 		=> d1.Ticks < d2.Ticks ? d2 : d1;
 
 	/// <summary>
+	/// Returns maximum of datetimes.
+	/// </summary>
+	/// <param name="dateTimes">Datetimes to get maximum of. Must contain at least one datetime.</param>
+	[OverloadResolutionPriority(-1)]
+	public static DateTime Max(params IReadOnlyCollection<DateTime> dateTimes)
+		=> dateTimes.Aggregate(Max);
+
+	/// <summary>
 	/// Returns maximum of two dates.
 	/// </summary>
 	public static DateOnly Max(DateOnly d1, DateOnly d2)
 		=> d1.DayNumber < d2.DayNumber ? d2 : d1;
+
+	/// <summary>
+	/// Returns maximum of dates.
+	/// </summary>
+	/// <param name="dates">Dates to get maximum of. Must contain at least one date.</param>
+	[OverloadResolutionPriority(-1)]
+	public static DateOnly Max(params IReadOnlyCollection<DateOnly> dates)
+		=> dates.Aggregate(Max);
 
 	/// <summary>
 	/// Returns datetime in range of minimum and maximum.
