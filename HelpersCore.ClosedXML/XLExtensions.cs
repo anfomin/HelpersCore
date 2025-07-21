@@ -252,9 +252,9 @@ public static class XLExtensions
 	/// Sets a gap in the Excel worksheet by setting the row height.
 	/// </summary>
 	/// <param name="height">Row height.</param>
-	public static IXLCell SetRowGap(this IXLCell cell, int height = 20)
+	public static IXLCell SetRowGap(this IXLCell cell, int height = 24)
 	{
-		cell.WorksheetRow().Height = 20;
+		cell.WorksheetRow().Height = height;
 		return cell;
 	}
 }
