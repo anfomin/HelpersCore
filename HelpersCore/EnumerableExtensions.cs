@@ -139,10 +139,10 @@ public static class EnumerableExtensions
 	/// </summary>
 	/// <param name="item">Item to search.</param>
 	/// <returns>Index of the item or -1 if no such item.</returns>
-	public static int IndexOf(this IEnumerable items, object item)
+	public static int IndexOf(this IEnumerable source, object item)
 	{
 		int i = 0;
-		foreach (var itm in items)
+		foreach (var itm in source)
 		{
 			if (itm == item)
 				return i;
@@ -297,8 +297,8 @@ public static class EnumerableExtensions
 	/// <summary>
 	/// Joins non-null items with specified separator.
 	/// </summary>
-	public static string Join<T>(this IEnumerable<T> items, char separator)
-		=> string.Join(separator, items
+	public static string Join<T>(this IEnumerable<T> source, char separator)
+		=> string.Join(separator, source
 			.Select(item => item?.ToString())
 			.Where(item => !string.IsNullOrEmpty(item))
 		);
@@ -306,11 +306,19 @@ public static class EnumerableExtensions
 	/// <summary>
 	/// Joins non-null items with specified separator.
 	/// </summary>
-	public static string Join<T>(this IEnumerable<T> items, string separator)
-		=> string.Join(separator, items
+	public static string Join<T>(this IEnumerable<T> source, string separator)
+		=> string.Join(separator, source
 			.Select(item => item?.ToString())
 			.Where(item => !string.IsNullOrEmpty(item))
 		);
+
+	/// <summary>
+	/// Caches the items of an enumerable as they are enumerated.
+	/// </summary>
+	/// <param name="source">Source enumerable for caching.</param>
+	/// <typeparam name="T">The type of objects to enumerate.</typeparam>
+	public static IEnumerable<T> Cache<T>(this IEnumerable<T> source) =>
+		new CachedEnumerable<T>(source);
 
 	/// <summary>
 	/// Adds or removes item from the set depending on include flag.
