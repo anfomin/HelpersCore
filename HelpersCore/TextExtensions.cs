@@ -1,5 +1,8 @@
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for text processing.
+/// </summary>
 public static class TextExtensions
 {
 	/// <summary>

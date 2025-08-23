@@ -2,6 +2,9 @@ using System.Linq.Expressions;
 
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for <see cref="IQueryable{T}"/>.
+/// </summary>
 public static class QueryableExtensions
 {
 	/// <summary>

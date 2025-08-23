@@ -3,6 +3,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for object conversion.
+/// </summary>
 public static class ConvertExtensions
 {
 	/// <summary>

@@ -3,6 +3,9 @@ using System.Text.Json.Nodes;
 
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for JSON.
+/// </summary>
 public static class JsonExtensions
 {
 	/// <summary>

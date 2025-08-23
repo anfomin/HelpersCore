@@ -1,5 +1,8 @@
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for <see cref="Stream"/>.
+/// </summary>
 public static class StreamExtensions
 {
 	/// <summary>

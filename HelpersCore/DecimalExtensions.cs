@@ -1,5 +1,8 @@
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for <see cref="decimal"/>.
+/// </summary>
 public static class DecimalExtensions
 {
 	/// <summary>

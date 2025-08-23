@@ -2,6 +2,9 @@ using System.Xml.Linq;
 
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for XML processing.
+/// </summary>
 public static class XmlExtensions
 {
 	/// <summary>

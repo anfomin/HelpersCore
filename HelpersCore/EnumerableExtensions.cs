@@ -3,6 +3,9 @@ using System.Numerics;
 
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for <see cref="IEnumerable{T}"/> and other collection types.
+/// </summary>
 public static class EnumerableExtensions
 {
 	/// <summary>

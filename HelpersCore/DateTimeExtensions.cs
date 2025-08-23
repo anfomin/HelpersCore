@@ -1,5 +1,8 @@
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for <see cref="DateTime"/> and <see cref="DateOnly"/>.
+/// </summary>
 public static class DateTimeExtensions
 {
 	/// <summary>

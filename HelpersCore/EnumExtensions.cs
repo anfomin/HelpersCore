@@ -1,17 +1,39 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for <see cref="Enum"/> types.
+/// </summary>
 public static class EnumExtensions
 {
+	static readonly Dictionary<Enum, bool> ReadOnly = new();
+	static readonly Dictionary<Enum, bool> Ignore = new();
+
 	/// <summary>
 	/// Returns if <see cref="Enum"/> value has ReadOnlyAttribute with <c>true</c> value.
 	/// </summary>
 	/// <param name="val">Enum value.</param>
 	public static bool IsReadOnly(this Enum val)
-		=> val.GetMemberInfo()?.GetCustomAttribute<ReadOnlyAttribute>()?.IsReadOnly == true;
+		=> ReadOnly.GetOrCreate(val,
+			v => v.GetMemberInfo()?.GetCustomAttribute<ReadOnlyAttribute>()?.IsReadOnly == true
+		);
+
+	/// <summary>
+	/// Returns if <see cref="Enum"/> value has <see cref="IgnoreDataMemberAttribute"/>.
+	/// </summary>
+	/// <param name="val">Enum value.</param>
+	public static bool IsIgnore(this Enum val)
+		=> Ignore.GetOrCreate(val, v => v
+			.GetType()
+			.GetMember(val.ToString())
+			.FirstOrDefault()
+			?.GetCustomAttribute<IgnoreDataMemberAttribute>(true)
+			!= null
+		);
 
 	/// <summary>
 	/// Returns order index for <see cref="Enum"/> value.

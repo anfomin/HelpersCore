@@ -2,6 +2,9 @@ using System.Net.Mail;
 
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for <see cref="IMailService"/>.
+/// </summary>
 public static class MailExtensions
 {
 	/// <summary>

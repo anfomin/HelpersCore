@@ -3,6 +3,9 @@ using System.Reflection;
 
 namespace HelpersCore;
 
+/// <summary>
+/// Extension methods for <see cref="IDictionary{TKey,TValue}"/>.
+/// </summary>
 public static class DictionaryExtensions
 {
 	/// <summary>
