@@ -288,12 +288,29 @@ public static class EnumerableExtensions
 	/// <summary>
 	/// Splits items into two list depending on <paramref name="predicate"/> result.
 	/// </summary>
+	/// <param name="predicate">Predicate to test items.</param>
+	/// <returns>
+	/// Tuple of two lists: first list contains items where predicate returned <c>false</c>,
+	/// second list contains items where predicate returned <c>true</c>.
+	/// </returns>
 	public static (List<T> Falsy, List<T> Truthy) Partition<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+		=> Partition(source, predicate, item => item);
+
+	/// <summary>
+	/// Splits items into two list of values depending on <paramref name="predicate"/> result.
+	/// </summary>
+	/// <param name="predicate">Predicate to test items.</param>
+	/// <param name="selector">Method to select value from item.</param>
+	/// <returns>
+	/// Tuple of two lists: first list contains values where predicate returned <c>false</c>,
+	/// second list contains values where predicate returned <c>true</c>.
+	/// </returns>
+	public static (List<TValue> Falsy, List<TValue> Truthy) Partition<T, TValue>(this IEnumerable<T> source, Func<T, bool> predicate, Func<T, TValue> selector)
 	{
-		var falsy = new List<T>();
-		var truthy = new List<T>();
+		var falsy = new List<TValue>();
+		var truthy = new List<TValue>();
 		foreach (var item in source)
-			(predicate(item) ? truthy : falsy).Add(item);
+			(predicate(item) ? truthy : falsy).Add(selector(item));
 		return (falsy, truthy);
 	}
 
