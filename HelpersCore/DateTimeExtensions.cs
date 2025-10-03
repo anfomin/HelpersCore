@@ -145,10 +145,18 @@ public static class DateTimeExtensions
 	}
 
 	/// <summary>
-	/// Returns time seconds and milliseconds for logging.
+	/// Returns elapsed time for logging in formats:
+	/// <list type="bullet">
+	/// <item>35ms</item>
+	/// <item>29s 549ms</item>
+	/// <item>2min 11s 307ms</item>
+	/// </list>
 	/// </summary>
 	public static string ToLog(this TimeSpan time)
-		=> time.TotalSeconds >= 1 ? $"{(int)time.TotalSeconds}s {time.Milliseconds}ms" : $"{time.Milliseconds}ms";
+		=> time.TotalSeconds < 1 ? $"{time.Milliseconds}ms"
+		: time.TotalMinutes < 1 ? $"{(int)time.TotalSeconds}s {time.Milliseconds}ms"
+		: time.Seconds == 0 ? $"{(int)time.TotalMinutes}min {time.Milliseconds}ms"
+		: $"{(int)time.TotalMinutes}min {time.Seconds}s {time.Milliseconds}ms";
 
 	/// <summary>
 	/// Returns time in format #HH:mm:ss.

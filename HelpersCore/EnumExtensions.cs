@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -10,15 +11,15 @@ namespace HelpersCore;
 /// </summary>
 public static class EnumExtensions
 {
-	static readonly Dictionary<Enum, bool> ReadOnly = new();
-	static readonly Dictionary<Enum, bool> Ignore = new();
+	static readonly ConcurrentDictionary<Enum, bool> ReadOnly = new();
+	static readonly ConcurrentDictionary<Enum, bool> Ignore = new();
 
 	/// <summary>
 	/// Returns if <see cref="Enum"/> value has ReadOnlyAttribute with <c>true</c> value.
 	/// </summary>
 	/// <param name="val">Enum value.</param>
 	public static bool IsReadOnly(this Enum val)
-		=> ReadOnly.GetOrCreate(val,
+		=> ReadOnly.GetOrAdd(val,
 			v => v.GetMemberInfo()?.GetCustomAttribute<ReadOnlyAttribute>()?.IsReadOnly == true
 		);
 
@@ -27,7 +28,7 @@ public static class EnumExtensions
 	/// </summary>
 	/// <param name="val">Enum value.</param>
 	public static bool IsIgnore(this Enum val)
-		=> Ignore.GetOrCreate(val, v => v
+		=> Ignore.GetOrAdd(val, v => v
 			.GetType()
 			.GetMember(val.ToString())
 			.FirstOrDefault()
