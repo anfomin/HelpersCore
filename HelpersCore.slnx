@@ -1,11 +1,11 @@
 <Solution>
-  <Folder Name="/Root/">
+  <Folder Name="/root/">
     <File Path=".gitignore" />
     <File Path="publish.sh" />
     <File Path="LICENSE" />
-    <File Path="Common.props" />
+    <File Path="common.props" />
   </Folder>
-  <Project Path="HelpersCore/HelpersCore.csproj" />
   <Project Path="HelpersCore.ClosedXML/HelpersCore.ClosedXML.csproj" />
   <Project Path="HelpersCore.SkiaSharp/HelpersCore.SkiaSharp.csproj" />
+  <Project Path="HelpersCore/HelpersCore.csproj" />
 </Solution>
