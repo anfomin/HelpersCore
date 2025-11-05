@@ -10,7 +10,7 @@ public static class Tree
 	/// <summary>
 	/// Creates tree.
 	/// </summary>
-	/// <param name="childrenSelector">Functions that returns children for specified parent.</param>
+	/// <param name="childrenSelector">Function that returns children for specified parent.</param>
 	public static Tree<T> Create<T>(Func<T?, IEnumerable<T>> childrenSelector)
 		where T : class
 	{
@@ -33,13 +33,13 @@ public static class Tree
 	/// <summary>
 	/// Creates linearized tree from random-sorted list.
 	/// </summary>
-	/// <param name="childrenSelector">Functions that returns children for specified parent.</param>
+	/// <param name="childrenSelector">Function that returns children for specified parent.</param>
 	public static List<Node<T>> List<T>(Func<T?, IEnumerable<T>> childrenSelector)
 		where T : class
 	{
 		List<Node<T>> list = [];
 		Stack<T> parentsStack = [];
-		Add(default);
+		Add(null);
 		return list;
 
 		void Add(T? parent)
