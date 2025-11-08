@@ -127,6 +127,20 @@ public static class DateTimeExtensions
 	}
 
 	/// <summary>
+	/// Converts <see cref="DateTime"/> to UTC.
+	/// <see cref="DateTime"/> of kind <see cref="DateTimeKind.Unspecified"/> treated as <paramref name="sourceTimeZone"/>.
+	/// </summary>
+	/// <param name="dateTime">Date time to convert.</param>
+	/// <param name="sourceTimeZone">Source timezone.</param>
+	public static DateTime ToUniversalTime(this DateTime dateTime, TimeZoneInfo sourceTimeZone)
+		=> dateTime.Kind switch
+		{
+			DateTimeKind.Utc => dateTime,
+			DateTimeKind.Local => dateTime.ToUniversalTime(),
+			_ => TimeZoneInfo.ConvertTimeToUtc(dateTime, sourceTimeZone),
+		};
+
+	/// <summary>
 	/// Converts <see cref="DateTime"/> to the specified <paramref name="timeZone"/>.
 	/// <see cref="DateTime"/> of kind <see cref="DateTimeKind.Unspecified"/> treated as UTC time.
 	/// </summary>
