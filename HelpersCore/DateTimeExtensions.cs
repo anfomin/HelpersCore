@@ -111,38 +111,57 @@ public static class DateTimeExtensions
 		=> new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind);
 
 	/// <summary>
-	/// Converts <paramref name="dateTime"/> to <see cref="DateTimeOffset"/> with the specified <paramref name="offset"/>.
-	/// <paramref name="dateTime"/> of kind <see cref="DateTimeKind.Unspecified"/> treats as UTC time.
+	/// Converts <see cref="DateTime"/> to <see cref="DateTimeOffset"/> with the specified <paramref name="offset"/>.
+	/// <see cref="DateTime"/> of kind <see cref="DateTimeKind.Unspecified"/> treated as UTC time.
 	/// </summary>
 	/// <param name="dateTime">Date time to convert.</param>
 	/// <param name="offset">Destination offset.</param>
 	public static DateTimeOffset ToOffset(this DateTime dateTime, TimeSpan offset)
 	{
-		dateTime = dateTime.Kind == DateTimeKind.Unspecified
-			? dateTime.Add(offset)
-			: DateTime.SpecifyKind(dateTime.ToUniversalTime().Add(offset), DateTimeKind.Unspecified);
+		dateTime = dateTime.Kind switch
+		{
+			DateTimeKind.Unspecified => dateTime.Add(offset),
+			_ => DateTime.SpecifyKind(dateTime.ToUniversalTime().Add(offset), DateTimeKind.Unspecified)
+		};
 		return new(dateTime, offset);
 	}
 
 	/// <summary>
-	/// Converts the specified <see cref="DateTime"/> to local <paramref name="timeProvider"/> offset.
+	/// Converts <see cref="DateTime"/> to the specified <paramref name="timeZone"/>.
+	/// <see cref="DateTime"/> of kind <see cref="DateTimeKind.Unspecified"/> treated as UTC time.
 	/// </summary>
-	public static DateTime ToLocal(this DateTime dateTime, TimeProvider timeProvider)
-		=> dateTime.Kind switch
-		{
-			DateTimeKind.Unspecified => throw new InvalidOperationException("Unable to convert unspecified DateTime to local time"),
-			DateTimeKind.Local => dateTime,
-			_ => DateTime.SpecifyKind(TimeZoneInfo.ConvertTimeFromUtc(dateTime, timeProvider.LocalTimeZone), DateTimeKind.Local),
-		};
+	/// <param name="dateTime">Date time to convert.</param>
+	/// <param name="timeZone">Destination timezone.</param>
+	public static DateTime ToTimeZone(this DateTime dateTime, TimeZoneInfo timeZone)
+		=> TimeZoneInfo.ConvertTimeFromUtc(
+			dateTime.Kind == DateTimeKind.Local ? dateTime.ToUniversalTime() : dateTime,
+			timeZone
+		);
 
 	/// <summary>
-	/// Converts the specified <see cref="DateTimeOffset"/> to local <paramref name="timeProvider"/> offset.
+	/// Converts <see cref="DateTime"/> to the timezone specified by <see cref="TimeProvider"/>.
+	/// <see cref="DateTime"/> of kind <see cref="DateTimeKind.Unspecified"/> treated as UTC time.
 	/// </summary>
-	public static DateTime ToLocal(this DateTimeOffset dateTimeOffset, TimeProvider timeProvider)
-	{
-		var local = TimeZoneInfo.ConvertTimeFromUtc(dateTimeOffset.UtcDateTime, timeProvider.LocalTimeZone);
-		return DateTime.SpecifyKind(local, DateTimeKind.Local);
-	}
+	/// <param name="dateTime">Date time to convert.</param>
+	/// <param name="timeProvider">Time provider that specifies timezone to convert to.</param>
+	public static DateTime ToTimeZone(this DateTime dateTime, TimeProvider timeProvider)
+		=> dateTime.ToTimeZone(timeProvider.LocalTimeZone);
+
+	/// <summary>
+	/// Converts <see cref="DateTimeOffset"/> to the specified <paramref name="timeZone"/>.
+	/// </summary>
+	/// <param name="dateTimeOffset">Date time to convert.</param>
+	/// <param name="timeZone">Destination timezone.</param>
+	public static DateTimeOffset ToTimeZone(this DateTimeOffset dateTimeOffset, TimeZoneInfo timeZone)
+		=> TimeZoneInfo.ConvertTime(dateTimeOffset, timeZone);
+
+	/// <summary>
+	/// Converts <see cref="DateTimeOffset"/> to the timezone specified by <see cref="TimeProvider"/>.
+	/// </summary>
+	/// <param name="dateTimeOffset">Date time to convert.</param>
+	/// <param name="timeProvider">Time provider that specifies timezone to convert to.</param>
+	public static DateTimeOffset ToTimeZone(this DateTimeOffset dateTimeOffset, TimeProvider timeProvider)
+		=> TimeZoneInfo.ConvertTime(dateTimeOffset, timeProvider.LocalTimeZone);
 
 	/// <summary>
 	/// Returns elapsed time for logging in formats:
