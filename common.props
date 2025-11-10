@@ -4,7 +4,7 @@
 		<Authors>Alexander Fomin</Authors>
 		<RepositoryUrl>https://github.com/anfomin/helperscore</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<VersionPrefix>1.7.3</VersionPrefix>
+		<VersionPrefix>1.7.4</VersionPrefix>
 		<VersionSuffix Condition="'$(VERSION_SUFFIX)'!=''">$(VERSION_SUFFIX)</VersionSuffix>
 		<TargetFramework>net9.0</TargetFramework>
 		<LangVersion>preview</LangVersion>

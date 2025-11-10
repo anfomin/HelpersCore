@@ -3,7 +3,7 @@ namespace HelpersCore;
 /// <summary>
 /// Represents entity with identity.
 /// </summary>
-public interface IKeyEntity<TKey>
+public interface IKeyEntity<out TKey>
 	where TKey : notnull
 {
 	/// <summary>

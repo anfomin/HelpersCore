@@ -141,6 +141,15 @@ public static class DateTimeExtensions
 		};
 
 	/// <summary>
+	/// Converts <see cref="DateOnly"/> and <see cref="TimeOnly"/> from the specified <paramref name="sourceTimeZone"/> to UTC.
+	/// </summary>
+	/// <param name="date">Date to convert.</param>
+	/// <param name="time">Time to convert.</param>
+	/// <param name="sourceTimeZone">Source timezone.</param>
+	public static DateTime ToUniversalTime(this DateOnly date, TimeOnly time, TimeZoneInfo sourceTimeZone)
+		=> date.ToDateTime(time, DateTimeKind.Unspecified).ToUniversalTime(sourceTimeZone);
+
+	/// <summary>
 	/// Converts <see cref="DateTime"/> to the specified <paramref name="timeZone"/>.
 	/// <see cref="DateTime"/> of kind <see cref="DateTimeKind.Unspecified"/> treated as UTC time.
 	/// </summary>
@@ -176,6 +185,12 @@ public static class DateTimeExtensions
 	/// <param name="timeProvider">Time provider that specifies timezone to convert to.</param>
 	public static DateTimeOffset ToTimeZone(this DateTimeOffset dateTimeOffset, TimeProvider timeProvider)
 		=> TimeZoneInfo.ConvertTime(dateTimeOffset, timeProvider.LocalTimeZone);
+
+	/// <summary>
+	/// Returns date in 'yyyy-MM' format.
+	/// </summary>
+	public static string ToYearMonthString(this DateOnly date)
+		=> date.ToString("yyyy-MM");
 
 	/// <summary>
 	/// Returns elapsed time for logging in formats:

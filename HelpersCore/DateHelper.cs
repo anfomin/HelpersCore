@@ -133,12 +133,6 @@ public static class DateHelper
 	}
 
 	/// <summary>
-	/// Returns date in 'yyyy-MM' format.
-	/// </summary>
-	public static string ToYearMonthString(this DateOnly date)
-		=> date.ToString("yyyy-MM");
-
-	/// <summary>
 	/// Parses date in 'yyyy-MM' format.
 	/// </summary>
 	/// <param name="s">Source string to parse.</param>
