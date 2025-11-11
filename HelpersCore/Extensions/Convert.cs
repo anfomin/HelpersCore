@@ -3,10 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HelpersCore;
 
-/// <summary>
-/// Extension methods for object conversion.
-/// </summary>
-public static class ConvertExtensions
+public static partial class Extensions
 {
 	/// <summary>
 	/// Tries convert <paramref name="value"/> to the type <typeparamref name="T"/>.
@@ -35,7 +32,7 @@ public static class ConvertExtensions
 	/// </summary>
 	/// <typeparam name="T">Type to convert to.</typeparam>
 	/// <param name="value">Object to convert.</param>
-	public static T? ConvertTo<T>(this object value)
+	public static T? ConvertTo<T>(this object? value)
 	{
 		var type = typeof(T);
 		if (value == null)
@@ -61,7 +58,7 @@ public static class ConvertExtensions
 
 		// type converter
 		var converter = TypeDescriptor.GetConverter(typeof(T));
-		if (converter != null && converter.CanConvertFrom(type))
+		if (converter.CanConvertFrom(type))
 			return (T)converter.ConvertFrom(value)!;
 
 		// standard converter

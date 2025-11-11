@@ -7,7 +7,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides helper methods for SkiaSharp imaging.
 /// </summary>
-public static partial class ImageHelpers
+public static partial class ImageHelper
 {
 	/// <summary>
 	/// Sampling options for high quality image resizing.

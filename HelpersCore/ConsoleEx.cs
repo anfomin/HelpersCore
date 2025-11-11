@@ -7,103 +7,104 @@ namespace HelpersCore;
 /// </summary>
 public static partial class ConsoleEx
 {
-	/// <summary>
-	/// Enables specified console foreground color.
-	/// </summary>
-	/// <param name="foregroundColor">Foreground color.</param>
-	/// <returns>Object that should be disposed to restore console color.</returns>
-	public static IDisposable Color(ConsoleColor foregroundColor)
-		=> new ConsoleConfigurator(foregroundColor);
-
-	/// <summary>
-	/// Enables specified console state.
-	/// </summary>
-	/// <param name="state">State to enable.</param>
-	/// <returns>Object that should be disposed to restore console state.</returns>
-	public static IDisposable State(ConsoleState state)
-		=> Color(StateToColor(state));
-
-	/// <summary>
-	/// Enabled prefix addition to each line until result is disposed.
-	/// </summary>
-	/// <param name="prefix">Prefix to add to each line.</param>
-	/// <returns>Object that should be disposed to remove prefix.</returns>
-	public static IDisposable Prefix(string prefix)
-		=> new ConsolePrefixer(prefix);
-
-	/// <summary>
-	/// Enabled label prefix addition to each line until result is disposed.
-	/// Label prefix is 2 spaces.
-	/// </summary>
-	/// <returns>Object that should be disposed to remove prefix.</returns>
-	public static IDisposable PrefixLevel()
-		=> Prefix("  ");
-
-	/// <summary>
-	/// Writes line to console with specified foreground color.
-	/// </summary>
-	/// <param name="value">Value to write.</param>
-	/// <param name="foregroundColor">Foreground color.</param>
-	public static void WriteLine(string value, ConsoleColor foregroundColor)
+	extension(Console)
 	{
-		using var _ = Color(foregroundColor);
-		Console.WriteLine(value);
-	}
+		/// <summary>
+		/// Enables specified console foreground color.
+		/// </summary>
+		/// <param name="foregroundColor">Foreground color.</param>
+		/// <returns>Object that should be disposed to restore console color.</returns>
+		public static IDisposable Color(ConsoleColor foregroundColor)
+			=> new ConsoleConfigurator(foregroundColor);
 
-	/// <summary>
-	/// Writes line to console with specified state.
-	/// </summary>
-	/// <param name="value">Value to write.</param>
-	/// <param name="state">Console state.</param>
-	public static void WriteLine(string value, ConsoleState state)
-		=> WriteLine(value, StateToColor(state));
+		/// <summary>
+		/// Enables specified console state.
+		/// </summary>
+		/// <param name="state">State to enable.</param>
+		/// <returns>Object that should be disposed to restore console state.</returns>
+		public static IDisposable State(ConsoleState state)
+			=> Color(StateToColor(state));
 
-	/// <summary>
-	/// Writes to console with specified foreground color.
-	/// </summary>
-	/// <param name="value">Value to write.</param>
-	/// <param name="foregroundColor">Foreground color.</param>
-	public static void Write(string value, ConsoleColor foregroundColor)
-	{
-		using var _ = Color(foregroundColor);
-		Console.Write(value);
-	}
+		/// <summary>
+		/// Enabled prefix addition to each line until result is disposed.
+		/// </summary>
+		/// <param name="prefix">Prefix to add to each line.</param>
+		/// <returns>Object that should be disposed to remove prefix.</returns>
+		public static IDisposable Prefix(string prefix)
+			=> new ConsolePrefixer(prefix);
 
-	/// <summary>
-	/// Writes to console with specified state.
-	/// </summary>
-	/// <param name="value">Value to write.</param>
-	/// <param name="state">Console state.</param>
-	public static void Write(string value, ConsoleState state)
-		=> Write(value, StateToColor(state));
+		/// <summary>
+		/// Enabled label prefix addition to each line until result is disposed.
+		/// Label prefix is 2 spaces.
+		/// </summary>
+		/// <returns>Object that should be disposed to remove prefix.</returns>
+		public static IDisposable PrefixLevel()
+			=> Prefix("  ");
 
-	/// <summary>
-	/// Writes exception information to the console.
-	/// </summary>
-	public static void WriteException(Exception ex)
-	{
-		using var _ = Color(ConsoleColor.Red);
-		Console.Error.WriteLine($"{ex.GetType().Name}: {ex.Message.Trim()}");
-		Exception? ex1 = ex.InnerException;
-		while (ex1 != null)
+		/// <summary>
+		/// Writes line to console with specified foreground color.
+		/// </summary>
+		/// <param name="value">Value to write.</param>
+		/// <param name="foregroundColor">Foreground color.</param>
+		public static void WriteLine(string value, ConsoleColor foregroundColor)
 		{
-			Console.Error.WriteLine($"   {ex1.GetType().Name}: {ex1.Message.Trim()}");
-			ex1 = ex1.InnerException;
+			using var _ = Color(foregroundColor);
+			Console.WriteLine(value);
 		}
+
+		/// <summary>
+		/// Writes line to console with specified state.
+		/// </summary>
+		/// <param name="value">Value to write.</param>
+		/// <param name="state">Console state.</param>
+		public static void WriteLine(string value, ConsoleState state)
+			=> WriteLine(value, StateToColor(state));
+
+		/// <summary>
+		/// Writes to console with specified foreground color.
+		/// </summary>
+		/// <param name="value">Value to write.</param>
+		/// <param name="foregroundColor">Foreground color.</param>
+		public static void Write(string value, ConsoleColor foregroundColor)
+		{
+			using var _ = Color(foregroundColor);
+			Console.Write(value);
+		}
+
+		/// <summary>
+		/// Writes to console with specified state.
+		/// </summary>
+		/// <param name="value">Value to write.</param>
+		/// <param name="state">Console state.</param>
+		public static void Write(string value, ConsoleState state)
+			=> Write(value, StateToColor(state));
+
+		/// <summary>
+		/// Writes exception information to the console.
+		/// </summary>
+		public static void WriteException(Exception ex)
+		{
+			using var _ = Color(ConsoleColor.Red);
+			Console.Error.WriteLine($"{ex.GetType().Name}: {ex.Message.Trim()}");
+			Exception? ex1 = ex.InnerException;
+			while (ex1 != null)
+			{
+				Console.Error.WriteLine($"   {ex1.GetType().Name}: {ex1.Message.Trim()}");
+				ex1 = ex1.InnerException;
+			}
+		}
+
+		/// <summary>
+		/// Returns console color from state.
+		/// </summary>
+		static ConsoleColor StateToColor(ConsoleState state) => state switch
+		{
+			ConsoleState.Success => ConsoleColor.Green,
+			ConsoleState.Warning => ConsoleColor.Yellow,
+			ConsoleState.Error => ConsoleColor.Red,
+			_ => ConsoleColor.White
+		};
 	}
-
-
-
-	/// <summary>
-	/// Returns console color from state.
-	/// </summary>
-	static ConsoleColor StateToColor(ConsoleState state) => state switch
-	{
-		ConsoleState.Success => ConsoleColor.Green,
-		ConsoleState.Warning => ConsoleColor.Yellow,
-		ConsoleState.Error => ConsoleColor.Red,
-		_ => ConsoleColor.White
-	};
 
 	class ConsoleConfigurator : IDisposable
 	{
@@ -134,7 +135,7 @@ public static partial class ConsoleEx
 		}
 	}
 
-	public class PrefixerTextWriter(TextWriter baseWriter, string prefix) : TextWriter
+	class PrefixerTextWriter(TextWriter baseWriter, string prefix) : TextWriter
 	{
 		readonly TextWriter _baseWriter = baseWriter;
 		readonly string _prefix = prefix;

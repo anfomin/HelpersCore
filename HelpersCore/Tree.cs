@@ -123,7 +123,7 @@ public class Tree<T>
 	}
 
 	/// <summary>
-	/// Represents tree node containing item of <typeparamref name="T"/>.
+	/// Represents tree node containing item of <c>T</c>.
 	/// </summary>
 	/// <param name="item">Tree item.</param>
 	public class Node(T item) : Tree<T>

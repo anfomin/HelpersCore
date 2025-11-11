@@ -1,0 +1,42 @@
+using SkiaSharp;
+
+namespace HelpersCore;
+
+/// <summary>
+/// Provides extension methods for working with SkiaSharp.
+/// </summary>
+public static partial class SKExtensions
+{
+	/// <summary>
+	/// Returns content-type string for specified image format.
+	/// </summary>
+	public static string ToContentType(this SKEncodedImageFormat format)
+		=> $"image/{format.ToString().ToLower()}";
+
+	/// <summary>
+	/// Decodes image from codec with RGBA8888 or BGRA8888 color type.
+	/// </summary>
+	public static SKBitmap DecodeColored(this SKCodec codec)
+	{
+		var bitmap = SKBitmap.Decode(codec, new SKImageInfo(codec.Info.Width, codec.Info.Height, SKImageInfo.PlatformColorType, SKAlphaType.Premul));
+		return bitmap ?? throw new FormatException("Error decoding image");
+	}
+
+	/// <summary>
+	/// Decodes <see cref="SKBitmap"/> from HTTP content.
+	/// </summary>
+	/// <param name="content">HTTP content to decode.</param>
+	public static async Task<SKBitmap> ReadAsImageAsync(this HttpContent content, CancellationToken cancellationToken = default)
+	{
+		await using var stream = await content.ReadAsStreamAsync(cancellationToken);
+		return ImageHelper.DecodeColored(stream);
+	}
+
+	extension(SKSamplingOptions)
+	{
+		/// <summary>
+		/// Sampling options for high quality image resizing.
+		/// </summary>
+		public static SKSamplingOptions High => ImageHelper.SamplingHigh;
+	}
+}

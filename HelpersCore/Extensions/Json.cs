@@ -3,10 +3,7 @@ using System.Text.Json.Nodes;
 
 namespace HelpersCore;
 
-/// <summary>
-/// Extension methods for JSON.
-/// </summary>
-public static class JsonExtensions
+public static partial class Extensions
 {
 	/// <summary>
 	/// Merges <paramref name="source"/> into <paramref name="node"/>.
