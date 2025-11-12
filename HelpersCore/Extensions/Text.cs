@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace HelpersCore;
 
 public static partial class Extensions
@@ -61,18 +63,37 @@ public static partial class Extensions
 	extension(string source)
 	{
 		/// <summary>
-		/// Returns string like-pattern "%source%".
+		/// Returns string like-pattern <c>%source%</c>.
 		/// </summary>
 		public string ToLikePattern()
 			=> $"%{source}%";
 
 		/// <summary>
-		/// Splits string by spaces into like-patterns "%word%".
+		/// Splits string by spaces into like-patterns <c>%word%</c>.
 		/// </summary>
 		public string[] SplitToLikePatterns() => source
 			.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
 			.Select(ToLikePattern)
 			.ToArray();
+
+		/// <summary>
+		/// If <see cref="String"/> length is more then specified <paramref name="maxLength"/>
+		/// then it is split by last matching whitespace and <c>…</c> added.
+		/// </summary>
+		public string LimitEllipsis(int maxLength)
+		{
+			if (source.Length <= maxLength)
+				return source;
+
+			int i = maxLength;
+			var match = NonWhiteSpace.Match(source.Trim());
+			while (match.Success && match.Index >= maxLength)
+			{
+				i = match.Index;
+				match = match.NextMatch();
+			}
+			return $"{source[..i]}…";
+		}
 	}
 
 	/// <summary>
@@ -101,4 +122,7 @@ public static partial class Extensions
 		}
 		return $"{v:0.##}\u00a0{unit}/s";
 	}
+
+	[GeneratedRegex(@"\W+")]
+	private static partial Regex NonWhiteSpace { get; }
 }
