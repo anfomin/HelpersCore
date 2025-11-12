@@ -117,6 +117,15 @@ public static partial class Extensions
 		}
 
 		/// <summary>
+		/// Caches the items of an enumerable as they are enumerated.
+		/// </summary>
+		public IEnumerable<T> Cache()
+			=> new CachedEnumerable<T>(source);
+	}
+
+	extension<T>(IEnumerable<T?> source)
+	{
+		/// <summary>
 		/// Joins non-null items with specified separator.
 		/// </summary>
 		public string Join(char separator)
@@ -133,12 +142,6 @@ public static partial class Extensions
 				.Select(item => item?.ToString())
 				.Where(item => !string.IsNullOrEmpty(item))
 			);
-
-		/// <summary>
-		/// Caches the items of an enumerable as they are enumerated.
-		/// </summary>
-		public IEnumerable<T> Cache()
-			=> new CachedEnumerable<T>(source);
 	}
 
 	extension<T>(IEnumerable<T> source) where T : class

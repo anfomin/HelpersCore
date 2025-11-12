@@ -111,5 +111,5 @@ public static partial class ConsoleEx
 	/// <summary>
 	/// Returns string to display in console for specified item.
 	/// </summary>
-	public delegate string? DisplayFn<in T>(T item);
+	public delegate string? DisplayFn<T>(T item);
 }

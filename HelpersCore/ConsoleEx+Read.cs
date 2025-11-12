@@ -75,5 +75,5 @@ public static partial class ConsoleEx
 	/// <typeparam name="T">Type to validate.</typeparam>
 	/// <param name="value">Value to validate.</param>
 	/// <returns>Error message or <c>null</c> if <paramref name="value"/> is valid.</returns>
-	public delegate string? ValidateFn<in T>(T value);
+	public delegate string? ValidateFn<T>(T value);
 }
