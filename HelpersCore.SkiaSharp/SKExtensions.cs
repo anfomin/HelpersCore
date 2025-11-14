@@ -42,6 +42,6 @@ public static partial class SKExtensions
 		/// <summary>
 		/// For downscaling it is recommended to use <see cref="SKFilterMode.Linear"/> and <see cref="SKMipmapMode.Linear"/>.
 		/// </summary>
-		public static SKSamplingOptions SamplingDownscale => ImageHelper.SamplingDownscale;
+		public static SKSamplingOptions Downscale => ImageHelper.SamplingDownscale;
 	}
 }
