@@ -10,9 +10,14 @@ namespace HelpersCore;
 public static partial class ImageHelper
 {
 	/// <summary>
-	/// Sampling options for high quality image resizing.
+	/// For upscaling it is recommended to use <see cref="SKCubicResampler.Mitchell"/>.
 	/// </summary>
-	public static readonly SKSamplingOptions SamplingHigh = new(SKCubicResampler.Mitchell);
+	public static readonly SKSamplingOptions SamplingUpscale = new(SKCubicResampler.Mitchell);
+
+	/// <summary>
+	/// For downscaling it is recommended to use <see cref="SKFilterMode.Linear"/> and <see cref="SKMipmapMode.Linear"/>.
+	/// </summary>
+	public static readonly SKSamplingOptions SamplingDownscale = new(SKFilterMode.Linear, SKMipmapMode.Linear);
 
 	/// <summary>
 	/// Creates <see cref="SKCodec"/> from stream not taking stream ownership.

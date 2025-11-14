@@ -35,8 +35,13 @@ public static partial class SKExtensions
 	extension(SKSamplingOptions)
 	{
 		/// <summary>
-		/// Sampling options for high quality image resizing.
+		/// For upscaling it is recommended to use <see cref="SKCubicResampler.Mitchell"/>.
 		/// </summary>
-		public static SKSamplingOptions High => ImageHelper.SamplingHigh;
+		public static SKSamplingOptions Upscale => ImageHelper.SamplingUpscale;
+
+		/// <summary>
+		/// For downscaling it is recommended to use <see cref="SKFilterMode.Linear"/> and <see cref="SKMipmapMode.Linear"/>.
+		/// </summary>
+		public static SKSamplingOptions SamplingDownscale => ImageHelper.SamplingDownscale;
 	}
 }
