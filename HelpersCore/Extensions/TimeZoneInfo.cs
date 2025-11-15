@@ -14,7 +14,16 @@ public static partial class Extensions
 	extension(TimeProvider timeProvider)
 	{
 		/// <summary>
-		/// Returns the current date in specified time provider timezone.
+		/// Returns the current date in specified by <see cref="TimeProvider"/> timezone.
+		/// </summary>
+		public DateOnly GetToday()
+			=> DateOnly.GetToday(timeProvider);
+	}
+
+	extension(ITimeProvider timeProvider)
+	{
+		/// <summary>
+		/// Returns the current date in specified by <see cref="ITimeProvider"/> timezone.
 		/// </summary>
 		public DateOnly GetToday()
 			=> DateOnly.GetToday(timeProvider);
