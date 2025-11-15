@@ -20,27 +20,35 @@ public static partial class ImageHelper
 	public static readonly SKSamplingOptions SamplingDownscale = new(SKFilterMode.Linear, SKMipmapMode.Linear);
 
 	/// <summary>
-	/// Creates <see cref="SKCodec"/> from stream not taking stream ownership.
+	/// Creates <see cref="SKCodec"/> from stream.
 	/// </summary>
-	public static SKCodec CreateCodec(Stream stream)
+	/// <param name="disposeStream"><c>True</c> to dispose stream when codec is disposed. Otherwise, <c>false</c>.</param>
+	public static SKCodec CreateCodec(Stream stream, bool disposeStream, out SKCodecResult result)
+		=> SKCodec.Create(WrapManagedStream(stream, disposeStream), out result);
+
+	/// <summary>
+	/// Creates <see cref="SKCodec"/> from stream.
+	/// </summary>
+	/// <param name="disposeStream"><c>True</c> to dispose stream when codec is disposed. Otherwise, <c>false</c>.</param>
+	public static SKCodec CreateCodec(Stream stream, bool disposeStream)
 	{
-		var codec = SKCodec.Create(WrapManagedStream(stream), out var result);
-		if (codec == null)
-			throw new InvalidDataException($"Invalid image stream: {result}");
-		return codec;
+		var codec = CreateCodec(stream, disposeStream, out var result);
+		return codec ?? throw new InvalidDataException($"Invalid image stream: {result}");
 	}
 
 	/// <summary>
-	/// Decodes image from codec with RGBA8888 or BGRA8888 color type.
+	/// Decodes <see cref="SKBitmap"/> with RGBA8888 or BGRA8888 color type.
 	/// </summary>
-	public static SKBitmap DecodeColored(Stream stream)
+	/// <param name="stream">Image stream.</param>
+	/// <param name="disposeStream"><c>True</c> to dispose stream when codec is disposed. Otherwise, <c>false</c>.</param>
+	public static SKBitmap DecodeColored(Stream stream, bool disposeStream = false)
 	{
-		using var codec = CreateCodec(stream);
+		using var codec = CreateCodec(stream, disposeStream);
 		return codec.DecodeColored();
 	}
 
 	/// <summary>
-	/// Parses size from string "{width}x{height}".
+	/// Parses <see cref="Size"/> from string <c>{width}x{height}</c>.
 	/// </summary>
 	public static Size ParseSize(string s)
 	{
@@ -49,7 +57,7 @@ public static partial class ImageHelper
 		return new Size(int.Parse(match.Groups["width"].Value), int.Parse(match.Groups["height"].Value));
 	}
 
-	static SKStream WrapManagedStream(Stream stream)
+	static SKStream WrapManagedStream(Stream stream, bool dispose)
 		=> stream == null ? throw new ArgumentNullException(nameof(stream))
 		: stream.CanSeek ? new SKManagedStream(stream, false)
 		: new SKFrontBufferedManagedStream(stream, SKCodec.MinBufferedBytesNeeded, false);

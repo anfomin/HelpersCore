@@ -8,6 +8,14 @@ public static partial class SKExtensions
 	extension(SKBitmap bitmap)
 	{
 		/// <summary>
+		/// Decodes <see cref="SKBitmap"/> with RGBA8888 or BGRA8888 color type.
+		/// </summary>
+		/// <param name="stream">Image stream.</param>
+		/// <param name="disposeStream"><c>True</c> to dispose stream when codec is disposed. Otherwise, <c>false</c>.</param>
+		public static SKBitmap DecodeColored(Stream stream, bool disposeStream = false)
+			=> ImageHelper.DecodeColored(stream, disposeStream);
+
+		/// <summary>
 		/// Encodes bitmap into specified format.
 		/// </summary>
 		/// <param name="format">Encode format.</param>
