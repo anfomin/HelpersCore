@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="../common.props" />
+
+	<PropertyGroup>
+		<AssemblyName>HelpersCore.Npgsql</AssemblyName>
+		<PackageId>HelpersCore.Npgsql</PackageId>
+		<PackageTags>helpers npgsql postgresql</PackageTags>
+		<Description>Common used helper methods for Npgsql to access PostgreSQL.</Description>
+		<RootNamespace>HelpersCore</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../HelpersCore/HelpersCore.csproj" />
+		<PackageReference Include="Npgsql" Version="9.0.*" />
+	</ItemGroup>
+</Project>
