@@ -22,10 +22,16 @@ public static class DateHelper
 			=> DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone));
 
 		/// <summary>
-		/// Returns the current date in specified time provider timezone.
+		/// Returns the current date in specified by <see cref="TimeProvider"/> timezone.
 		/// </summary>
 		public static DateOnly GetToday(TimeProvider timeProvider)
 			=> GetToday(timeProvider.LocalTimeZone);
+
+		/// <summary>
+		/// Returns the current date in specified by <see cref="ITimeProvider"/> timezone.
+		/// </summary>
+		public static DateOnly GetToday(ITimeProvider timeProvider)
+			=> DateOnly.GetToday(timeProvider.LocalTimeZone);
 
 		/// <summary>
 		/// Gets last day of the month.

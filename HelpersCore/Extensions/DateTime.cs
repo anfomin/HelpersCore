@@ -86,6 +86,14 @@ public static partial class Extensions
 		/// <param name="timeProvider">Time provider that specifies timezone to convert to.</param>
 		public DateTime ToTimeZone(TimeProvider timeProvider)
 			=> dateTime.ToTimeZone(timeProvider.LocalTimeZone);
+
+		/// <summary>
+		/// Converts <see cref="DateTime"/> to the timezone specified by <see cref="ITimeProvider"/>.
+		/// <see cref="DateTime"/> of kind <see cref="DateTimeKind.Unspecified"/> treated as UTC time.
+		/// </summary>
+		/// <param name="timeProvider">Time provider that specifies timezone to convert to.</param>
+		public DateTime ToTimeZone(ITimeProvider timeProvider)
+			=> dateTime.ToTimeZone(timeProvider.LocalTimeZone);
 	}
 
 	extension(DateTimeOffset dateTimeOffset)
@@ -102,6 +110,13 @@ public static partial class Extensions
 		/// </summary>
 		/// <param name="timeProvider">Time provider that specifies timezone to convert to.</param>
 		public DateTimeOffset ToTimeZone(TimeProvider timeProvider)
+			=> TimeZoneInfo.ConvertTime(dateTimeOffset, timeProvider.LocalTimeZone);
+
+		/// <summary>
+		/// Converts <see cref="DateTimeOffset"/> to the timezone specified by <see cref="ITimeProvider"/>.
+		/// </summary>
+		/// <param name="timeProvider">Time provider that specifies timezone to convert to.</param>
+		public DateTimeOffset ToTimeZone(ITimeProvider timeProvider)
 			=> TimeZoneInfo.ConvertTime(dateTimeOffset, timeProvider.LocalTimeZone);
 	}
 }
