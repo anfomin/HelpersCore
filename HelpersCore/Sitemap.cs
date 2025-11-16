@@ -80,7 +80,7 @@ public record SitemapUrl()
 		init
 		{
 			LastMod = null;
-			LastModDate = value == null ? null : DateOnly.Parse(value);
+			LastModDate = value is null ? null : DateOnly.Parse(value);
 		}
 	}
 

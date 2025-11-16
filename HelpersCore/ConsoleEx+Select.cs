@@ -87,9 +87,9 @@ public static partial class ConsoleEx
 			where TKey : notnull
 			=> SelectByKeyAsync(name,
 				items: items.Prepend(null),
-				keyFn: item => item == null ? default! : keyFn(item),
-				displayFn: item => displayFn != null ? displayFn(item)
-					: item == null ? Strings.Null
+				keyFn: item => item is null ? default! : keyFn(item),
+				displayFn: item => displayFn is not null ? displayFn(item)
+					: item is null ? Strings.Null
 					: item.ToString()
 			);
 
@@ -104,7 +104,7 @@ public static partial class ConsoleEx
 			where T : class, IKeyEntity<int>
 			=> SelectByKeyOrNullAsync(name, items,
 				item => item.Id,
-				item => item != null ? item.ToString() : nullText
+				item => item is not null ? item.ToString() : nullText
 			);
 	}
 

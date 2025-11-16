@@ -47,8 +47,8 @@ public static partial class Extensions
 		/// <param name="upperInclusive"><c>True</c> if the lower bound is part of the range (i.e. inclusive); otherwise, <c>false</c>.</param>
 		public static NpgsqlRange<T> Create(T? lower, T? upper, bool lowerInclusive = true, bool upperInclusive = true)
 			=> new(
-				lower ?? default, lowerBoundIsInclusive: lowerInclusive, lowerBoundInfinite: lower == null,
-				upper ?? default, upperBoundIsInclusive: upperInclusive, upperBoundInfinite: upper == null
+				lower ?? default, lowerBoundIsInclusive: lowerInclusive, lowerBoundInfinite: lower is null,
+				upper ?? default, upperBoundIsInclusive: upperInclusive, upperBoundInfinite: upper is null
 			);
 
 		/// <summary>
@@ -70,7 +70,7 @@ public static partial class Extensions
 		{
 			var upper = range.UpperBound;
 			bool upperInclusive = range.UpperBoundIsInclusive;
-			if (lower != null && !range.UpperBoundInfinite)
+			if (lower is not null && !range.UpperBoundInfinite)
 			{
 				int compare = lower.Value.CompareTo(upper);
 				if (compare > 0 || (compare == 0 && (!inclusive || !upperInclusive)))
@@ -80,7 +80,7 @@ public static partial class Extensions
 				}
 			}
 			return new(
-				lower ?? default, lowerBoundIsInclusive: inclusive, lowerBoundInfinite: lower == null,
+				lower ?? default, lowerBoundIsInclusive: inclusive, lowerBoundInfinite: lower is null,
 				upper, upperBoundIsInclusive: upperInclusive, upperBoundInfinite: range.UpperBoundInfinite
 			);
 		}
@@ -95,7 +95,7 @@ public static partial class Extensions
 		{
 			var lower = range.LowerBound;
 			bool lowerInclusive = range.LowerBoundIsInclusive;
-			if (upper != null && !range.LowerBoundInfinite)
+			if (upper is not null && !range.LowerBoundInfinite)
 			{
 				int compare = lower.CompareTo(upper.Value);
 				if (compare > 0 || (compare == 0 && (!inclusive || !lowerInclusive)))
@@ -106,7 +106,7 @@ public static partial class Extensions
 			}
 			return new(
 				lower, lowerBoundIsInclusive: lowerInclusive, lowerBoundInfinite: range.LowerBoundInfinite,
-				upper ?? default, upperBoundIsInclusive: inclusive, upperBoundInfinite: upper == null
+				upper ?? default, upperBoundIsInclusive: inclusive, upperBoundInfinite: upper is null
 			);
 		}
 	}

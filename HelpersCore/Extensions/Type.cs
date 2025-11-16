@@ -15,10 +15,10 @@ public static partial class Extensions
 	extension(Type type)
 	{
 		/// <summary>
-		/// Returns if type == nullable.
+		/// Returns if type is <see cref="Nullable"/>.
 		/// </summary>
 		public bool IsNullable()
-			=> !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
+			=> !type.IsValueType || Nullable.GetUnderlyingType(type) is not null;
 
 		/// <summary>
 		/// Determines if type is simple.
@@ -66,7 +66,7 @@ public static partial class Extensions
 		/// Determines if type is <see cref="Enum"/> and contains <see cref="FlagsAttribute"/>.
 		/// </summary>
 		public bool IsEnumFlags()
-			=> type.IsEnum && type.GetCustomAttribute<FlagsAttribute>(true) != null;
+			=> type.IsEnum && type.GetCustomAttribute<FlagsAttribute>(true) is not null;
 	}
 
 	extension(PropertyInfo property)

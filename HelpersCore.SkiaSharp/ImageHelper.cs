@@ -58,9 +58,9 @@ public static partial class ImageHelper
 	}
 
 	static SKStream WrapManagedStream(Stream stream, bool dispose)
-		=> stream == null ? throw new ArgumentNullException(nameof(stream))
-		: stream.CanSeek ? new SKManagedStream(stream, false)
-		: new SKFrontBufferedManagedStream(stream, SKCodec.MinBufferedBytesNeeded, false);
+		=> stream is null ? throw new ArgumentNullException(nameof(stream))
+		: stream.CanSeek ? new SKManagedStream(stream, dispose)
+		: new SKFrontBufferedManagedStream(stream, SKCodec.MinBufferedBytesNeeded, dispose);
 
 	[GeneratedRegex(@"^(?<width>\d+)x(?<height>\d+)$")]
 	private static partial Regex SizeRegex { get; }

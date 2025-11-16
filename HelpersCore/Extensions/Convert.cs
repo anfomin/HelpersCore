@@ -35,10 +35,10 @@ public static partial class Extensions
 	public static T? ConvertTo<T>(this object? value)
 	{
 		var type = typeof(T);
-		if (value == null)
+		if (value is null)
 		{
 			T def = default!;
-			if (def != null)
+			if (def is not null)
 				throw new ArgumentNullException(nameof(value));
 			return def;
 		}

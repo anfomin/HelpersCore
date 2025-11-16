@@ -25,12 +25,13 @@ public static partial class Extensions
 		/// Returns if <see cref="Enum"/> value has <see cref="IgnoreDataMemberAttribute"/>.
 		/// </summary>
 		public bool IsIgnore()
-			=> EnumIgnore.GetOrAdd(enm, v => v
+			=> EnumIgnore.GetOrAdd(enm,
+				v => v
 					.GetType()
 					.GetMember(enm.ToString())
 					.FirstOrDefault()
 					?.GetCustomAttribute<IgnoreDataMemberAttribute>(true)
-				!= null
+				is not null
 			);
 
 		/// <summary>

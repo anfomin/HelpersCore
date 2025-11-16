@@ -29,12 +29,12 @@ public static partial class ConsoleEx
 				string? str = Console.ReadLine();
 				string? error = null;
 				T? result = default;
-				if (str == null || !str.TryConvertTo(out result))
+				if (str is null || !str.TryConvertTo(out result))
 					error = "Неверный формат";
-				else if (validator != null)
+				else if (validator is not null)
 					error = validator(result!);
 
-				if (error == null)
+				if (error is null)
 					return result!;
 				WriteLine(error, ConsoleColor.DarkYellow);
 			}

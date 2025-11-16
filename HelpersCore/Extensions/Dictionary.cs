@@ -51,7 +51,7 @@ public static partial class Extensions
 	public static void SetOrRemove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue? value)
 		where TValue : class
 	{
-		if (value == null)
+		if (value is null)
 			dictionary.Remove(key);
 		else
 			dictionary[key] = value;
@@ -70,18 +70,18 @@ public static partial class Extensions
 			{
 				string keyStr = key.ToString() ?? throw new ArgumentException("Dictionary key must be non-null", nameof(obj));
 				object? value = objDic[key];
-				if (value == null && removeNulls)
+				if (value is null && removeNulls)
 					dictionary.Remove(keyStr);
 				else
 					dictionary[keyStr] = value;
 			}
 		}
-		else if (obj != null)
+		else if (obj is not null)
 		{
 			foreach (var prop in obj.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty))
 			{
 				object? value = prop.GetValue(obj);
-				if (value == null && removeNulls)
+				if (value is null && removeNulls)
 					dictionary.Remove(prop.Name);
 				else
 					dictionary[prop.Name] = value;

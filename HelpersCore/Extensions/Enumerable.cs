@@ -170,7 +170,7 @@ public static partial class Extensions
 		/// Selects non-null elements.
 		/// </summary>
 		public IEnumerable<T> NotNull()
-			=> (IEnumerable<T>)source.Where(item => item != null);
+			=> (IEnumerable<T>)source.Where(item => item is not null);
 	}
 
 	extension<T>(IAsyncEnumerable<T?> source) where T : class
@@ -179,19 +179,19 @@ public static partial class Extensions
 		/// Selects non-null elements.
 		/// </summary>
 		public IAsyncEnumerable<T> NotNull()
-			=> (IAsyncEnumerable<T>)source.Where(item => item != null);
+			=> (IAsyncEnumerable<T>)source.Where(item => item is not null);
 	}
 
 	extension<T>(IEnumerable<T> source) where T : struct
 	{
 		/// <summary>
-		/// Returns first item or null if no items matching <paramref name="predicate"/>.
+		/// Returns first item or <c>null</c> if no items matching <paramref name="predicate"/>.
 		/// </summary>
 		public T? FirstOrNull(Func<T, bool>? predicate = null)
 		{
 			foreach (var item in source)
 			{
-				if (predicate == null || predicate(item))
+				if (predicate is null || predicate(item))
 					return item;
 			}
 			return null;

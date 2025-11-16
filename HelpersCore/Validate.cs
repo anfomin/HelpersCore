@@ -86,12 +86,12 @@ public static class Validate
 	}
 
 	/// <summary>
-	/// Throws an <see cref="ArgumentNullException"/> if the given argument == null or <see cref="ArgumentException"/> if one is empty.
+	/// Throws an <see cref="ArgumentNullException"/> if the given argument is <c>null</c> or <see cref="ArgumentException"/> if one is empty.
 	/// </summary>
 	[DebuggerHidden]
 	public static IEnumerable<T> NotEmpty<T>(IEnumerable<T>? value, string? message = null, [CallerArgumentExpression("value")] string? name = null)
 	{
-		if (value == null)
+		if (value is null)
 			throw new ArgumentNullException(name, message);
 		if (value.None())
 			throw new ArgumentException(message ?? $"{name ?? "Value"} is empty", name);
@@ -99,12 +99,12 @@ public static class Validate
 	}
 
 	/// <summary>
-	/// Throws an <see cref="ArgumentNullException"/> if the given argument == null or <see cref="ArgumentException"/> if one is empty.
+	/// Throws an <see cref="ArgumentNullException"/> if the given argument is <c>null</c> or <see cref="ArgumentException"/> if one is empty.
 	/// </summary>
 	[DebuggerHidden]
 	public static string NotEmpty(string? value, string? message = null, [CallerArgumentExpression("value")] string? name = null)
 	{
-		if (value == null)
+		if (value is null)
 			throw new ArgumentNullException(name, message);
 		if (value == string.Empty)
 			throw new ArgumentException(message ?? $"{name ?? "Value"} is empty", name);
@@ -112,13 +112,13 @@ public static class Validate
 	}
 
 	/// <summary>
-	/// Throws an <see cref="ArgumentNullException"/> if the given argument == null or <see cref="ArgumentException"/> if one is empty.
+	/// Throws an <see cref="ArgumentNullException"/> if the given argument is <c>null</c> or <see cref="ArgumentException"/> if one is empty.
 	/// </summary>
 	[DebuggerHidden]
 	public static T NotEmpty<T>(T? value, string? message = null, [CallerArgumentExpression("value")] string? name = null)
 		where T : ICollection
 	{
-		if (value == null)
+		if (value is null)
 			throw new ArgumentNullException(name, message);
 		if (value.Count == 0)
 			throw new ArgumentException(message ?? $"{name ?? "Value"} does not contains any element", name);

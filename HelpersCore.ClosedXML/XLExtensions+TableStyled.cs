@@ -98,8 +98,8 @@ public static partial class XLExtensions
 			style.Alignment.SetHorizontal(attr2.Horizontal);
 			if (attr2.FormatId != -1)
 				style.NumberFormat.SetNumberFormatId(attr2.FormatId);
-			else if (attr2.Format != null)
-				style.NumberFormat.SetFormat(attr2.Format);
+			else if (attr2.Format is { } format)
+				style.NumberFormat.SetFormat(format);
 			if (attr2.WrapText)
 				style.Alignment.SetWrapText();
 

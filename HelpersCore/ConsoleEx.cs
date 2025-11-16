@@ -87,7 +87,7 @@ public static partial class ConsoleEx
 			using var _ = Color(ConsoleColor.Red);
 			Console.Error.WriteLine($"{ex.GetType().Name}: {ex.Message.Trim()}");
 			Exception? ex1 = ex.InnerException;
-			while (ex1 != null)
+			while (ex1 is not null)
 			{
 				Console.Error.WriteLine($"   {ex1.GetType().Name}: {ex1.Message.Trim()}");
 				ex1 = ex1.InnerException;

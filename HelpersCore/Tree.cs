@@ -113,10 +113,10 @@ public class Tree<T>
 		foreach (var child in Children)
 		{
 			T? parent = this is Node p ? p.Item : null;
-			yield return (child, parent, parent == null ? [] : [parent]);
+			yield return (child, parent, parent is null ? [] : [parent]);
 			foreach (var (childNode, childParent, childParents) in child.Subtree())
 			{
-				var childParents2 = parent == null ? childParents : [..childParents, parent];
+				var childParents2 = parent is null ? childParents : [..childParents, parent];
 				yield return (childNode, childParent, childParents2);
 			}
 		}

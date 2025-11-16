@@ -36,7 +36,7 @@ public static partial class Extensions
 				Body = bodyHtml,
 				IsBodyHtml = true
 			};
-			if (from != null)
+			if (from is not null)
 				message.From = from;
 			foreach (var address in to)
 				message.To.Add(address);

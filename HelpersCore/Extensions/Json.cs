@@ -24,7 +24,7 @@ public static partial class Extensions
 					if (current is JsonObject && sourceValue is JsonObject
 						|| current is JsonArray && sourceValue is JsonArray)
 						current.Merge(sourceValue, redefine);
-					else if (current == null || redefine)
+					else if (current is null || redefine)
 						obj[key] = sourceValue?.DeepClone();
 				}
 				break;
