@@ -30,14 +30,14 @@ public static partial class SKExtensions
 		/// Creates <see cref="SKCodec"/> from stream.
 		/// </summary>
 		/// <param name="disposeStream"><c>True</c> to dispose stream when codec is disposed. Otherwise, <c>false</c>.</param>
-		public static SKCodec CreateCodec(Stream stream, bool disposeStream, out SKCodecResult result)
+		public static SKCodec Create(Stream stream, bool disposeStream, out SKCodecResult result)
 			=> ImageHelper.CreateCodec(stream, disposeStream, out result);
 
 		/// <summary>
 		/// Creates <see cref="SKCodec"/> from stream.
 		/// </summary>
 		/// <param name="disposeStream"><c>True</c> to dispose stream when codec is disposed. Otherwise, <c>false</c>.</param>
-		public static SKCodec CreateCodec(Stream stream, bool disposeStream)
+		public static SKCodec Create(Stream stream, bool disposeStream)
 			=> ImageHelper.CreateCodec(stream, disposeStream);
 
 		/// <summary>

@@ -7,31 +7,31 @@ public static partial class Extensions
 		/// <summary>
 		/// Returns if date is today in UTC.
 		/// </summary>
-		public bool IsTodayUtc()
+		public bool IsTodayUtc
 			=> date == DateHelper.GetTodayUtc();
 
 		/// <summary>
 		/// Returns if date is today or in past in UTC.
 		/// </summary>
-		public bool IsTodayOrPastUtc()
+		public bool IsTodayOrPastUtc
 			=> date <= DateHelper.GetTodayUtc();
 
 		/// <summary>
 		/// Returns if date is in past in UTC.
 		/// </summary>
-		public bool IsPastUtc()
+		public bool IsPastUtc
 			=> date < DateHelper.GetTodayUtc();
 
 		/// <summary>
 		/// Returns if date is today or in future in UTC.
 		/// </summary>
-		public bool IsTodayOrFutureUtc()
+		public bool IsTodayOrFutureUtc
 			=> date >= DateHelper.GetTodayUtc();
 
 		/// <summary>
 		/// Returns if date is in future in UTC.
 		/// </summary>
-		public bool IsFutureUtc()
+		public bool IsFutureUtc
 			=> date > DateHelper.GetTodayUtc();
 
 		/// <summary>
@@ -43,7 +43,7 @@ public static partial class Extensions
 		/// <summary>
 		/// Returns number of days in month.
 		/// </summary>
-		public int GetDaysInMonth()
+		public int DaysInMonth
 			=> DateTime.DaysInMonth(date.Year, date.Month);
 
 		/// <summary>
@@ -56,7 +56,7 @@ public static partial class Extensions
 		/// Gets the last day of the month.
 		/// </summary>
 		public DateOnly GetMonthEnd()
-			=> new(date.Year, date.Month, date.GetDaysInMonth());
+			=> new(date.Year, date.Month, date.DaysInMonth);
 
 		/// <summary>
 		/// Gets the first day of the year.
@@ -83,7 +83,7 @@ public static partial class Extensions
 		/// </summary>
 		/// <param name="day">Day of month.</param>
 		public DateOnly SetDay(int day)
-			=> new(date.Year, date.Month, Math.Min(day, date.GetDaysInMonth()));
+			=> new(date.Year, date.Month, Math.Min(day, date.DaysInMonth));
 
 		/// <summary>
 		/// Converts <see cref="DateOnly"/> and <see cref="TimeOnly"/> from the specified <paramref name="sourceTimeZone"/> to UTC.

@@ -13,7 +13,7 @@ public static partial class Extensions
 		/// <summary>
 		/// Returns number of days in month.
 		/// </summary>
-		public int GetDaysInMonth()
+		public int DaysInMonth
 			=> DateTime.DaysInMonth(dateTime.Year, dateTime.Month);
 
 		/// <summary>
