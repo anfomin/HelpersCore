@@ -2,7 +2,10 @@ using System.Linq.Expressions;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for <see cref="IQueryable{T}"/>.
+/// </summary>
+public static class QueryableExtensions
 {
 	extension<T>(IQueryable<T> source)
 	{

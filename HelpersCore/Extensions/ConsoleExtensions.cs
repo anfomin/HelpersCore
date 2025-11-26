@@ -3,9 +3,9 @@ using System.Text;
 namespace HelpersCore;
 
 /// <summary>
-/// Provides additional functions to work with <see cref="Console"/>.
+/// Provides extensions for <see cref="Console"/>.
 /// </summary>
-public static partial class ConsoleEx
+public static partial class ConsoleExtensions
 {
 	extension(Console)
 	{

@@ -3,7 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for object conversion.
+/// </summary>
+public static class ConvertExtensions
 {
 	/// <summary>
 	/// Tries convert <paramref name="value"/> to the type <typeparamref name="T"/>.

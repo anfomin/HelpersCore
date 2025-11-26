@@ -2,7 +2,10 @@ using System.Text.RegularExpressions;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for text representation.
+/// </summary>
+public static partial class TextExtensions
 {
 	extension(int value)
 	{

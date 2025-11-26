@@ -1,6 +1,9 @@
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for <see cref="Stream"/>.
+/// </summary>
+public static class StreamExtensions
 {
 	extension(Stream source)
 	{

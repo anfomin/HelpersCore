@@ -4,7 +4,10 @@ using System.Reflection;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for <see cref="Type"/> and <see cref="PropertyInfo"/>.
+/// </summary>
+public static class TypeExtensions
 {
 	/// <summary>
 	/// Returns if <see cref="Type"/> is included in <paramref name="others"/>.

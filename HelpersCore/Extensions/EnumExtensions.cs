@@ -6,7 +6,10 @@ using System.Runtime.Serialization;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for <see cref="Enum"/>.
+/// </summary>
+public static class EnumExtensions
 {
 	static readonly ConcurrentDictionary<Enum, bool> EnumReadOnly = new();
 	static readonly ConcurrentDictionary<Enum, bool> EnumIgnore = new();

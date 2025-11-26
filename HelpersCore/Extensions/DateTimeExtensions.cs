@@ -1,20 +1,66 @@
+using System.Runtime.CompilerServices;
+
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for <see cref="DateTime"/>.
+/// </summary>
+public static class DateTimeExtensions
 {
-	extension(DateTime dateTime)
+	extension(DateTime)
 	{
 		/// <summary>
-		/// Returns if datetime matches year and month of another datetime.
+		/// Returns minimum of two datetimes.
 		/// </summary>
-		public bool IsMatchYearMonth(DateTime other)
-			=> dateTime.Year == other.Year && dateTime.Month == other.Month;
+		public static DateTime Min(DateTime d1, DateTime d2)
+			=> d1.Ticks < d2.Ticks ? d1 : d2;
 
+		/// <summary>
+		/// Returns minimum of datetimes.
+		/// </summary>
+		/// <param name="dateTimes">Datetimes to get minimum of. Must contain at least one datetime.</param>
+		[OverloadResolutionPriority(-1)]
+		public static DateTime Min(params IReadOnlyCollection<DateTime> dateTimes)
+			=> dateTimes.Aggregate(Min);
+
+		/// <summary>
+		/// Returns maximum of two datetimes.
+		/// </summary>
+		public static DateTime Max(DateTime d1, DateTime d2)
+			=> d1.Ticks < d2.Ticks ? d2 : d1;
+
+		/// <summary>
+		/// Returns maximum of datetimes.
+		/// </summary>
+		/// <param name="dateTimes">Datetimes to get maximum of. Must contain at least one datetime.</param>
+		[OverloadResolutionPriority(-1)]
+		public static DateTime Max(params IReadOnlyCollection<DateTime> dateTimes)
+			=> dateTimes.Aggregate(Max);
+	}
+
+	extension(DateTime dateTime)
+	{
 		/// <summary>
 		/// Returns number of days in month.
 		/// </summary>
 		public int DaysInMonth
 			=> DateTime.DaysInMonth(dateTime.Year, dateTime.Month);
+
+		/// <summary>
+		/// Returns datetime in range of minimum and maximum.
+		/// </summary>
+		/// <param name="min">Minimum datetime.</param>
+		/// <param name="max">Maximum datetime.</param>
+		public DateTime Clamp(DateTime min, DateTime max)
+			=> dateTime.Ticks < min.Ticks ? min
+				: dateTime.Ticks > max.Ticks ? max
+				: dateTime;
+
+		/// <summary>
+		/// Returns if datetime matches year and month of another datetime.
+		/// </summary>
+		public bool IsMatchYearMonth(DateTime other)
+			=> dateTime.Year == other.Year && dateTime.Month == other.Month;
 
 		/// <summary>
 		/// Truncates the <see cref="DateTime"/> to hours.

@@ -3,7 +3,10 @@ using System.Numerics;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for enumerable and collections.
+/// </summary>
+public static class EnumerableExtensions
 {
 	extension<T>(IEnumerable<T> source)
 	{

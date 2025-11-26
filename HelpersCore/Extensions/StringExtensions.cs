@@ -2,7 +2,10 @@ using System.Text;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for <see cref="string"/> and <see cref="ReadOnlySpan{T}"/>.
+/// </summary>
+public static class StringExtensions
 {
 	extension(ReadOnlySpan<char> source)
 	{

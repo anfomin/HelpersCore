@@ -1,9 +1,9 @@
 namespace HelpersCore;
 
 /// <summary>
-/// Provides additional path methods.
+/// Provides extensions for <see cref="Path"/> and <see cref="FileInfo"/>.
 /// </summary>
-public static class PathHelper
+public static class PathExtensions
 {
 	extension(Path)
 	{
@@ -26,5 +26,15 @@ public static class PathHelper
 			string ext = Path.GetExtension(path);
 			return (path[..^ext.Length], ext);
 		}
+	}
+
+	extension(FileInfo file)
+	{
+		/// <summary>
+		/// Returns <see cref="FileInfo"/> with changed extension.
+		/// </summary>
+		/// <param name="extension">New file extension.</param>
+		public FileInfo ChangeExtension(string? extension)
+			=> new(Path.ChangeExtension(file.FullName, extension));
 	}
 }

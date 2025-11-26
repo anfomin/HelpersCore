@@ -3,7 +3,10 @@ using System.Reflection;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for dictionaries.
+/// </summary>
+public static class DictionaryExtensions
 {
 	extension<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
 	{

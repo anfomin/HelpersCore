@@ -2,7 +2,10 @@ using System.Xml.Linq;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for XML.
+/// </summary>
+public static class XmlExtensions
 {
 	extension(XElement element)
 	{

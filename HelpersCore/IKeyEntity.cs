@@ -17,7 +17,7 @@ public interface IKeyEntity<out TKey>
 /// </summary>
 public interface IKeyEntity : IKeyEntity<int>;
 
-public static partial class Extensions
+public static class KeyEntityExtensions
 {
 	/// <summary>
 	/// Returns system representation "{ToString} &lt;ID:{Id}&gt;".

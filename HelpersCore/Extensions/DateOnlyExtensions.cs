@@ -3,35 +3,17 @@ using System.Runtime.CompilerServices;
 namespace HelpersCore;
 
 /// <summary>
-/// Provides helper methods for <see cref="DateTime"/> and <see cref="DateOnly"/>.
+/// Provides extensions for <see cref="DateOnly"/>.
 /// </summary>
-public static class DateHelper
+public static class DateOnlyExtensions
 {
-	extension(DateOnly date)
+	extension(DateOnly)
 	{
 		/// <summary>
 		/// Returns the current date in UTC.
 		/// </summary>
-		public static DateOnly GetTodayUtc()
+		public static DateOnly UtcToday
 			=> DateOnly.FromDateTime(DateTime.UtcNow);
-
-		/// <summary>
-		/// Returns the current date in specified timezone.
-		/// </summary>
-		public static DateOnly GetToday(TimeZoneInfo timeZone)
-			=> DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone));
-
-		/// <summary>
-		/// Returns the current date in specified by <see cref="TimeProvider"/> timezone.
-		/// </summary>
-		public static DateOnly GetToday(TimeProvider timeProvider)
-			=> GetToday(timeProvider.LocalTimeZone);
-
-		/// <summary>
-		/// Returns the current date in specified by <see cref="ITimeProvider"/> timezone.
-		/// </summary>
-		public static DateOnly GetToday(ITimeProvider timeProvider)
-			=> DateOnly.GetToday(timeProvider.LocalTimeZone);
 
 		/// <summary>
 		/// Gets last day of the month.
@@ -68,16 +50,6 @@ public static class DateHelper
 		[OverloadResolutionPriority(-1)]
 		public static DateOnly Max(params IReadOnlyCollection<DateOnly> dates)
 			=> dates.Aggregate(Max);
-
-		/// <summary>
-		/// Returns date in range of minimum and maximum.
-		/// </summary>
-		/// <param name="min">Minimum date.</param>
-		/// <param name="max">Maximum date.</param>
-		public DateOnly Clamp(DateOnly min, DateOnly max)
-			=> date.DayNumber < min.DayNumber ? min
-				: date.DayNumber > max.DayNumber ? max
-				: date;
 
 		/// <summary>
 		/// Enumerates days between two dates.
@@ -139,44 +111,108 @@ public static class DateHelper
 		}
 	}
 
-	extension(DateTime dateTime)
+	extension(DateOnly date)
 	{
 		/// <summary>
-		/// Returns minimum of two datetimes.
+		/// Returns number of days in month.
 		/// </summary>
-		public static DateTime Min(DateTime d1, DateTime d2)
-			=> d1.Ticks < d2.Ticks ? d1 : d2;
+		public int DaysInMonth
+			=> DateTime.DaysInMonth(date.Year, date.Month);
 
 		/// <summary>
-		/// Returns minimum of datetimes.
+		/// Returns date in range of minimum and maximum.
 		/// </summary>
-		/// <param name="dateTimes">Datetimes to get minimum of. Must contain at least one datetime.</param>
-		[OverloadResolutionPriority(-1)]
-		public static DateTime Min(params IReadOnlyCollection<DateTime> dateTimes)
-			=> dateTimes.Aggregate(Min);
+		/// <param name="min">Minimum date.</param>
+		/// <param name="max">Maximum date.</param>
+		public DateOnly Clamp(DateOnly min, DateOnly max)
+			=> date.DayNumber < min.DayNumber ? min
+				: date.DayNumber > max.DayNumber ? max
+				: date;
 
 		/// <summary>
-		/// Returns maximum of two datetimes.
+		/// Returns if date matches year and month of another date.
 		/// </summary>
-		public static DateTime Max(DateTime d1, DateTime d2)
-			=> d1.Ticks < d2.Ticks ? d2 : d1;
+		public bool IsMatchYearMonth(DateOnly other)
+			=> date.Year == other.Year && date.Month == other.Month;
 
 		/// <summary>
-		/// Returns maximum of datetimes.
+		/// Gets the first day of the month.
 		/// </summary>
-		/// <param name="dateTimes">Datetimes to get maximum of. Must contain at least one datetime.</param>
-		[OverloadResolutionPriority(-1)]
-		public static DateTime Max(params IReadOnlyCollection<DateTime> dateTimes)
-			=> dateTimes.Aggregate(Max);
+		public DateOnly GetMonthBegin()
+			=> new(date.Year, date.Month, 1);
 
 		/// <summary>
-		/// Returns datetime in range of minimum and maximum.
+		/// Gets the last day of the month.
 		/// </summary>
-		/// <param name="min">Minimum datetime.</param>
-		/// <param name="max">Maximum datetime.</param>
-		public DateTime Clamp(DateTime min, DateTime max)
-			=> dateTime.Ticks < min.Ticks ? min
-				: dateTime.Ticks > max.Ticks ? max
-				: dateTime;
+		public DateOnly GetMonthEnd()
+			=> new(date.Year, date.Month, date.DaysInMonth);
+
+		/// <summary>
+		/// Gets the first day of the year.
+		/// </summary>
+		public DateOnly GetYearBegin()
+			=> new(date.Year, 1, 1);
+
+		/// <summary>
+		/// Gets the last day of the year.
+		/// </summary>
+		public DateOnly GetYearEnd()
+			=> new(date.Year, 12, 31);
+
+		/// <summary>
+		/// Gets next <paramref name="dayOfWeek"/> after current date.
+		/// </summary>
+		/// <param name="dayOfWeek">Day of week.</param>
+		public DateOnly GetNextDayOfWeek(DayOfWeek dayOfWeek)
+			=> date.AddDays((dayOfWeek - date.DayOfWeek + 7) % 7);
+
+		/// <summary>
+		/// Returns date with specified day of month.
+		/// If day is greater than days in month, returns last day of month.
+		/// </summary>
+		/// <param name="day">Day of month.</param>
+		public DateOnly SetDay(int day)
+			=> new(date.Year, date.Month, Math.Min(day, date.DaysInMonth));
+
+		/// <summary>
+		/// Converts <see cref="DateOnly"/> and <see cref="TimeOnly"/> from the specified <paramref name="sourceTimeZone"/> to UTC.
+		/// </summary>
+		/// <param name="time">Time to convert.</param>
+		/// <param name="sourceTimeZone">Source timezone.</param>
+		public DateTime ToUniversalTime(TimeOnly time, TimeZoneInfo sourceTimeZone)
+			=> date.ToDateTime(time, DateTimeKind.Unspecified).ToUniversalTime(sourceTimeZone);
+
+		/// <summary>
+		/// Returns date in 'yyyy-MM' format.
+		/// </summary>
+		public string ToYearMonthString()
+			=> date.ToString("yyyy-MM");
+	}
+
+	extension(TimeZoneInfo timeZone)
+	{
+		/// <summary>
+		/// Returns the current date in specified timezone.
+		/// </summary>
+		public DateOnly GetToday()
+			=> DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone));
+	}
+
+	extension(TimeProvider timeProvider)
+	{
+		/// <summary>
+		/// Returns the current date in specified by <see cref="TimeProvider"/> timezone.
+		/// </summary>
+		public DateOnly GetToday()
+			=> GetToday(timeProvider.LocalTimeZone);
+	}
+
+	extension(ITimeProvider timeProvider)
+	{
+		/// <summary>
+		/// Returns the current date in specified by <see cref="ITimeProvider"/> timezone.
+		/// </summary>
+		public DateOnly GetToday()
+			=> GetToday(timeProvider.LocalTimeZone);
 	}
 }

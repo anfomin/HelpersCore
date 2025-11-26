@@ -15,7 +15,7 @@ public interface IMailService
 	Task<string> SendMailAsync(MailMessage message, CancellationToken cancellationToken = default);
 }
 
-public static partial class Extensions
+public static class MailExtensions
 {
 	extension(IMailService mailService)
 	{

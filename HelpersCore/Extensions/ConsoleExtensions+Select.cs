@@ -1,6 +1,6 @@
 namespace HelpersCore;
 
-public static partial class ConsoleEx
+public static partial class ConsoleExtensions
 {
 	extension(Console)
 	{

@@ -13,7 +13,10 @@ public static partial class SKExtensions
 		/// <param name="stream">Image stream.</param>
 		/// <param name="disposeStream"><c>True</c> to dispose stream when codec is disposed. Otherwise, <c>false</c>.</param>
 		public static SKBitmap DecodeColored(Stream stream, bool disposeStream = false)
-			=> ImageHelper.DecodeColored(stream, disposeStream);
+		{
+			using var codec = SKCodec.Create(stream, disposeStream);
+			return codec.DecodeColored();
+		}
 
 		/// <summary>
 		/// Encodes bitmap into specified format.

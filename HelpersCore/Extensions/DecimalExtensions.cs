@@ -1,6 +1,9 @@
 namespace HelpersCore;
 
-public static partial class Extensions
+/// <summary>
+/// Provides extensions for <see cref="Decimal"/>.
+/// </summary>
+public static class DecimalExtensions
 {
 	extension(decimal v)
 	{
