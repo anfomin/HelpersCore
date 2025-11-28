@@ -2,7 +2,7 @@ using NpgsqlTypes;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+public static partial class NpgsqlExtensions
 {
 	extension(DateOnly date)
 	{

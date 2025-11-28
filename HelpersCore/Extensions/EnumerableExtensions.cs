@@ -23,6 +23,13 @@ public static class EnumerableExtensions
 			=> !source.Any(predicate);
 
 		/// <summary>
+		/// Determines whether a sequence contains all specified values.
+		/// </summary>
+		/// <param name="values">Values to locate in the sequence.</param>
+		public bool ContainsAll(IEnumerable<T> values)
+			=> values.All(source.Contains);
+
+		/// <summary>
 		/// Returns paired elements from sequence.
 		/// If sequence contains less than 2 elements then returns empty sequence.
 		/// </summary>
@@ -205,6 +212,15 @@ public static class EnumerableExtensions
 		/// </summary>
 		public T? LastOrNull(Func<T, bool>? predicate = null)
 			=> source.Reverse().FirstOrNull(predicate);
+
+		/// <summary>
+		///	Applies an accumulator function over a sequence.
+		/// If source is empty then returns <c>null</c>.
+		/// </summary>
+		/// <param name="func">An accumulator function to be invoked on each element.</param>
+		/// <returns>The final accumulator value.</returns>
+		public T? AggregateOrNull(Func<T, T, T> func)
+			=> source.Aggregate<T, T?>(null, (current, value) => current is { } acc ? func(acc, value) : value);
 	}
 
 	extension<T>(IEnumerable<T?> source) where T : struct

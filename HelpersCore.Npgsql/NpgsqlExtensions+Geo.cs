@@ -2,7 +2,7 @@ using NpgsqlTypes;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+public static partial class NpgsqlExtensions
 {
 	const double EarthRadius = 6_378_137; // in meters
 

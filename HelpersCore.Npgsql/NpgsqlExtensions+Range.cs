@@ -2,14 +2,24 @@
 
 namespace HelpersCore;
 
-public static partial class Extensions
+public static partial class NpgsqlExtensions
 {
+	extension<T>(NpgsqlRange<T>)
+	{
+		public static NpgsqlRange<T> Infinite => new(
+			default, lowerBoundIsInclusive: true, lowerBoundInfinite: true,
+			default, upperBoundIsInclusive: true, upperBoundInfinite: true
+		);
+	}
+
 	extension<T>(NpgsqlRange<T> range) where T : IComparable<T>
 	{
 		/// <summary>
 		/// Determines whether the specified value is contained within the range on .NET client side.
 		/// </summary>
-		public bool ContainsClient(T value) => (range.LowerBoundInfinite || range.LowerBound!.CompareTo(value) is int lower && (lower < 0 || lower == 0 && range.LowerBoundIsInclusive))
+		public bool ContainsClient(T value) =>
+			!range.IsEmpty
+			&& (range.LowerBoundInfinite || range.LowerBound!.CompareTo(value) is int lower && (lower < 0 || lower == 0 && range.LowerBoundIsInclusive))
 			&& (range.UpperBoundInfinite || range.UpperBound!.CompareTo(value) is int upper && (upper > 0 || upper == 0 && range.UpperBoundIsInclusive));
 
 		/// <summary>
@@ -19,8 +29,10 @@ public static partial class Extensions
 		/// <returns>Intersection of two ranges.</returns>
 		public NpgsqlRange<T> IntersectClient(NpgsqlRange<T> other)
 		{
-			int lower = range.LowerBound!.CompareTo(other.LowerBound);
-			int upper = range.UpperBound!.CompareTo(other.UpperBound);
+			if (range.IsEmpty || other.IsEmpty)
+				return NpgsqlRange<T>.Empty;
+			int lower = range.LowerBound?.CompareTo(other.LowerBound) ?? 0;
+			int upper = range.UpperBound?.CompareTo(other.UpperBound) ?? 0;
 			return new(
 				lower > 0 ? range.LowerBound : other.LowerBound,
 				lower > 0 ? range.LowerBoundIsInclusive
@@ -36,38 +48,19 @@ public static partial class Extensions
 		}
 	}
 
-	extension<T>(NpgsqlRange<T>) where T : struct
-	{
-		/// <summary>
-		/// Creates a new <see cref="NpgsqlRange&lt;T&gt;"/>.
-		/// </summary>
-		/// <param name="lower">Range lower bound. If <c>null</c> then infinite.</param>
-		/// <param name="upper">Range upper bound. If <c>null</c> then infinite.</param>
-		/// <param name="lowerInclusive"><c>True</c> if the upper bound is part of the range (i.e. inclusive); otherwise, <c>false</c>.</param>
-		/// <param name="upperInclusive"><c>True</c> if the lower bound is part of the range (i.e. inclusive); otherwise, <c>false</c>.</param>
-		public static NpgsqlRange<T> Create(T? lower, T? upper, bool lowerInclusive = true, bool upperInclusive = true)
-			=> new(
-				lower ?? default, lowerBoundIsInclusive: lowerInclusive, lowerBoundInfinite: lower is null,
-				upper ?? default, upperBoundIsInclusive: upperInclusive, upperBoundInfinite: upper is null
-			);
-
-		/// <summary>
-		/// Creates an infinite <see cref="NpgsqlRange&lt;T&gt;"/>.
-		/// </summary>
-		public static NpgsqlRange<T> CreateInfinite()
-			=> Create((T?)null, null);
-	}
-
 	extension<T>(NpgsqlRange<T> range) where T : struct, IComparable<T>
 	{
 		/// <summary>
 		/// Returns a new range with the specified lower bound.
 		/// If lower bound is greater than the current upper bound, the upper bound is adjusted accordingly.
 		/// </summary>
-		/// <param name="lower">New lower bound.</param>
+		/// <param name="lower">New lower bound. If <c>null</c> then infinite.</param>
 		/// <param name="inclusive"><c>True</c> if the lower bound is part of the range (i.e. inclusive); otherwise, <c>false</c>.</param>
 		public NpgsqlRange<T> WithLower(T? lower, bool inclusive = true)
 		{
+			if (range.IsEmpty)
+				return NpgsqlRange.Create(lower, null, lowerInclusive: inclusive);
+
 			var upper = range.UpperBound;
 			bool upperInclusive = range.UpperBoundIsInclusive;
 			if (lower is not null && !range.UpperBoundInfinite)
@@ -89,10 +82,13 @@ public static partial class Extensions
 		/// Returns a new range with the specified upper bound.
 		/// If upper bound is less than the current lower bound, the lower bound is adjusted accordingly.
 		/// </summary>
-		/// <param name="upper">New upper bound.</param>
+		/// <param name="upper">New upper bound. If <c>null</c> then infinite.</param>
 		/// <param name="inclusive"><c>True</c> if the upper bound is part of the range (i.e. inclusive); otherwise, <c>false</c>.</param>
 		public NpgsqlRange<T> WithUpper(T? upper, bool inclusive = true)
 		{
+			if (range.IsEmpty)
+				return NpgsqlRange.Create(null, upper, upperInclusive: inclusive);
+
 			var lower = range.LowerBound;
 			bool lowerInclusive = range.LowerBoundIsInclusive;
 			if (upper is not null && !range.LowerBoundInfinite)

@@ -3,7 +3,7 @@ using NpgsqlTypes;
 
 namespace HelpersCore;
 
-public static partial class Extensions
+public static partial class NpgsqlExtensions
 {
 	extension(NpgsqlRange<DateOnly> range)
 	{
@@ -13,9 +13,9 @@ public static partial class Extensions
 		/// </summary>
 		/// <param name="kind">Date time kind.</param>
 		public NpgsqlRange<DateTime> ToDateTime(DateTimeKind kind = DateTimeKind.Utc)
-			=> Create(
-				range.LowerBoundOrNull?.ToDateTime(TimeOnly.MinValue, kind),
-				range.UpperBoundOrNull?.ToDateTime(TimeOnly.MaxValue, kind)
+			=> NpgsqlRange.Create(
+				range.BeginOrNull?.ToDateTime(TimeOnly.MinValue, kind),
+				range.EndOrNull?.ToDateTime(TimeOnly.MaxValue, kind)
 			);
 
 		/// <summary>
@@ -24,9 +24,9 @@ public static partial class Extensions
 		/// </summary>
 		/// <param name="sourceTimeZone">Source timezone.</param>
 		public NpgsqlRange<DateTime> ToUniversalTime(TimeZoneInfo sourceTimeZone)
-			=> Create(
-				range.LowerBoundOrNull?.ToUniversalTime(TimeOnly.MinValue, sourceTimeZone),
-				range.UpperBoundOrNull?.ToUniversalTime(TimeOnly.MaxValue, sourceTimeZone)
+			=> NpgsqlRange.Create(
+				range.BeginOrNull?.ToUniversalTime(TimeOnly.MinValue, sourceTimeZone),
+				range.EndOrNull?.ToUniversalTime(TimeOnly.MaxValue, sourceTimeZone)
 			);
 
 		/// <summary>
@@ -37,8 +37,8 @@ public static partial class Extensions
 		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
 		public string ToDashString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
 		{
-			string begin = range.LowerBoundOrNull?.ToString(format, provider) ?? "∞";
-			string end = range.UpperBoundOrNull?.ToString(format, provider) ?? "∞";
+			string begin = range.BeginOrNull?.ToString(format, provider) ?? "∞";
+			string end = range.EndOrNull?.ToString(format, provider) ?? "∞";
 			return $"{begin} – {end}";
 		}
 
@@ -61,54 +61,58 @@ public static partial class Extensions
 			=> range.LowerBoundInfinite || range.UpperBoundInfinite;
 
 		/// <summary>
-		/// Returns lower <see cref="DateOnly"/> bound or <c>null</c> if lower bound is infinite.
+		/// Returns always inclusive lower <see cref="DateOnly"/> bound or <see cref="DateOnly.MinValue"/>
+		/// if lower bound is infinite or <c>default</c> if range is empty.
 		/// </summary>
-		public DateOnly? LowerBoundOrNull
-			=> range.LowerBoundInfinite ? null
+		public DateOnly Begin
+			=> range.IsEmpty ? default
+				: range.LowerBoundInfinite ? DateOnly.MinValue
 				: range.LowerBoundIsInclusive ? range.LowerBound
 				: range.LowerBound.AddDays(1);
 
 		/// <summary>
-		/// Returns upper <see cref="DateOnly"/> bound or <c>null</c> if upper bound is infinite.
+		/// Returns always inclusive upper <see cref="DateOnly"/> bound or <see cref="DateOnly.MaxValue"/>
+		/// if upper bound is infinite or <c>default</c> if range is empty.
 		/// </summary>
-		public DateOnly? UpperBoundOrNull
-			=> range.UpperBoundInfinite ? null
+		public DateOnly End
+			=> range.IsEmpty ? default
+				: range.UpperBoundInfinite ? DateOnly.MaxValue
 				: range.UpperBoundIsInclusive ? range.UpperBound
 				: range.UpperBound.AddDays(-1);
 
 		/// <summary>
-		/// Returns range begin and end as a tuple.
+		/// Returns always inclusive lower <see cref="DateOnly"/> bound or <c>null</c> if range is empty or lower bound is infinite.
 		/// </summary>
-		/// <exception cref="InvalidOperationException">If any bound is infinite.</exception>
-		public (DateOnly Begin, DateOnly End) GetBeginEnd()
-		{
-			if (range.LowerBoundInfinite || range.UpperBoundInfinite)
-				throw new InvalidOperationException("Infinite range");
-			return (
-				range.LowerBoundIsInclusive ? range.LowerBound : range.LowerBound.AddDays(1),
-				range.UpperBoundIsInclusive ? range.UpperBound : range.UpperBound.AddDays(-1)
-			);
-		}
+		public DateOnly? BeginOrNull
+			=> range.IsEmpty || range.LowerBoundInfinite ? null
+				: range.LowerBoundIsInclusive ? range.LowerBound
+				: range.LowerBound.AddDays(1);
+
+		/// <summary>
+		/// Returns always inclusive upper <see cref="DateOnly"/> bound or <c>null</c> if range is empty or upper bound is infinite.
+		/// </summary>
+		public DateOnly? EndOrNull
+			=> range.IsEmpty || range.UpperBoundInfinite ? null
+				: range.UpperBoundIsInclusive ? range.UpperBound
+				: range.UpperBound.AddDays(-1);
 
 		/// <summary>
 		/// Returns number of days in the range.
 		/// </summary>
-		/// <exception cref="InvalidOperationException">If any bound is infinite.</exception>
+		/// <returns>Number of days or <c>zero</c> if range is empty or any bound is infinite.</returns>
 		public int GetDays()
-		{
-			var (begin, end) = range.GetBeginEnd();
-			return (int)(end.AddDays(1).ToDateTime(TimeOnly.MinValue) - begin.ToDateTime(TimeOnly.MinValue)).TotalDays;
-		}
+			=> range is { BeginOrNull: { } begin, EndOrNull: { } end }
+				? end.DayNumber - begin.DayNumber + 1
+				: 0;
 
 		/// <summary>
 		/// Enumerate days in the period range.
 		/// </summary>
-		/// <exception cref="InvalidOperationException">If any bound is infinite.</exception>
+		/// <returns><see cref="IEnumerable{DateOnly}"/> for days in range or empty collection if range empty or any bound is infinite.</returns>
 		public IEnumerable<DateOnly> EnumerateDays()
-		{
-			var (begin, end) = range.GetBeginEnd();
-			return DateOnly.EnumerateDays(begin, end);
-		}
+			=> range is { BeginOrNull: { } begin, EndOrNull: { } end }
+				? DateOnly.EnumerateDays(begin, end)
+				: [];
 
 		/// <summary>
 		/// Enumerate months in the period range.
@@ -116,7 +120,8 @@ public static partial class Extensions
 		/// <param name="wholeMonths"><c>True</c> to return whole months. <c>False</c> to return month in range only.</param>
 		public IEnumerable<NpgsqlRange<DateOnly>> EnumerateMonths(bool wholeMonths = false)
 		{
-			var (begin, end) = range.GetBeginEnd();
+			if (range is not { BeginOrNull: { } begin, EndOrNull: { } end })
+				yield break;
 			while (begin <= end)
 			{
 				var monthBegin = wholeMonths ? begin.GetMonthBegin() : begin;
