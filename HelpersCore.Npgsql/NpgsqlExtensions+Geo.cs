@@ -9,29 +9,27 @@ public static partial class NpgsqlExtensions
 	extension(NpgsqlPoint point)
 	{
 		/// <summary>
-		/// Calculates the distance between current point and other one on the Earth's surface.
+		/// Converts to <see cref="GeoPoint"/>.
 		/// </summary>
-		/// <param name="lng">Other point longitude on the Earth's surface.</param>
-		/// <param name="lat">Other point latitude on the Earth's surface.</param>
-		/// <returns>Distance in meters.</returns>
-		public double DistanceTo(double lng, double lat)
-		{
-			var d1 = point.Y * (Math.PI / 180.0);
-			var num1 = point.X * (Math.PI / 180.0);
-			var d2 = lat * (Math.PI / 180.0);
-			var num2 = lng * (Math.PI / 180.0) - num1;
-			var d3 = Math.Pow(Math.Sin((d2 - d1) / 2.0), 2.0) +
-				Math.Cos(d1) * Math.Cos(d2) * Math.Pow(Math.Sin(num2 / 2.0), 2.0);
-			return 6376500.0 * (2.0 * Math.Atan2(Math.Sqrt(d3), Math.Sqrt(1.0 - d3)));
-		}
+		public GeoPoint ToGeoPoint()
+			=> new(point.X, point.Y);
 
 		/// <summary>
-		/// Calculates the distance between current point and other one on the Earth's surface.
+		/// Returns the distance between the current point and other one on the Earth's surface.
 		/// </summary>
-		/// <param name="other">Other point on the Earth's surface.</param>
-		/// <returns>Distance in meters.</returns>
-		public double DistanceTo(NpgsqlPoint other)
-			=> DistanceTo(point, other.X, other.Y);
+		/// <param name="lng">Other point longitude (x-coordinate).</param>
+		/// <param name="lat">Other point latitude (y-coordinate).</param>
+		/// <returns>The distance between the two coordinates, in meters.</returns>
+		public double GetDistanceTo(double lng, double lat)
+			=> GeoPoint.GetDistance(point.X, point.Y, lng, lat);
+
+		/// <summary>
+		/// Returns the distance between the current point and <paramref name="other"/> one on the Earth's surface.
+		/// </summary>
+		/// <param name="other">Other point to calculate distance to.</param>
+		/// <returns>The distance between the two coordinates, in meters.</returns>
+		public double GetDistanceTo(NpgsqlPoint other)
+			=> GeoPoint.GetDistance(point.X, point.Y, other.X, other.Y);
 
 		/// <summary>
 		/// Adds specified <paramref name="x"/> and <paramref name="y"/> to the point's coordinates.
@@ -49,26 +47,33 @@ public static partial class NpgsqlExtensions
 		/// Returns if the circle contains specified <paramref name="point"/>.
 		/// </summary>
 		public bool Contains(NpgsqlPoint point)
-			=> circle.Center.DistanceTo(point) <= circle.Radius;
+			=> circle.Center.GetDistanceTo(point) <= circle.Radius;
 
 		/// <summary>
 		/// Returns the bounding box of the circle.
 		/// </summary>
-		public NpgsqlBounds GetBounds()
+		public GeoBounds GetBounds()
 			=> new(
-				circle.Center.Add(-circle.Radius, circle.Radius),
-				circle.Center.Add(circle.Radius, -circle.Radius)
+				circle.Center.Add(-circle.Radius, circle.Radius).ToGeoPoint(),
+				circle.Center.Add(circle.Radius, -circle.Radius).ToGeoPoint()
 			);
 	}
 
-	/// <summary>
-	/// Returns the bounding box of all points or <c>null</c> if the collection is empty.
-	/// </summary>
-	public static NpgsqlBounds? GetBounds(this IEnumerable<NpgsqlPoint> points)
-		=> points.Any()
-			? new(
-				new(points.Select(p => p.X).Min(), points.Select(p => p.Y).Max()),
-				new(points.Select(p => p.X).Max(), points.Select(p => p.Y).Min())
-			)
-			: null;
+	extension(NpgsqlPolygon polygon)
+	{
+		/// <summary>
+		/// Returns the bounding box of the polygon.
+		/// </summary>
+		public GeoBounds GetBounds()
+			=> GeoBounds.FromPoints(polygon.Select(p => p.ToGeoPoint()));
+	}
+
+	extension(GeoPoint point)
+	{
+		/// <summary>
+		/// Converts to <see cref="NpgsqlPoint"/>.
+		/// </summary>
+		public NpgsqlPoint ToNpgsql()
+			=> new(point.Lng, point.Lat);
+	}
 }

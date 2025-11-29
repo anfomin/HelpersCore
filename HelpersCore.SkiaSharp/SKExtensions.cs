@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Text.RegularExpressions;
 using SkiaSharp;
 
 namespace HelpersCore;
@@ -44,16 +43,44 @@ public static partial class SKExtensions
 	extension(Size)
 	{
 		/// <summary>
-		/// Parses <see cref="Size"/> from string <c>{width}x{height}</c>.
+		/// Tries to parse <see cref="Size"/> from <c>{width}x{height}</c> string.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <param name="result">Parsed <see cref="Size"/> if successful.</param>
+		/// <returns><c>True</c> if parse successful.</returns>
+		public static bool TryParse(ReadOnlySpan<char> s, out Size result)
+		{
+			int index = s.IndexOf('x');
+			if (index != -1
+				&& int.TryParse(s[..index], out int width)
+				&& int.TryParse(s[(index + 1)..], out int height))
+			{
+				result = new(width, height);
+				return true;
+			}
+			result = default;
+			return false;
+		}
+
+		/// <summary>
+		/// Tries to parse <see cref="Size"/> from <c>{width}x{height}</c> string.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <param name="result">Parsed <see cref="Size"/> if successful.</param>
+		/// <returns><c>True</c> if parse successful.</returns>
+		public static bool TryParse(string? s, out Size result)
+			=> TryParse(s.AsSpan(), out result);
+
+		/// <summary>
+		/// Parses <see cref="Size"/> from <c>{width}x{height}</c> string.
+		/// </summary>
+		public static Size Parse(ReadOnlySpan<char> s)
+			=> TryParse(s, out var result) ? result : throw new FormatException("Input string was not in correct format");
+
+		/// <summary>
+		/// Parses <see cref="Size"/> from <c>{width}x{height}</c> string.
 		/// </summary>
 		public static Size Parse(string s)
-		{
-			if (SizeRegex.Match(s) is not { Success: true } match)
-				throw new FormatException($"Can not parse {s} into Size. Supported format is '{{width}}x{{height}}'.");
-			return new Size(int.Parse(match.Groups["width"].Value), int.Parse(match.Groups["height"].Value));
-		}
+			=> Parse(s.AsSpan());
 	}
-
-	[GeneratedRegex(@"^(?<width>\d+)x(?<height>\d+)$")]
-	private static partial Regex SizeRegex { get; }
 }

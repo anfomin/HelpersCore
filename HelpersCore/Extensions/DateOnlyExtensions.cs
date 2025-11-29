@@ -103,12 +103,7 @@ public static class DateOnlyExtensions
 		/// <param name="result">Parsed date if successful.</param>
 		/// <returns><c>True</c> if parse successful.</returns>
 		public static bool TryParseYearMonth(string? s, out DateOnly result)
-		{
-			if (!string.IsNullOrEmpty(s))
-				return TryParseYearMonth(s.AsSpan(), out result);
-			result = default;
-			return false;
-		}
+			=> TryParseYearMonth(s.AsSpan(), out result);
 	}
 
 	extension(DateOnly date)
