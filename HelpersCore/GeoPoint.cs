@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.Json.Serialization;
 
@@ -7,7 +8,7 @@ namespace HelpersCore;
 /// <summary>
 /// Represents geographic point.
 /// </summary>
-public record struct GeoPoint
+public record struct GeoPoint : IParsable<GeoPoint>
 {
 	/// <summary>
 	/// Gets a <see cref="GeoPoint"/> with <see cref="Lng"/> and <see cref="Lat"/> set to <see cref="double.NaN"/>.
@@ -111,7 +112,10 @@ public record struct GeoPoint
 	/// <param name="s">Source string to parse.</param>
 	/// <param name="result">Parsed <see cref="GeoPoint"/> if successful.</param>
 	/// <returns><c>True</c> if parse successful.</returns>
-	public static bool TryParse(string? s, out GeoPoint result)
+	public static bool TryParse([NotNullWhen(true)] string? s, out GeoPoint result)
+		=> TryParse(s.AsSpan(), out result);
+
+	static bool IParsable<GeoPoint>.TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out GeoPoint result)
 		=> TryParse(s.AsSpan(), out result);
 
 	/// <summary>
@@ -124,6 +128,9 @@ public record struct GeoPoint
 	/// Parses <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
 	/// </summary>
 	public static GeoPoint Parse(string s)
+		=> Parse(s.AsSpan());
+
+	static GeoPoint IParsable<GeoPoint>.Parse(string s, IFormatProvider? provider)
 		=> Parse(s.AsSpan());
 
 	/// <summary>

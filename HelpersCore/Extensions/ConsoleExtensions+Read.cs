@@ -36,7 +36,7 @@ public static partial class ConsoleExtensions
 
 				if (error is null)
 					return result!;
-				WriteLine(error, ConsoleColor.DarkYellow);
+				WriteLine(ConsoleColor.DarkYellow, error);
 			}
 		}
 

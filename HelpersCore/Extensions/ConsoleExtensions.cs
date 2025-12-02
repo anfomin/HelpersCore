@@ -44,9 +44,9 @@ public static partial class ConsoleExtensions
 		/// <summary>
 		/// Writes line to console with specified foreground color.
 		/// </summary>
-		/// <param name="value">Value to write.</param>
 		/// <param name="foregroundColor">Foreground color.</param>
-		public static void WriteLine(string value, ConsoleColor foregroundColor)
+		/// <param name="value">Value to write.</param>
+		public static void WriteLine(ConsoleColor foregroundColor, string? value)
 		{
 			using var _ = Color(foregroundColor);
 			Console.WriteLine(value);
@@ -55,17 +55,17 @@ public static partial class ConsoleExtensions
 		/// <summary>
 		/// Writes line to console with specified state.
 		/// </summary>
-		/// <param name="value">Value to write.</param>
 		/// <param name="state">Console state.</param>
-		public static void WriteLine(string value, ConsoleState state)
-			=> WriteLine(value, StateToColor(state));
+		/// <param name="value">Value to write.</param>
+		public static void WriteLine(ConsoleState state, string? value)
+			=> WriteLine(StateToColor(state), value);
 
 		/// <summary>
 		/// Writes to console with specified foreground color.
 		/// </summary>
-		/// <param name="value">Value to write.</param>
 		/// <param name="foregroundColor">Foreground color.</param>
-		public static void Write(string value, ConsoleColor foregroundColor)
+		/// <param name="value">Value to write.</param>
+		public static void WriteColored(ConsoleColor foregroundColor, string? value)
 		{
 			using var _ = Color(foregroundColor);
 			Console.Write(value);
@@ -74,10 +74,10 @@ public static partial class ConsoleExtensions
 		/// <summary>
 		/// Writes to console with specified state.
 		/// </summary>
-		/// <param name="value">Value to write.</param>
 		/// <param name="state">Console state.</param>
-		public static void Write(string value, ConsoleState state)
-			=> Write(value, StateToColor(state));
+		/// <param name="value">Value to write.</param>
+		public static void Write(ConsoleState state, string? value)
+			=> WriteColored(StateToColor(state), value);
 
 		/// <summary>
 		/// Writes exception information to the console.
