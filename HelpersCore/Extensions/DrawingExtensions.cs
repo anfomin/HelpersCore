@@ -110,8 +110,8 @@ public static class DrawingExtensions
 		/// <param name="maxHeight">Desired maximum height.</param>
 		public Size Downscale(int maxWidth, int maxHeight, ResizeMode mode = ResizeMode.Fit)
 		{
-			Validate.GreaterThan(maxWidth, 0);
-			Validate.GreaterThan(maxHeight, 0);
+			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxWidth);
+			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxHeight);
 
 			if (size.IsEmpty)
 				return new Size(maxWidth, maxHeight);

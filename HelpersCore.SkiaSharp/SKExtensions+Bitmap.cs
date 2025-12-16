@@ -127,7 +127,7 @@ public static partial class SKExtensions
 		/// <param name="sampling">Resize sampling.</param>
 		public SKBitmap Scale(double scale, SKSamplingOptions sampling)
 		{
-			Validate.GreaterThan(scale, 0);
+			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(scale);
 			var size = new Size((int)(bitmap.Width * scale), (int)(bitmap.Height * scale));
 			return bitmap.Resize(size, sampling);
 		}

@@ -46,8 +46,8 @@ public record struct GeoPoint : ISpanParsable<GeoPoint>
 	/// <param name="altitude">Point altitude (z-coordinate).</param>
 	public GeoPoint(double lng, double lat, double? altitude = null)
 	{
-		Validate.Range(lng, -180, 180);
-		Validate.Range(lat, -90, 90);
+		ArgumentOutOfRangeException.ThrowIfNotInRange(lng, -180, 180);
+		ArgumentOutOfRangeException.ThrowIfNotInRange(lat, -90, 90);
 		Lng = lng;
 		Lat = lat;
 	}
