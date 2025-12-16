@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace HelpersCore;
@@ -75,7 +76,35 @@ public static class DateOnlyExtensions
 		}
 
 		/// <summary>
-		/// Parses date in 'yyyy-MM' format.
+		/// Parses <see cref="DateOnly"/> in <c>yyyy-MM</c> format.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <returns>Parsed date.</returns>
+		public static DateOnly ParseYearMonth(ReadOnlySpan<char> s)
+		{
+			int index = s.IndexOf('-');
+			if (index == -1)
+				throw new FormatException("YearMonth string must contain '-' separator.");
+
+			int year = int.Parse(s[..index]);
+			int month = int.Parse(s[(index + 1)..]);
+			if (year is < 1 or > 9999)
+				throw new FormatException("Year must be in range [1,9999].");
+			if (month is < 1 or > 12)
+				throw new FormatException("Month must be in range [1,12].");
+			return new DateOnly(year, month, 1);
+		}
+
+		/// <summary>
+		/// Parses <see cref="DateOnly"/> in <c>yyyy-MM</c> format.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <returns>Parsed date.</returns>
+		public static DateOnly ParseYearMonth(string? s)
+			=> ParseYearMonth(s.AsSpan());
+
+		/// <summary>
+		/// Tries to parse <see cref="DateOnly"/> in <c>yyyy-MM</c> format.
 		/// </summary>
 		/// <param name="s">Source string to parse.</param>
 		/// <param name="result">Parsed date if successful.</param>
@@ -97,12 +126,12 @@ public static class DateOnlyExtensions
 		}
 
 		/// <summary>
-		/// Parses date in 'yyyy-MM' format.
+		/// Tries to parse <see cref="DateOnly"/> in <c>yyyy-MM</c> format.
 		/// </summary>
 		/// <param name="s">Source string to parse.</param>
 		/// <param name="result">Parsed date if successful.</param>
 		/// <returns><c>True</c> if parse successful.</returns>
-		public static bool TryParseYearMonth(string? s, out DateOnly result)
+		public static bool TryParseYearMonth([NotNullWhen(true)] string? s, out DateOnly result)
 			=> TryParseYearMonth(s.AsSpan(), out result);
 	}
 

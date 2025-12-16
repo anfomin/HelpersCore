@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using SkiaSharp;
 
@@ -40,7 +41,7 @@ public static partial class SKExtensions
 		public static SKSamplingOptions Downscale => SamplingDownscale;
 	}
 
-	extension(Size)
+	extension(Size size)
 	{
 		/// <summary>
 		/// Tries to parse <see cref="Size"/> from <c>{width}x{height}</c> string.
@@ -68,19 +69,30 @@ public static partial class SKExtensions
 		/// <param name="s">Source string to parse.</param>
 		/// <param name="result">Parsed <see cref="Size"/> if successful.</param>
 		/// <returns><c>True</c> if parse successful.</returns>
-		public static bool TryParse(string? s, out Size result)
+		public static bool TryParse([NotNullWhen(true)] string? s, out Size result)
 			=> TryParse(s.AsSpan(), out result);
 
 		/// <summary>
 		/// Parses <see cref="Size"/> from <c>{width}x{height}</c> string.
 		/// </summary>
 		public static Size Parse(ReadOnlySpan<char> s)
-			=> TryParse(s, out var result) ? result : throw new FormatException("Input string was not in correct format");
+		{
+			int index = s.IndexOf('x');
+			if (index == -1)
+				throw new FormatException("Size string must contain 'x' separator.");
+			return new Size(int.Parse(s[..index]), int.Parse(s[(index + 1)..]));
+		}
 
 		/// <summary>
 		/// Parses <see cref="Size"/> from <c>{width}x{height}</c> string.
 		/// </summary>
 		public static Size Parse(string s)
 			=> Parse(s.AsSpan());
+
+		/// <summary>
+		/// Returns string in <c>{width}x{height}</c> format.
+		/// </summary>
+		public string ToResolutionString()
+			=> $"{size.Width}x{size.Height}";
 	}
 }

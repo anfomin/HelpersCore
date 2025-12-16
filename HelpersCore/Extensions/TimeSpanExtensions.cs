@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace HelpersCore;
 
 /// <summary>
@@ -8,12 +10,58 @@ public static class TimeSpanExtensions
 	extension(TimeSpan)
 	{
 		/// <summary>
-		/// Tries to parse <see cref="TimeSpan"/> in <c>mm:ss</c> format or fallbacks to <see cref="TimeSpan.TryParse(ReadOnlySpan{char}, out TimeSpan)"/> .
+		/// Parses <see cref="TimeSpan"/> in <c>mm:ss</c> format.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <results>Parsed <see cref="TimeSpan"/>.</results>
+		public static TimeSpan ParseMinSec(ReadOnlySpan<char> s)
+		{
+			int index = s.IndexOf(':');
+			if (index == -1)
+				throw new FormatException("TimeSpan string must contain ':' separator.");
+
+			int min = int.Parse(s[..index]);
+			int sec = int.Parse(s[(index + 1)..]);
+			if (min is < 0 or >= 60)
+				throw new FormatException("Minutes must be in range [0,59].");
+			if (sec is < 0 or >= 60)
+				throw new FormatException("Seconds must be in range [0,59].");
+			return new(0, min, sec);
+		}
+
+		/// <summary>
+		/// Parses <see cref="TimeSpan"/> in <c>mm:ss</c> format.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <results>Parsed <see cref="TimeSpan"/>.</results>
+		public static TimeSpan ParseMinSec(string s)
+			=> ParseMinSec(s.AsSpan());
+
+		/// <summary>
+		/// Parses <see cref="TimeSpan"/> in <c>mm:ss</c> format.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <results>Parsed <see cref="TimeSpan"/>.</results>
+		[Obsolete("Use ParseMinSec instead")]
+		public static TimeSpan ParseShort(ReadOnlySpan<char> s)
+			=> ParseMinSec(s);
+
+		/// <summary>
+		/// Parses <see cref="TimeSpan"/> in <c>mm:ss</c> format.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <results>Parsed <see cref="TimeSpan"/>.</results>
+		[Obsolete("Use ParseMinSec instead")]
+		public static TimeSpan ParseShort(string s)
+			=> ParseMinSec(s.AsSpan());
+
+		/// <summary>
+		/// Tries to parse <see cref="TimeSpan"/> in <c>mm:ss</c> format.
 		/// </summary>
 		/// <param name="s">Source string to parse.</param>
 		/// <param name="result">Parsed <see cref="TimeSpan"/> if successful.</param>
 		/// <returns><c>True</c> if parse successful.</returns>
-		public static bool TryParseShort(ReadOnlySpan<char> s, out TimeSpan result)
+		public static bool TryParseMinSec(ReadOnlySpan<char> s, out TimeSpan result)
 		{
 			int index = s.IndexOf(':');
 			if (index != -1
@@ -30,29 +78,33 @@ public static class TimeSpanExtensions
 		}
 
 		/// <summary>
+		/// Tries to parse <see cref="TimeSpan"/> in <c>mm:ss</c> format.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <param name="result">Parsed <see cref="TimeSpan"/> if successful.</param>
+		/// <returns><c>True</c> if parse successful.</returns>
+		public static bool TryParseMinSec([NotNullWhen(true)] string? s, out TimeSpan result)
+			=> TryParseMinSec(s.AsSpan(), out result);
+
+		/// <summary>
+		/// Tries to parse <see cref="TimeSpan"/> in <c>mm:ss</c> format.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <param name="result">Parsed <see cref="TimeSpan"/> if successful.</param>
+		/// <returns><c>True</c> if parse successful.</returns>
+		[Obsolete("Use TryParseMinSec instead")]
+		public static bool TryParseShort(ReadOnlySpan<char> s, out TimeSpan result)
+			=> TryParseMinSec(s, out result);
+
+		/// <summary>
 		/// Tries to parse <see cref="TimeSpan"/> in <c>mm:ss</c> format or fallbacks to <see cref="TimeSpan.TryParse(string?, out TimeSpan)"/> .
 		/// </summary>
 		/// <param name="s">Source string to parse.</param>
 		/// <param name="result">Parsed <see cref="TimeSpan"/> if successful.</param>
 		/// <returns><c>True</c> if parse successful.</returns>
-		public static bool TryParseShort(string? s, out TimeSpan result)
-			=> TryParseShort(s.AsSpan(), out result);
-
-		/// <summary>
-		/// Parses <see cref="TimeSpan"/> in <c>mm:ss</c> format or fallbacks to <see cref="TimeSpan.Parse(string)"/> .
-		/// </summary>
-		/// <param name="s">Source string to parse.</param>
-		/// <results>Parsed <see cref="TimeSpan"/>.</results>
-		public static TimeSpan ParseShort(ReadOnlySpan<char> s)
-			=> TryParseShort(s, out var result) ? result : throw new FormatException("Input string was not in correct format");
-
-		/// <summary>
-		/// Parses <see cref="TimeSpan"/> in <c>mm:ss</c> format or fallbacks to <see cref="TimeSpan.Parse(string)"/> .
-		/// </summary>
-		/// <param name="s">Source string to parse.</param>
-		/// <results>Parsed <see cref="TimeSpan"/>.</results>
-		public static TimeSpan ParseShort(string s)
-			=> ParseShort(s.AsSpan());
+		[Obsolete("Use TryParseMinSec instead")]
+		public static bool TryParseShort([NotNullWhen(true)] string? s, out TimeSpan result)
+			=> TryParseMinSec(s.AsSpan(), out result);
 	}
 
 	extension(TimeSpan time)

@@ -8,7 +8,7 @@ namespace HelpersCore;
 /// <summary>
 /// Represents geographic point.
 /// </summary>
-public record struct GeoPoint : IParsable<GeoPoint>
+public record struct GeoPoint : ISpanParsable<GeoPoint>
 {
 	/// <summary>
 	/// Gets a <see cref="GeoPoint"/> with <see cref="Lng"/> and <see cref="Lat"/> set to <see cref="double.NaN"/>.
@@ -83,57 +83,6 @@ public record struct GeoPoint : IParsable<GeoPoint>
 		=> (lng, lat, altitude) = (Lng, Lat, Alt);
 
 	/// <summary>
-	/// Tries to parse <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
-	/// </summary>
-	/// <param name="s">Source string to parse.</param>
-	/// <param name="result">Parsed <see cref="GeoPoint"/> if successful.</param>
-	/// <returns><c>True</c> if parse successful.</returns>
-	public static bool TryParse(ReadOnlySpan<char> s, out GeoPoint result)
-	{
-		int index = s.IndexOf(',');
-		if (index == -1)
-			index = s.IndexOf(';');
-		if (index != -1
-			&& double.TryParse(s[..index], NumberStyles.Any, CultureInfo.InvariantCulture, out double lng)
-			&& double.TryParse(s[(index + 1)..], NumberStyles.Any, CultureInfo.InvariantCulture, out double lat)
-			&& lng is >= -180 and <= 180
-			&& lat is >= -90 and <= 90)
-		{
-			result = new(lng, lat);
-			return true;
-		}
-		result = NaN;
-		return false;
-	}
-
-	/// <summary>
-	/// Tries to parse <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
-	/// </summary>
-	/// <param name="s">Source string to parse.</param>
-	/// <param name="result">Parsed <see cref="GeoPoint"/> if successful.</param>
-	/// <returns><c>True</c> if parse successful.</returns>
-	public static bool TryParse([NotNullWhen(true)] string? s, out GeoPoint result)
-		=> TryParse(s.AsSpan(), out result);
-
-	static bool IParsable<GeoPoint>.TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out GeoPoint result)
-		=> TryParse(s.AsSpan(), out result);
-
-	/// <summary>
-	/// Parses <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
-	/// </summary>
-	public static GeoPoint Parse(ReadOnlySpan<char> s)
-		=> TryParse(s, out var result) ? result : throw new FormatException("Input string was not in correct format");
-
-	/// <summary>
-	/// Parses <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
-	/// </summary>
-	public static GeoPoint Parse(string s)
-		=> Parse(s.AsSpan());
-
-	static GeoPoint IParsable<GeoPoint>.Parse(string s, IFormatProvider? provider)
-		=> Parse(s.AsSpan());
-
-	/// <summary>
 	/// Returns the distance between two geo-coordinates on the Earth's surface
 	/// that are specified by their longitude and latitude.
 	/// </summary>
@@ -164,4 +113,93 @@ public record struct GeoPoint : IParsable<GeoPoint>
 			Math.Cos(d1) * Math.Cos(d2) * Math.Pow(Math.Sin(num2 / 2.0), 2.0);
 		return 6376500.0 * (2.0 * Math.Atan2(Math.Sqrt(d3), Math.Sqrt(1.0 - d3)));
 	}
+
+	/// <summary>
+	/// Tries to parse <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
+	/// </summary>
+	/// <param name="s">Source string to parse.</param>
+	/// <param name="result">Parsed <see cref="GeoPoint"/> if successful.</param>
+	/// <returns><c>True</c> if parse successful.</returns>
+	public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out GeoPoint result)
+	{
+		int index = s.IndexOfAny(',', ';');
+		if (index != -1
+			&& double.TryParse(s[..index], NumberStyles.Float, provider, out double lng)
+			&& double.TryParse(s[(index + 1)..], NumberStyles.Float, provider, out double lat)
+			&& lng is >= -180 and <= 180
+			&& lat is >= -90 and <= 90)
+		{
+			result = new(lng, lat);
+			return true;
+		}
+		result = NaN;
+		return false;
+	}
+
+	/// <summary>
+	/// Tries to parse <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
+	/// </summary>
+	/// <param name="s">Source string to parse.</param>
+	/// <param name="result">Parsed <see cref="GeoPoint"/> if successful.</param>
+	/// <returns><c>True</c> if parse successful.</returns>
+	public static bool TryParse(ReadOnlySpan<char> s, out GeoPoint result)
+		=> TryParse(s, CultureInfo.InvariantCulture, out result);
+
+	/// <summary>
+	/// Tries to parse <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
+	/// </summary>
+	/// <param name="s">Source string to parse.</param>
+	/// <param name="result">Parsed <see cref="GeoPoint"/> if successful.</param>
+	/// <returns><c>True</c> if parse successful.</returns>
+	public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out GeoPoint result)
+		=> TryParse(s.AsSpan(), provider, out result);
+
+	/// <summary>
+	/// Tries to parse <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
+	/// </summary>
+	/// <param name="s">Source string to parse.</param>
+	/// <param name="result">Parsed <see cref="GeoPoint"/> if successful.</param>
+	/// <returns><c>True</c> if parse successful.</returns>
+	public static bool TryParse([NotNullWhen(true)] string? s, out GeoPoint result)
+		=> TryParse(s.AsSpan(), CultureInfo.InvariantCulture, out result);
+
+	/// <summary>
+	/// Parses <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
+	/// </summary>
+	/// <returns>Parsed <see cref="GeoPoint"/>.</returns>
+	public static GeoPoint Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+	{
+		int index = s.IndexOfAny(',', ';');
+		if (index == -1)
+			throw new FormatException("GeoPoint string must contain ',' or ';' separator.");
+
+		double lng = double.Parse(s[..index], NumberStyles.Float, provider);
+		double lat = double.Parse(s[(index + 1)..], NumberStyles.Float, provider);
+		if (lng is < -180 or > 180)
+			throw new FormatException("Longitude must be in range [-180,180].");
+		if (lat is < -90 or > 90)
+			throw new FormatException("Latitude must be in range [-90,90].");
+		return new(lng, lat);
+	}
+
+	/// <summary>
+	/// Parses <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
+	/// </summary>
+	/// <returns>Parsed <see cref="GeoPoint"/>.</returns>
+	public static GeoPoint Parse(ReadOnlySpan<char> s)
+		=> Parse(s, CultureInfo.InvariantCulture);
+
+	/// <summary>
+	/// Parses <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
+	/// </summary>
+	/// <returns>Parsed <see cref="GeoPoint"/>.</returns>
+	public static GeoPoint Parse(string s, IFormatProvider? provider)
+		=> Parse(s.AsSpan(), provider);
+
+	/// <summary>
+	/// Parses <see cref="GeoPoint"/> from <c>lng,lat</c> or <c>lng;lat</c> string.
+	/// </summary>
+	/// <returns>Parsed <see cref="GeoPoint"/>.</returns>
+	public static GeoPoint Parse(string s)
+		=> Parse(s.AsSpan(), CultureInfo.InvariantCulture);
 }

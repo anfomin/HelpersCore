@@ -7,7 +7,7 @@ namespace HelpersCore;
 /// </summary>
 /// <param name="Key">Sort key.</param>
 /// <param name="Descending">Sort direction.</param>
-public readonly record struct DataSort(string Key, bool Descending = false) : IParsable<DataSort>
+public readonly record struct DataSort(string Key, bool Descending = false) : ISpanParsable<DataSort>
 {
 	const char Delimiter = '-';
 
@@ -40,6 +40,9 @@ public readonly record struct DataSort(string Key, bool Descending = false) : IP
 	public static DataSort Parse(string s)
 		=> Parse(s.AsSpan());
 
+	static DataSort ISpanParsable<DataSort>.Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+		=> Parse(s);
+
 	static DataSort IParsable<DataSort>.Parse(string s, IFormatProvider? provider)
 		=> Parse(s.AsSpan());
 
@@ -48,7 +51,7 @@ public readonly record struct DataSort(string Key, bool Descending = false) : IP
 	/// </summary>
 	/// <param name="s">The span to parse.</param>
 	/// <param name="result">When this method returns, contains the result of successfully parsing <paramref name="s" /> or an undefined value on failure.</param>
-	/// <returns><see langword="true" /> if <paramref name="s" /> was successfully parsed; otherwise, <see langword="false" />.</returns>
+	/// <returns><c>True</c> if span was successfully parsed; otherwise, <c>false</c>.</returns>
 	public static bool TryParse(ReadOnlySpan<char> s, out DataSort result)
 	{
 		if (s.IsEmpty)
@@ -65,7 +68,7 @@ public readonly record struct DataSort(string Key, bool Descending = false) : IP
 	/// </summary>
 	/// <param name="s">The string to parse.</param>
 	/// <param name="result">When this method returns, contains the result of successfully parsing <paramref name="s" /> or an undefined value on failure.</param>
-	/// <returns><see langword="true" /> if <paramref name="s" /> was successfully parsed; otherwise, <see langword="false" />.</returns>
+	/// <returns><c>True</c> if string was successfully parsed; otherwise, <c>false</c>.</returns>
 	public static bool TryParse([NotNullWhen(true)] string? s, out DataSort result)
 	{
 		if (string.IsNullOrEmpty(s))
@@ -76,6 +79,9 @@ public readonly record struct DataSort(string Key, bool Descending = false) : IP
 		result = Parse(s.AsSpan());
 		return true;
 	}
+
+	static bool ISpanParsable<DataSort>.TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out DataSort result)
+		=> TryParse(s, out result);
 
 	static bool IParsable<DataSort>.TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out DataSort result)
 		=> TryParse(s, out result);
