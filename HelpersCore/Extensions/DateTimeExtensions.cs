@@ -41,9 +41,9 @@ public static class DateTimeExtensions
 	extension(DateTime dateTime)
 	{
 		/// <summary>
-		/// Returns number of days in month.
+		/// Returns number of days in month for current <see cref="DateTime"/>.
 		/// </summary>
-		public int DaysInMonth
+		public int DaysInMonthCurrent
 			=> DateTime.DaysInMonth(dateTime.Year, dateTime.Month);
 
 		/// <summary>

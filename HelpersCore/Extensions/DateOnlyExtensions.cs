@@ -138,7 +138,7 @@ public static class DateOnlyExtensions
 	extension(DateOnly date)
 	{
 		/// <summary>
-		/// Returns number of days in month.
+		/// Returns number of days in month for current <see cref="DateOnly"/>.
 		/// </summary>
 		public int DaysInMonth
 			=> DateTime.DaysInMonth(date.Year, date.Month);
