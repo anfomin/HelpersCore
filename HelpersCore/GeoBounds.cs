@@ -8,6 +8,16 @@ namespace HelpersCore;
 public readonly record struct GeoBounds(GeoPoint TopLeft, GeoPoint BottomRight)
 {
 	/// <summary>
+	/// Initializes new instance.
+	/// </summary>
+	/// <param name="topLeftLng">Top left point longitude.</param>
+	/// <param name="topLeftLat">Top left point latitude.</param>
+	/// <param name="bottomRightLng">Bottom right point longitude.</param>
+	/// <param name="bottomRightLat">Bottom right point latitude.</param>
+	public GeoBounds(double topLeftLng, double topLeftLat, double bottomRightLng, double bottomRightLat)
+		: this(new GeoPoint(topLeftLng, topLeftLat), new GeoPoint(bottomRightLng, bottomRightLat)) { }
+
+	/// <summary>
 	/// Returns string representation in <c>[TopLeft;BottomRight]</c> format.
 	/// </summary>
 	public override string ToString()
@@ -37,6 +47,27 @@ public readonly record struct GeoBounds(GeoPoint TopLeft, GeoPoint BottomRight)
 	}
 
 	/// <summary>
+	/// Combines the current bounds with specified <paramref name="bounds"/>.
+	/// </summary>
+	/// <param name="bounds">Bounds to combine with.</param>
+	/// <returns>Bounding box that contains both the current and specified bounds.</returns>
+	public GeoBounds CombineWith(params IEnumerable<GeoBounds> bounds)
+	{
+		double topLeftLng = TopLeft.Lng;
+		double topLeftLat = TopLeft.Lat;
+		double bottomRightLng = BottomRight.Lng;
+		double bottomRightLat = BottomRight.Lat;
+		foreach (var b in bounds)
+		{
+			topLeftLng = Math.Min(topLeftLng, b.TopLeft.Lng);
+			topLeftLat = Math.Max(topLeftLat, b.TopLeft.Lat);
+			bottomRightLng = Math.Max(bottomRightLng, b.BottomRight.Lng);
+			bottomRightLat = Math.Min(bottomRightLat, b.BottomRight.Lat);
+		}
+		return new(topLeftLng, topLeftLat, bottomRightLng, bottomRightLat);
+	}
+
+	/// <summary>
 	/// Returns the bounding box of <paramref name="points"/>.
 	/// </summary>
 	/// <exception cref="ArgumentException"><paramref name="points"/> enumeration is empty.</exception>
@@ -61,5 +92,31 @@ public readonly record struct GeoBounds(GeoPoint TopLeft, GeoPoint BottomRight)
 			new(xMin, yMax),
 			new(xMax, yMin)
 		);
+	}
+
+	/// <summary>
+	/// Combines multiple <paramref name="bounds"/> into one.
+	/// </summary>
+	/// <param name="bounds">Bounds to combine.</param>
+	/// <returns>Bounding box that contains specified bounds.</returns>
+	/// <exception cref="ArgumentException"><paramref name="bounds"/> enumeration is empty.</exception>
+	public static GeoBounds Combine(params IEnumerable<GeoBounds> bounds)
+	{
+		bool has = false;
+		double topLeftLng = double.MaxValue;
+		double topLeftLat = double.MinValue;
+		double bottomRightLng = double.MinValue;
+		double bottomRightLat = double.MaxValue;
+		foreach (var b in bounds)
+		{
+			has = true;
+			topLeftLng = Math.Min(topLeftLng, b.TopLeft.Lng);
+			topLeftLat = Math.Max(topLeftLat, b.TopLeft.Lat);
+			bottomRightLng = Math.Max(bottomRightLng, b.BottomRight.Lng);
+			bottomRightLat = Math.Min(bottomRightLat, b.BottomRight.Lat);
+		}
+		if (!has)
+			throw new ArgumentException("Bounds collection is empty.", nameof(bounds));
+		return new(topLeftLng, topLeftLat, bottomRightLng, bottomRightLat);
 	}
 }
