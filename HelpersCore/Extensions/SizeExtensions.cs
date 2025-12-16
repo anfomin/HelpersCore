@@ -1,62 +1,13 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace HelpersCore;
 
 /// <summary>
-/// Provides extensions for <see cref="Point"/> and <see cref="Size"/>.
+/// Provides extensions for <see cref="Size"/>.
 /// </summary>
-public static class DrawingExtensions
+public static class SizeExtensions
 {
-	extension(ref PointF point)
-	{
-		/// <summary>
-		/// Multiplies point's X and Y by <paramref name="factor"/>.
-		/// </summary>
-		/// <param name="factor">Multiply factor.</param>
-		public static PointF operator *(PointF p, float factor)
-			=> new(p.X * factor, p.Y * factor);
-
-		/// <summary>
-		/// Multiplies point's X and Y by <paramref name="factor"/>.
-		/// </summary>
-		/// <param name="factor">Multiply factor.</param>
-		public void operator *= (float factor)
-		{
-			point.X *= factor;
-			point.Y *= factor;
-		}
-
-		/// <summary>
-		/// Divides point's X and Y by <paramref name="divider"/>.
-		/// </summary>
-		/// <param name="divider">Division divider.</param>
-		public static PointF operator /(PointF p, float divider)
-			=> new(p.X / divider, p.Y / divider);
-
-		/// <summary>
-		/// Divides point's X and Y by <paramref name="divider"/>.
-		/// </summary>
-		/// <param name="divider">Division divider.</param>
-		public void operator /= (float divider)
-		{
-			point.X /= divider;
-			point.Y /= divider;
-		}
-	}
-
-	extension(PointF point)
-	{
-		/// <summary>
-		/// Returns distance from current points to <paramref name="other"/>.
-		/// </summary>
-		public double DistanceTo(Point other)
-		{
-			double dx = other.X - point.X;
-			double dy = other.Y - point.Y;
-			return Math.Sqrt(dx * dx + dy * dy);
-		}
-	}
-
 	extension(ref Size size)
 	{
 		/// <summary>
@@ -97,6 +48,12 @@ public static class DrawingExtensions
 	extension(Size size)
 	{
 		/// <summary>
+		/// Returns string in <c>{width}x{height}</c> format.
+		/// </summary>
+		public string ToResolutionString()
+			=> $"{size.Width}x{size.Height}";
+
+		/// <summary>
 		/// Returns downscaled size saving original proportions.
 		/// </summary>
 		/// <param name="maxSize">Desired maximum width and height.</param>
@@ -132,5 +89,51 @@ public static class DrawingExtensions
 			int resultHeight = (int)Math.Round(maxHeight * scale);
 			return new Size(Math.Min(resultWidth, width), Math.Min(resultHeight, height));
 		}
+
+		/// <summary>
+		/// Tries to parse <see cref="Size"/> from <c>{width}x{height}</c> string.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <param name="result">Parsed <see cref="Size"/> if successful.</param>
+		/// <returns><c>True</c> if parse successful.</returns>
+		public static bool TryParse(ReadOnlySpan<char> s, out Size result)
+		{
+			int index = s.IndexOf('x');
+			if (index != -1
+				&& int.TryParse(s[..index], out int width)
+				&& int.TryParse(s[(index + 1)..], out int height))
+			{
+				result = new(width, height);
+				return true;
+			}
+			result = default;
+			return false;
+		}
+
+		/// <summary>
+		/// Tries to parse <see cref="Size"/> from <c>{width}x{height}</c> string.
+		/// </summary>
+		/// <param name="s">Source string to parse.</param>
+		/// <param name="result">Parsed <see cref="Size"/> if successful.</param>
+		/// <returns><c>True</c> if parse successful.</returns>
+		public static bool TryParse([NotNullWhen(true)] string? s, out Size result)
+			=> TryParse(s.AsSpan(), out result);
+
+		/// <summary>
+		/// Parses <see cref="Size"/> from <c>{width}x{height}</c> string.
+		/// </summary>
+		public static Size Parse(ReadOnlySpan<char> s)
+		{
+			int index = s.IndexOf('x');
+			if (index == -1)
+				throw new FormatException("Size string must contain 'x' separator.");
+			return new Size(int.Parse(s[..index]), int.Parse(s[(index + 1)..]));
+		}
+
+		/// <summary>
+		/// Parses <see cref="Size"/> from <c>{width}x{height}</c> string.
+		/// </summary>
+		public static Size Parse(string s)
+			=> Parse(s.AsSpan());
 	}
 }

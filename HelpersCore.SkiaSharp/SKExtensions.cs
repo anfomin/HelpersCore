@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using SkiaSharp;
 
 namespace HelpersCore;
@@ -39,60 +37,5 @@ public static partial class SKExtensions
 		/// For downscaling it is recommended to use <see cref="SKFilterMode.Linear"/> and <see cref="SKMipmapMode.Linear"/>.
 		/// </summary>
 		public static SKSamplingOptions Downscale => SamplingDownscale;
-	}
-
-	extension(Size size)
-	{
-		/// <summary>
-		/// Tries to parse <see cref="Size"/> from <c>{width}x{height}</c> string.
-		/// </summary>
-		/// <param name="s">Source string to parse.</param>
-		/// <param name="result">Parsed <see cref="Size"/> if successful.</param>
-		/// <returns><c>True</c> if parse successful.</returns>
-		public static bool TryParse(ReadOnlySpan<char> s, out Size result)
-		{
-			int index = s.IndexOf('x');
-			if (index != -1
-				&& int.TryParse(s[..index], out int width)
-				&& int.TryParse(s[(index + 1)..], out int height))
-			{
-				result = new(width, height);
-				return true;
-			}
-			result = default;
-			return false;
-		}
-
-		/// <summary>
-		/// Tries to parse <see cref="Size"/> from <c>{width}x{height}</c> string.
-		/// </summary>
-		/// <param name="s">Source string to parse.</param>
-		/// <param name="result">Parsed <see cref="Size"/> if successful.</param>
-		/// <returns><c>True</c> if parse successful.</returns>
-		public static bool TryParse([NotNullWhen(true)] string? s, out Size result)
-			=> TryParse(s.AsSpan(), out result);
-
-		/// <summary>
-		/// Parses <see cref="Size"/> from <c>{width}x{height}</c> string.
-		/// </summary>
-		public static Size Parse(ReadOnlySpan<char> s)
-		{
-			int index = s.IndexOf('x');
-			if (index == -1)
-				throw new FormatException("Size string must contain 'x' separator.");
-			return new Size(int.Parse(s[..index]), int.Parse(s[(index + 1)..]));
-		}
-
-		/// <summary>
-		/// Parses <see cref="Size"/> from <c>{width}x{height}</c> string.
-		/// </summary>
-		public static Size Parse(string s)
-			=> Parse(s.AsSpan());
-
-		/// <summary>
-		/// Returns string in <c>{width}x{height}</c> format.
-		/// </summary>
-		public string ToResolutionString()
-			=> $"{size.Width}x{size.Height}";
 	}
 }
