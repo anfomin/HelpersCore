@@ -3,7 +3,7 @@ using System.Globalization;
 namespace HelpersCore;
 
 /// <summary>
-/// Represents a readonly ordered set of items that can be parsed from <c>,</c>-separated string and converted to a query string.
+/// Represents a readonly ordered set of items that can be parsed from <c>_</c>-separated string and converted to a query string.
 /// </summary>
 /// <typeparam name="T">Item type.</typeparam>
 public class QuerySet<T> : QuerySetBase<QuerySet<T>, T>, IQuerySetStatic<QuerySet<T>, T>

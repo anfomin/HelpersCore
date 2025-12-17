@@ -1,7 +1,7 @@
 namespace HelpersCore;
 
 /// <summary>
-/// Represents a readonly ordered set of <see cref="Enum"/> that can be parsed from <c>,</c>-separated string and converted to a query string.
+/// Represents a readonly ordered set of <see cref="Enum"/> that can be parsed from <c>_</c>-separated string and converted to a query string.
 /// </summary>
 /// <typeparam name="T">Enum type.</typeparam>
 public class QueryEnums<T> : QuerySetBase<QueryEnums<T>, T>, IQuerySetStatic<QueryEnums<T>, T>

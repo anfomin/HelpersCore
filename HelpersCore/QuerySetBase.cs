@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace HelpersCore;
 
 /// <summary>
-/// Abstract readonly ordered set of items that can be parsed from <c>,</c>-separated string and converted to a query string.
+/// Abstract readonly ordered set of items that can be parsed from <c>_</c>-separated string and converted to a query string.
 /// </summary>
 /// <typeparam name="TSelf">Query set final type.</typeparam>
 /// <typeparam name="TItem">Item type.</typeparam>
@@ -13,7 +13,7 @@ public abstract class QuerySetBase<TSelf, TItem> : IReadOnlySet<TItem>, ISpanPar
 	where TSelf : class, IReadOnlySet<TItem>, ISpanParsable<TSelf>, IEquatable<TSelf>, IQuerySetStatic<TSelf, TItem>, new()
 	where TItem : notnull
 {
-	const char Separator = ',';
+	const char Separator = '_';
 	readonly ImmutableSortedSet<TItem> _items;
 
 	public int Count => _items.Count;
@@ -72,19 +72,19 @@ public abstract class QuerySetBase<TSelf, TItem> : IReadOnlySet<TItem>, ISpanPar
 		=> other is not null && SetEquals(other);
 
 	/// <summary>
-	/// Returns a <c>,</c>-separated string representation of the set or <c>null</c> if the set is empty.
+	/// Returns a <c>_</c>-separated string representation of the set or <c>null</c> if the set is empty.
 	/// </summary>
 	public override string? ToString()
 		=> _items.Count == 0 ? null : string.Join(Separator, _items.Select(TSelf.ConvertItemToString));
 
 	/// <summary>
-	/// Returns a <c>,</c>-separated string of specified <paramref name="items"/> or <c>null</c> if no items are provided.
+	/// Returns a <c>_</c>-separated string of specified <paramref name="items"/> or <c>null</c> if no items are provided.
 	/// </summary>
 	public static string? GetString(params IEnumerable<TItem>? items)
 		=> items == null || !items.Any() ? null : string.Join(Separator, items.Distinct().Order().Select(TSelf.ConvertItemToString));
 
 	/// <summary>
-	/// Tries to parse <c>,</c>-separated query string value into <typeparamref name="TItem"/> items set.
+	/// Tries to parse <c>_</c>-separated query string value into <typeparamref name="TItem"/> items set.
 	/// </summary>
 	/// <param name="s">Source string to parse.</param>
 	/// <param name="result">Parsed set if successful.</param>
@@ -120,7 +120,7 @@ public abstract class QuerySetBase<TSelf, TItem> : IReadOnlySet<TItem>, ISpanPar
 	}
 
 	/// <summary>
-	/// Tries to parse <c>,</c>-separated query string value into <typeparamref name="TItem"/> items set.
+	/// Tries to parse <c>_</c>-separated query string value into <typeparamref name="TItem"/> items set.
 	/// </summary>
 	/// <param name="s">Source string to parse.</param>
 	/// <param name="result">Parsed set if successful.</param>
@@ -135,7 +135,7 @@ public abstract class QuerySetBase<TSelf, TItem> : IReadOnlySet<TItem>, ISpanPar
 		=> TryParse(s.AsSpan(), out result);
 
 	/// <summary>
-	/// Parses <c>,</c>-separated query string value into <typeparamref name="TItem"/> items set.
+	/// Parses <c>_</c>-separated query string value into <typeparamref name="TItem"/> items set.
 	/// </summary>
 	/// <param name="s">Source string to parse.</param>
 	/// <returns>Parsed set.</returns>
@@ -156,7 +156,7 @@ public abstract class QuerySetBase<TSelf, TItem> : IReadOnlySet<TItem>, ISpanPar
 	}
 
 	/// <summary>
-	/// Parses <c>,</c>-separated query string value into <typeparamref name="TItem"/> items set.
+	/// Parses <c>_</c>-separated query string value into <typeparamref name="TItem"/> items set.
 	/// </summary>
 	/// <param name="s">Source string to parse.</param>
 	/// <returns>Parsed set.</returns>
