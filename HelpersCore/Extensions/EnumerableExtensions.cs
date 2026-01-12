@@ -129,7 +129,7 @@ public static class EnumerableExtensions
 		/// <summary>
 		/// Caches the items of an enumerable as they are enumerated.
 		/// </summary>
-		public IEnumerable<T> Cache()
+		public ICachedEnumerable<T> Cache()
 			=> new CachedEnumerable<T>(source);
 	}
 

@@ -10,14 +10,12 @@ public class ReadOnlyMemoryCharComparer(StringComparison comparisonType) : IComp
 	/// </summary>
 	public static readonly ReadOnlyMemoryCharComparer OrdinalIgnoreCase = new(StringComparison.OrdinalIgnoreCase);
 
-	readonly StringComparison _comparisonType = comparisonType;
-
 	public int Compare(ReadOnlyMemory<char> x, ReadOnlyMemory<char> y)
-		=> x.Span.CompareTo(y.Span, _comparisonType);
+		=> x.Span.CompareTo(y.Span, comparisonType);
 
 	public bool Equals(ReadOnlyMemory<char> x, ReadOnlyMemory<char> y)
-		=> x.Span.Equals(y.Span, _comparisonType);
+		=> x.Span.Equals(y.Span, comparisonType);
 
 	public int GetHashCode(ReadOnlyMemory<char> obj)
-		=> string.GetHashCode(obj.Span, _comparisonType);
+		=> string.GetHashCode(obj.Span, comparisonType);
 }

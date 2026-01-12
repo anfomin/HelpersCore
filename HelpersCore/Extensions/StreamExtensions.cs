@@ -8,6 +8,11 @@ public static class StreamExtensions
 	extension(Stream source)
 	{
 		/// <summary>
+		/// Default buffer size of 4 KB.
+		/// </summary>
+		public static int DefaultBufferSize => 1024 * 4; // 4 KB
+
+		/// <summary>
 		/// Copies source stream to memory stream.
 		/// </summary>
 		public async Task<MemoryStream> CopyToMemoryAsync(CancellationToken cancellationToken = default)
@@ -25,7 +30,7 @@ public static class StreamExtensions
 		/// <param name="progress">Copied size progress callback.</param>
 		/// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is None.</param>
 		public Task CopyToAsync(Stream destination, Action<long> progress, CancellationToken cancellationToken = default)
-			=> source.CopyToAsync(destination, StreamHelper.BufferSize, progress, cancellationToken);
+			=> source.CopyToAsync(destination, Stream.DefaultBufferSize, progress, cancellationToken);
 
 		/// <summary>
 		/// Copies source stream to destination stream with progress callback.
@@ -34,7 +39,7 @@ public static class StreamExtensions
 		/// <param name="progress">Copied size async progress callback.</param>
 		/// <param name="cancellationToken">The token to monitor for cancellation requests. The default value is None.</param>
 		public Task CopyToAsync(Stream destination, Func<long, Task> progress, CancellationToken cancellationToken = default)
-			=> source.CopyToAsync(destination, StreamHelper.BufferSize, progress, cancellationToken);
+			=> source.CopyToAsync(destination, Stream.DefaultBufferSize, progress, cancellationToken);
 
 		/// <summary>
 		/// Copies source stream to destination stream with the specified buffer size and progress callback.

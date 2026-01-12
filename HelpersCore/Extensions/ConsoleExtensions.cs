@@ -137,35 +137,32 @@ public static partial class ConsoleExtensions
 
 	class PrefixerTextWriter(TextWriter baseWriter, string prefix) : TextWriter
 	{
-		readonly TextWriter _baseWriter = baseWriter;
-		readonly string _prefix = prefix;
+		public override Encoding Encoding => baseWriter.Encoding;
 
-		public override Encoding Encoding => _baseWriter.Encoding;
-
-		public override IFormatProvider FormatProvider => _baseWriter.FormatProvider;
+		public override IFormatProvider FormatProvider => baseWriter.FormatProvider;
 
 		public override string NewLine
 		{
-			get => _baseWriter.NewLine;
+			get => baseWriter.NewLine;
 #pragma warning disable CS8765
-			set => _baseWriter.NewLine = value;
+			set => baseWriter.NewLine = value;
 #pragma warning restore CS8765
 		}
 
 		public override void WriteLine(string? value)
 		{
-			_baseWriter.Write(_prefix);
-			_baseWriter.WriteLine(value);
+			baseWriter.Write(prefix);
+			baseWriter.WriteLine(value);
 		}
 
 		public override void Write(string? value)
-			=> _baseWriter.Write(value);
+			=> baseWriter.Write(value);
 
 		public override void Flush()
-			=> _baseWriter.Flush();
+			=> baseWriter.Flush();
 
 		public override void Close()
-			=> _baseWriter.Close();
+			=> baseWriter.Close();
 	}
 }
 

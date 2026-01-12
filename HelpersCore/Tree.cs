@@ -85,7 +85,7 @@ public class Tree<T>
 	where T : class
 {
 	/// <summary>
-	/// Gets tree children.
+	/// Gets children of current tree.
 	/// </summary>
 	public List<Node> Children { get; } = [];
 

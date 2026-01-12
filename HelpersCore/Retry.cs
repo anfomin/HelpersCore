@@ -32,7 +32,7 @@ public static class Retry
 			}
 			catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
 			{
-				if (retryWhen(ex) && attempts <= retryCount)
+				if (attempts <= retryCount && retryWhen(ex))
 				{
 					await Task.Delay(retryDelay, cancellationToken);
 					continue;

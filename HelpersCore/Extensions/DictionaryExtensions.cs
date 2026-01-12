@@ -100,16 +100,4 @@ public static class DictionaryExtensions
 		key = pair.Key;
 		value = pair.Value;
 	}
-
-	/// <summary>
-	/// Creates dictionary where keys are object public properties.
-	/// </summary>
-	public static IDictionary<string, object?> ToPropertiesDictionary(this object obj)
-	{
-		if (obj is IDictionary<string, object?> objDic)
-			return objDic;
-		Dictionary<string, object?> dic = [];
-		dic.Set(obj);
-		return dic;
-	}
 }
