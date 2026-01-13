@@ -31,7 +31,7 @@ internal sealed class CachedEnumerable<T>(IEnumerable<T> source) : ICachedEnumer
 		public bool MoveNext()
 		{
 			int indexNext = _index + 1;
-			if (indexNext + 1 < enumerable._cache.Count)
+			if (indexNext < enumerable._cache.Count)
 			{
 				_index = indexNext;
 				return true;
