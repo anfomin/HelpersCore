@@ -19,7 +19,7 @@ public static class ConvertExtensions
 	{
 		try
 		{
-			result = ConvertTo<T>(value)!;
+			result = value.ConvertTo<T>()!;
 			return true;
 		}
 		catch

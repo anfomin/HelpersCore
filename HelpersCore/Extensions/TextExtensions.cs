@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace HelpersCore;
@@ -5,6 +6,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for text representation.
 /// </summary>
+[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
 public static partial class TextExtensions
 {
 	extension(int value)

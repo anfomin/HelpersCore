@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace HelpersCore;
 
+[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
 public static partial class ConsoleExtensions
 {
 	extension(Console)

@@ -6,6 +6,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for <see cref="DateOnly"/>.
 /// </summary>
+[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
 public static class DateOnlyExtensions
 {
 	extension(DateOnly)

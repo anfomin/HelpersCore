@@ -6,6 +6,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for <see cref="Size"/>.
 /// </summary>
+[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
 public static class SizeExtensions
 {
 	extension(ref Size size)

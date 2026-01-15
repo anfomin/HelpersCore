@@ -53,10 +53,19 @@ public record struct GeoPoint : ISpanParsable<GeoPoint>
 	}
 
 	/// <summary>
-	/// Returns string representation in <c>lng,lat</c> format.
+	/// Returns string representation in <c>lng,lat</c> format with specified maximum number of decimal digits.
+	/// </summary>
+	/// <param name="digits">Maximum number of decimal digits.</param>
+	public readonly string ToString(int digits)
+		=> IsNaN
+			? "NaN"
+			: $"{Math.Round(Lng, digits).ToString(CultureInfo.InvariantCulture)},{Math.Round(Lat, digits).ToString(CultureInfo.InvariantCulture)}";
+
+	/// <summary>
+	/// Returns string representation in <c>lng,lat</c> format with <c>6</c> maximum number of decimal digits.
 	/// </summary>
 	public readonly override string ToString()
-		=> IsNaN ? "NaN" : $"{Lng.ToString(CultureInfo.InvariantCulture)},{Lat.ToString(CultureInfo.InvariantCulture)}";
+		=> ToString(6);
 
 	/// <summary>
 	/// Returns the distance between the current point <see cref="Lng"/> and <see cref="Lat"/>

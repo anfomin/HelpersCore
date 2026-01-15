@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace HelpersCore;
@@ -5,6 +6,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for <see cref="Console"/>.
 /// </summary>
+[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
 public static partial class ConsoleExtensions
 {
 	extension(Console)

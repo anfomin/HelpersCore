@@ -5,6 +5,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for <see cref="TimeSpan"/>.
 /// </summary>
+[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
 public static class TimeSpanExtensions
 {
 	extension(TimeSpan)

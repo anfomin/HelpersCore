@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace HelpersCore;
@@ -6,6 +7,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for enumerable and collections.
 /// </summary>
+[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
 public static class EnumerableExtensions
 {
 	extension<T>(IEnumerable<T> source)

@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -9,6 +10,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for <see cref="Enum"/>.
 /// </summary>
+[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
 public static class EnumExtensions
 {
 	static readonly ConcurrentDictionary<Enum, bool> EnumReadOnly = new();

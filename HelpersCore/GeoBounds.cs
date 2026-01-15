@@ -8,6 +8,16 @@ namespace HelpersCore;
 public readonly record struct GeoBounds(GeoPoint TopLeft, GeoPoint BottomRight)
 {
 	/// <summary>
+	/// Gets bottom left point.
+	/// </summary>
+	public GeoPoint BottomLeft => new(TopLeft.Lng, BottomRight.Lat);
+
+	/// <summary>
+	/// Gets top right point.
+	/// </summary>
+	public GeoPoint TopRight => new(BottomRight.Lng, TopLeft.Lat);
+
+	/// <summary>
 	/// Initializes new instance.
 	/// </summary>
 	/// <param name="topLeftLng">Top left point longitude.</param>
@@ -22,6 +32,14 @@ public readonly record struct GeoBounds(GeoPoint TopLeft, GeoPoint BottomRight)
 	/// </summary>
 	public override string ToString()
 		=> $"[{TopLeft};{BottomRight}]";
+
+	/// <summary>
+	/// Gets center point of the bounds.
+	/// </summary>
+	public GeoPoint GetCenter() => new(
+		(TopLeft.Lng + BottomRight.Lng) / 2,
+		(TopLeft.Lat + BottomRight.Lat) / 2
+	);
 
 	/// <summary>
 	/// Extends the bounds by specified <paramref name="x"/> and <paramref name="y"/> amounts.
