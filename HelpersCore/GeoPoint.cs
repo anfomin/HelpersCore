@@ -68,8 +68,7 @@ public record struct GeoPoint : ISpanParsable<GeoPoint>
 		=> ToString(6);
 
 	/// <summary>
-	/// Returns the distance between the current point <see cref="Lng"/> and <see cref="Lat"/>
-	/// coordinates and <paramref name="other"/> one on the Earth's surface.
+	/// Returns the distance between the current point and <paramref name="other"/> one on the Earth's surface.
 	/// </summary>
 	/// <param name="other">The <see cref="GeoPoint"/> to calculate distance to.</param>
 	/// <returns>The distance between the two coordinates, in meters.</returns>
@@ -78,6 +77,18 @@ public record struct GeoPoint : ISpanParsable<GeoPoint>
 	/// </remarks>
 	public readonly double GetDistanceTo(GeoPoint other)
 		=> GetDistance(Lng, Lat, other.Lng, other.Lat);
+
+	/// <summary>
+	/// Returns the distance between the current point and other one on the Earth's surface.
+	/// </summary>
+	/// <param name="lng">Other point longitude (x-coordinate).</param>
+	/// <param name="lat">Other point latitude (y-coordinate).</param>
+	/// <returns>The distance between the two coordinates, in meters.</returns>
+	/// <remarks>
+	/// Source: https://github.com/ghuntley/geocoordinate/blob/master/src/GeoCoordinatePortable/GeoCoordinate.cs
+	/// </remarks>
+	public readonly double GetDistanceTo(double lng, double lat)
+		=> GetDistance(Lng, Lat, lng, lat);
 
 	/// <summary>
 	/// Deconstructs the point into longitude and latitude.
