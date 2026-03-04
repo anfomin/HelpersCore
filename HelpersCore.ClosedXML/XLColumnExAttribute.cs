@@ -36,6 +36,26 @@ public class XLColumnExAttribute : XLColumnAttribute
 	public string? HyperlinkLabel { get; set; }
 
 	/// <summary>
+	/// Gets or sets if column width should be adjusted to fit content.
+	/// </summary>
+	public bool WidthFit { get; set; }
+
+	/// <summary>
+	/// Gets or sets column width. If <see cref="WidthFit"/> is <c>true</c> then this value is used as maximum width.
+	/// </summary>
+	public int Width { get; set; }
+
+	/// <summary>
+	/// Gets or sets column minimum width if <see cref="WidthFit"/> is <c>true</c>.
+	/// </summary>
+	public int WidthMin { get; set; }
+
+	/// <summary>
+	/// Gets or sets cell formula in R1C1 format.
+	/// </summary>
+	public string? FormulaR1C1 { get; set; }
+
+	/// <summary>
 	/// Initializes new instance of <see cref="XLColumnExAttribute"/>.
 	/// </summary>
 	public XLColumnExAttribute() { }

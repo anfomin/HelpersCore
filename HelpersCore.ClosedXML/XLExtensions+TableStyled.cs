@@ -83,13 +83,14 @@ public static partial class XLExtensions
 	/// <typeparam name="T">Data type to get properties with <see cref="XLColumnExAttribute"/> attribute from.</typeparam>
 	static void ApplyStylesFromExtendedAttributes<T>(this IXLRange range, XLAlignmentHorizontalValues? headerAlignment)
 	{
-		foreach (var (index, (_, attr)) in typeof(T)
+		var columns = typeof(T)
 			.GetProperties(BindingFlags.Instance | BindingFlags.Public)
 			.Select(p => (Prop: p, Attr: p.GetCustomAttribute<XLColumnAttribute>()))
 			.Where(r => r.Attr?.Ignore != true)
 			.OrderBy(r => r.Attr?.Order ?? 0)
-			.Index()
-		) {
+			.ToList();
+		foreach (var (index, (_, attr)) in columns.Index())
+		{
 			if (attr is not XLColumnExAttribute attr2)
 				continue;
 
@@ -103,7 +104,13 @@ public static partial class XLExtensions
 			if (attr2.WrapText)
 				style.Alignment.SetWrapText();
 
-			if (attr2.HyperlinkLabel is string label)
+			if (attr2.FormulaR1C1 is { } formula)
+			{
+				foreach (var cell in column.Cells().Skip(1))
+					cell.SetFormulaR1C1(formula);
+			}
+
+			if (attr2.HyperlinkLabel is { } label)
 			{
 				foreach (var cell in column.Cells().Skip(1))
 				{
@@ -120,5 +127,21 @@ public static partial class XLExtensions
 
 		if (headerAlignment is { } alignment)
 			range.Row(1).Style.Alignment.Horizontal = alignment;
+		foreach (var (index, (_, attr)) in columns.Index())
+		{
+			if (attr is not XLColumnExAttribute attr2)
+				continue;
+
+			var col = range.Column(index + 1).WorksheetColumn();
+			if (attr2.WidthFit)
+			{
+				if (attr2.Width > 0)
+					col.AdjustToContents(Math.Max(attr2.WidthMin, 0), attr2.Width);
+				else
+					col.AdjustToContents();
+			}
+			else if (attr2.Width > 0)
+				col.Width = attr2.Width;
+		}
 	}
 }
