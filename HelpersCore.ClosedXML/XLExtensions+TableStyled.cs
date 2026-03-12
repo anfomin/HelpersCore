@@ -136,7 +136,7 @@ public static partial class XLExtensions
 			if (attr2.WidthFit)
 			{
 				if (attr2.Width > 0)
-					col.AdjustToContents(Math.Max(attr2.WidthMin, 0), attr2.Width);
+					col.AdjustToContents(Math.Max(attr2.WidthMin, .0), attr2.Width);
 				else
 					col.AdjustToContents();
 			}

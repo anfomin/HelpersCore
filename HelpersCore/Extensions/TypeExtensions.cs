@@ -9,12 +9,6 @@ namespace HelpersCore;
 /// </summary>
 public static class TypeExtensions
 {
-	/// <summary>
-	/// Returns if <see cref="Type"/> is included in <paramref name="others"/>.
-	/// </summary>
-	public static bool OneOf(this Type type, params IEnumerable<Type> others)
-		=> others.Contains(type);
-
 	extension(Type type)
 	{
 		/// <summary>
@@ -70,6 +64,12 @@ public static class TypeExtensions
 		/// </summary>
 		public bool IsEnumFlags()
 			=> type.IsEnum && type.GetCustomAttribute<FlagsAttribute>(true) is not null;
+
+		/// <summary>
+		/// Returns if <see cref="Type"/> is included in <paramref name="others"/>.
+		/// </summary>
+		public bool OneOf(params IEnumerable<Type> others)
+			=> others.Contains(type);
 	}
 
 	extension(PropertyInfo property)

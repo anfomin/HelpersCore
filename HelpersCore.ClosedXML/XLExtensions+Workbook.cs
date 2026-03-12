@@ -17,7 +17,7 @@ public static partial class XLExtensions
 		/// <c>True</c> to evaluate formulas and the calculated values are saved to the file.
 		/// <c>False</c> (default) – formulas are not evaluated and the formula cells don't have their values saved to the file.
 		/// </param>
-		public MemoryStream SaveAsStream(bool validate = true, bool evaluateFormulas = false)
+		public MemoryStream SaveAsStream(bool validate = false, bool evaluateFormulas = false)
 		{
 			MemoryStream ms = new();
 			workbook.SaveAs(ms, validate, evaluateFormulas);
