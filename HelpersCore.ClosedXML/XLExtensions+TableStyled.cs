@@ -1,5 +1,4 @@
-using System.Reflection;
-using ClosedXML.Attributes;
+using System.Linq.Expressions;
 using ClosedXML.Excel;
 
 namespace HelpersCore;
@@ -14,12 +13,12 @@ public static partial class XLExtensions
 		/// The new table will receive a generic name: Table#.
 		/// </summary>
 		/// <param name="data">Table data.</param>
-		/// <param name="headerAlignment">If specified, overrides header alignment.</param>
+		/// <param name="options">Provides table options.</param>
 		/// <typeparam name="T">Table data type.</typeparam>
-		public IXLTable InsertTableStyled<T>(IEnumerable<T> data, XLAlignmentHorizontalValues? headerAlignment = null)
+		public IXLTable InsertTableStyled<T>(IEnumerable<T> data, XLTableOptions<T>? options = null)
 		{
 			var table = cell.InsertTable(data);
-			table.ApplyStylesFromExtendedAttributes<T>(headerAlignment);
+			table.ApplyStylesFromExtendedAttributes(data, options);
 			return table;
 		}
 
@@ -33,12 +32,12 @@ public static partial class XLExtensions
 		/// If set to <c>true</c> it will create an Excel table.
 		/// If set to <c>false</c> the table will be created in memory.
 		/// </param>
-		/// <param name="headerAlignment">If specified, overrides header alignment.</param>
+		/// <param name="options">Provides table options.</param>
 		/// <typeparam name="T">Table data type.</typeparam>
-		public IXLTable InsertTableStyled<T>(IEnumerable<T> data, bool createTable, XLAlignmentHorizontalValues? headerAlignment = null)
+		public IXLTable InsertTableStyled<T>(IEnumerable<T> data, bool createTable, XLTableOptions<T>? options = null)
 		{
 			var table = cell.InsertTable(data, createTable);
-			table.ApplyStylesFromExtendedAttributes<T>(headerAlignment);
+			table.ApplyStylesFromExtendedAttributes(data, options);
 			return table;
 		}
 
@@ -48,12 +47,12 @@ public static partial class XLExtensions
 		/// </summary>
 		/// <param name="data">Table data.</param>
 		/// <param name="tableName">Name of the table.</param>
-		/// <param name="headerAlignment">If specified, overrides header alignment.</param>
+		/// <param name="options">Provides table options.</param>
 		/// <typeparam name="T">Table data type.</typeparam>
-		public IXLTable InsertTableStyled<T>(IEnumerable<T> data, string tableName, XLAlignmentHorizontalValues? headerAlignment = null)
+		public IXLTable InsertTableStyled<T>(IEnumerable<T> data, string tableName, XLTableOptions<T>? options = null)
 		{
 			var table = cell.InsertTable(data, tableName);
-			table.ApplyStylesFromExtendedAttributes<T>(headerAlignment);
+			table.ApplyStylesFromExtendedAttributes(data, options);
 			return table;
 		}
 
@@ -67,12 +66,12 @@ public static partial class XLExtensions
 		/// If set to <c>true</c> it will create an Excel table.
 		/// If set to <c>false</c> the table will be created in memory.
 		/// </param>
-		/// <param name="headerAlignment">If specified, overrides header alignment.</param>
+		/// <param name="options">Provides table options.</param>
 		/// <typeparam name="T">Table data type.</typeparam>
-		public IXLTable InsertTableStyled<T>(IEnumerable<T> data, string tableName, bool createTable, XLAlignmentHorizontalValues? headerAlignment = null)
+		public IXLTable InsertTableStyled<T>(IEnumerable<T> data, string tableName, bool createTable, XLTableOptions<T>? options = null)
 		{
 			var table = cell.InsertTable(data, tableName, createTable);
-			table.ApplyStylesFromExtendedAttributes<T>(headerAlignment);
+			table.ApplyStylesFromExtendedAttributes(data, options);
 			return table;
 		}
 	}
@@ -81,15 +80,10 @@ public static partial class XLExtensions
 	/// Applies styles from <see cref="XLColumnExAttribute"/> attributes to the columns of the specified range.
 	/// </summary>
 	/// <typeparam name="T">Data type to get properties with <see cref="XLColumnExAttribute"/> attribute from.</typeparam>
-	static void ApplyStylesFromExtendedAttributes<T>(this IXLRange range, XLAlignmentHorizontalValues? headerAlignment)
+	static void ApplyStylesFromExtendedAttributes<T>(this IXLRange range, IEnumerable<T> data, XLTableOptions<T>? options)
 	{
-		var columns = typeof(T)
-			.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-			.Select(p => (Prop: p, Attr: p.GetCustomAttribute<XLColumnAttribute>()))
-			.Where(r => r.Attr?.Ignore != true)
-			.OrderBy(r => r.Attr?.Order ?? 0)
-			.ToList();
-		foreach (var (index, (_, attr)) in columns.Index())
+		var columns = XLTableHelper.GetColumns<T>().ToList();
+		foreach (var (index, _, attr) in columns)
 		{
 			if (attr is not XLColumnExAttribute attr2)
 				continue;
@@ -125,9 +119,7 @@ public static partial class XLExtensions
 			}
 		}
 
-		if (headerAlignment is { } alignment)
-			range.Row(1).Style.Alignment.Horizontal = alignment;
-		foreach (var (index, (_, attr)) in columns.Index())
+		foreach (var (index, _, attr) in columns)
 		{
 			if (attr is not XLColumnExAttribute attr2)
 				continue;
@@ -136,12 +128,40 @@ public static partial class XLExtensions
 			if (attr2.WidthFit)
 			{
 				if (attr2.Width > 0)
-					col.AdjustToContents(Math.Max(attr2.WidthMin, .0), attr2.Width);
+					col.AdjustToContents(Math.Max(attr2.WidthMin, 0), attr2.Width);
 				else
 					col.AdjustToContents();
 			}
 			else if (attr2.Width > 0)
 				col.Width = attr2.Width;
 		}
+
+		if (options?.HeaderHorizontal is { } headerHorizontal)
+			range.Row(1).Style.Alignment.SetHorizontal(headerHorizontal);
+		if (options?.HeaderVertical is { } headerVertical)
+			range.Row(1).Style.Alignment.SetVertical(headerVertical);
+		if (options?.DataVertical is { } dataVertical)
+			range.FirstCell().CellBelow().RangeTo(range.LastCell())
+				.Style.Alignment.SetVertical(dataVertical);
+		if (options?.RowAction is { } action)
+		{
+			foreach (var (index, item) in data.Index())
+			{
+				var row = range.Row(index + 2);
+				action(item, row, columns);
+			}
+		}
 	}
+
+	/// <summary>
+	/// Gets the cell for property specified by <paramref name="propertyExpression"/>.
+	/// </summary>
+	/// <param name="row">Table row.</param>
+	/// <param name="columns">Table columns.</param>
+	/// <param name="propertyExpression">Data item property accessor.</param>
+	public static IXLCell? Cell<TProp>(this IXLRangeRow row, IReadOnlyList<XLTableColumn> columns, Expression<Func<TProp?>> propertyExpression)
+		=> Expression.GetMember(propertyExpression) is { } member
+			&& columns.FirstOrNull(c => c.Name.Equals(member.Name, StringComparison.InvariantCultureIgnoreCase)) is { } column
+			? row.Cell(column.Index + 1)
+			: null;
 }

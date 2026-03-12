@@ -43,12 +43,12 @@ public class XLColumnExAttribute : XLColumnAttribute
 	/// <summary>
 	/// Gets or sets column width. If <see cref="WidthFit"/> is <c>true</c> then this value is used as maximum width.
 	/// </summary>
-	public int Width { get; set; }
+	public double Width { get; set; }
 
 	/// <summary>
 	/// Gets or sets column minimum width if <see cref="WidthFit"/> is <c>true</c>.
 	/// </summary>
-	public int WidthMin { get; set; }
+	public double WidthMin { get; set; }
 
 	/// <summary>
 	/// Gets or sets cell formula in R1C1 format.

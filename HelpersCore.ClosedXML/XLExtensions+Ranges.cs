@@ -31,20 +31,6 @@ public static partial class XLExtensions
 	extension(IXLRange range)
 	{
 		/// <summary>
-		/// Extends the range to the right by the specified number of columns.
-		/// </summary>
-		/// <param name="step">Number of columns to extend range for.</param>
-		public IXLRange GrowRight(int step)
-			=> range.FirstCell().RangeTo(range.LastCell().CellRight(step));
-
-		/// <summary>
-		/// Extends the range down by the specified number of rows.
-		/// </summary>
-		/// <param name="step">Number of rows to extend range for.</param>
-		public IXLRange GrowDown(int step)
-			=> range.FirstCell().RangeTo(range.LastCell().CellBelow(step));
-
-		/// <summary>
 		/// Returns the top-right cell of the specified range.
 		/// </summary>
 		public IXLCell TopRightCell()
@@ -55,5 +41,33 @@ public static partial class XLExtensions
 		/// </summary>
 		public IXLCell BottomLeftCell()
 			=> range.FirstColumn().LastCell();
+
+		/// <summary>
+		/// Extends the range to the left by the specified number of columns.
+		/// </summary>
+		/// <param name="step">Number of columns to extend range for.</param>
+		public IXLRange GrowLeft(int step)
+			=> range.FirstCell().CellLeft(step).RangeTo(range.LastCell().CellRight(step));
+
+		/// <summary>
+		/// Extends the range to the right by the specified number of columns.
+		/// </summary>
+		/// <param name="step">Number of columns to extend range for.</param>
+		public IXLRange GrowRight(int step)
+			=> range.FirstCell().RangeTo(range.LastCell().CellRight(step));
+
+		/// <summary>
+		/// Extends the range up by the specified number of rows.
+		/// </summary>
+		/// <param name="step">Number of rows to extend range for.</param>
+		public IXLRange GrowUp(int step)
+			=> range.FirstCell().CellAbove(step).RangeTo(range.LastCell());
+
+		/// <summary>
+		/// Extends the range down by the specified number of rows.
+		/// </summary>
+		/// <param name="step">Number of rows to extend range for.</param>
+		public IXLRange GrowDown(int step)
+			=> range.FirstCell().RangeTo(range.LastCell().CellBelow(step));
 	}
 }
