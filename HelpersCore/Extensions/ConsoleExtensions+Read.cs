@@ -49,20 +49,28 @@ public static partial class ConsoleExtensions
 		/// If input is not valid, it will be repeated until valid input is received.
 		/// </summary>
 		/// <param name="name">Name to prefix reading value.</param>
-		public static bool ReadBool(string name)
+		/// <param name="defaultResult">Default result to use then <see cref="ConsoleKey.Enter"/> is pressed.</param>
+		public static bool ReadBool(string name, bool? defaultResult = null)
 		{
 			while (true)
 			{
 				Console.Write(name);
-				Console.Write(@" (y/n)");
-				Console.Write(@": ");
-				char c = Console.ReadKey().KeyChar;
-				Console.WriteLine();
-				switch (c)
+				Console.Write(defaultResult switch
 				{
-					case 'y':
+					true => @" (Y/n)",
+					false => @" (y/N)",
+					_ => @" (y/n)"
+				});
+				Console.Write(@": ");
+				var key = Console.ReadKey();
+				Console.WriteLine();
+				switch (key)
+				{
+					case { Key: ConsoleKey.Enter } when defaultResult == true:
+					case { KeyChar: 'y' or 'н' }:
 						return true;
-					case 'n':
+					case { Key: ConsoleKey.Enter } when defaultResult == false:
+					case { KeyChar: 'n' or 'т' }:
 						return false;
 					default:
 						Console.WriteLine(Strings.EnterYesNo);
