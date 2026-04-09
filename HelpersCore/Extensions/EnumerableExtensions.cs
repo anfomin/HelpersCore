@@ -138,8 +138,16 @@ public static class EnumerableExtensions
 	extension<T>(IEnumerable<T?> source)
 	{
 		/// <summary>
-		/// Joins non-null items with specified separator.
+		/// Concatenates the non-null members of a collection, using the specified separator between each member.
 		/// </summary>
+		/// <param name="separator">
+		/// The character to use as a separator. <paramref name="separator" /> is included in the returned
+		/// string only if <paramref name="source" /> has more than one element.
+		/// </param>
+		/// <returns>
+		/// A string that consists of the non-null members of <paramref name="source" /> delimited by the <paramref name="separator" /> character.
+		/// -or- <see cref="F:String.Empty" /> if <paramref name="source" /> has no elements.
+		/// </returns>
 		public string Join(char separator)
 			=> string.Join(separator, source
 				.Select(item => item?.ToString())
@@ -147,8 +155,16 @@ public static class EnumerableExtensions
 			);
 
 		/// <summary>
-		/// Joins non-null items with specified separator.
+		/// Concatenates the non-null members of a collection, using the specified separator between each member.
 		/// </summary>
+		/// <param name="separator">
+		/// The string to use as a separator. <paramref name="separator" /> is included in the returned
+		/// string only if <paramref name="source" /> has more than one element.
+		/// </param>
+		/// <returns>
+		/// A string that consists of the non-null members of <paramref name="source" /> delimited by the <paramref name="separator" /> character.
+		/// -or- <see cref="F:String.Empty" /> if <paramref name="source" /> has no elements.
+		/// </returns>
 		public string Join(string separator)
 			=> string.Join(separator, source
 				.Select(item => item?.ToString())

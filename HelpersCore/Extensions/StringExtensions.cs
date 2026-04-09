@@ -7,6 +7,73 @@ namespace HelpersCore;
 /// </summary>
 public static class StringExtensions
 {
+	extension(string)
+	{
+		/// <summary>
+		/// Concatenates the non-null members of a collection, using the specified separator between each member.
+		/// </summary>
+		/// <param name="separator">
+		/// The character to use as a separator. <paramref name="separator" /> is included in the returned
+		/// string only if <paramref name="values" /> has more than one element.
+		/// </param>
+		/// <param name="values">A collection that contains the objects to concatenate.</param>
+		/// <returns>
+		/// A string that consists of the non-null members of <paramref name="values" /> delimited by the <paramref name="separator" /> character.
+		/// -or- <see cref="F:String.Empty" /> if <paramref name="values" /> has no elements.
+		/// </returns>
+		public static string JoinNotNull(char separator, params IEnumerable<string?> values)
+			=> string.Join(separator, values.NotNull());
+
+		/// <summary>
+		/// Concatenates the non-null members of a collection, using the specified separator between each member.
+		/// </summary>
+		/// <param name="separator">
+		/// The string to use as a separator. <paramref name="separator" /> is included in the returned
+		/// string only if <paramref name="values" /> has more than one element.
+		/// </param>
+		/// <param name="values">A collection that contains the objects to concatenate.</param>
+		/// <returns>
+		/// A string that consists of the non-null members of <paramref name="values" /> delimited by the <paramref name="separator" /> character.
+		/// -or- <see cref="F:String.Empty" /> if <paramref name="values" /> has no elements.
+		/// </returns>
+		public static string JoinNotNull(string? separator, params IEnumerable<string?> values)
+			=> string.Join(separator, values.NotNull());
+
+		/// <summary>
+		/// Concatenates the non-null members of a collection, using the specified separator between each member.
+		/// </summary>
+		/// <param name="separator">
+		/// The character to use as a separator. <paramref name="separator" /> is included in the returned
+		/// string only if <paramref name="values" /> has more than one element.
+		/// </param>
+		/// <param name="values">A collection that contains the objects to concatenate.</param>
+		/// <typeparam name="T">The type of the members of <paramref name="values" />.</typeparam>
+		/// <returns>
+		/// A string that consists of the non-null members of <paramref name="values" /> delimited by the <paramref name="separator" /> character.
+		/// -or- <see cref="F:String.Empty" /> if <paramref name="values" /> has no elements.
+		/// </returns>
+		public static string JoinNotNull<T>(char separator, params IEnumerable<T?> values)
+			where T : class
+			=> string.Join(separator, values.NotNull());
+
+		/// <summary>
+		/// Concatenates the non-null members of a collection, using the specified separator between each member.
+		/// </summary>
+		/// <param name="separator">
+		/// The string to use as a separator. <paramref name="separator" /> is included in the returned
+		/// string only if <paramref name="values" /> has more than one element.
+		/// </param>
+		/// <param name="values">A collection that contains the objects to concatenate.</param>
+		/// <typeparam name="T">The type of the members of <paramref name="values" />.</typeparam>
+		/// <returns>
+		/// A string that consists of the non-null members of <paramref name="values" /> delimited by the <paramref name="separator" /> character.
+		/// -or- <see cref="F:String.Empty" /> if <paramref name="values" /> has no elements.
+		/// </returns>
+		public static string JoinNotNull<T>(string? separator, params IEnumerable<T?> values)
+			where T : class
+			=> string.Join(separator, values.NotNull());
+	}
+
 	extension(ReadOnlySpan<char> source)
 	{
 		/// <summary>
