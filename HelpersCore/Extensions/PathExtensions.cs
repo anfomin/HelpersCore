@@ -31,10 +31,33 @@ public static class PathExtensions
 	extension(FileInfo file)
 	{
 		/// <summary>
+		/// Gets the file name without extension.
+		/// </summary>
+		public string NameWithoutExtension
+			=> Path.GetFileNameWithoutExtension(file.Name);
+
+		/// <summary>
 		/// Returns <see cref="FileInfo"/> with changed extension.
 		/// </summary>
 		/// <param name="extension">New file extension.</param>
 		public FileInfo ChangeExtension(string? extension)
 			=> new(Path.ChangeExtension(file.FullName, extension));
+	}
+
+	extension(DirectoryInfo directory)
+	{
+		/// <summary>
+		/// Gets subdirectory by relative path.
+		/// </summary>
+		/// <param name="relativePath">Path relative to the current directory.</param>
+		public DirectoryInfo GetSubdirectory(string relativePath)
+			=> new(Path.Combine(directory.FullName, relativePath));
+
+		/// <summary>
+		/// Gets file by relative path.
+		/// </summary>
+		/// <param name="relativePath">Path relative to the current directory.</param>
+		public FileInfo GetFile(string relativePath)
+			=> new(Path.Combine(directory.FullName, relativePath));
 	}
 }
