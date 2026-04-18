@@ -10,11 +10,65 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for <see cref="Enum"/>.
 /// </summary>
-[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
+[SuppressMessage("ReSharper", "InvokeAsExtensionMemberFromSameClass")]
 public static class EnumExtensions
 {
 	static readonly ConcurrentDictionary<Enum, bool> EnumReadOnly = new();
 	static readonly ConcurrentDictionary<Enum, bool> EnumIgnore = new();
+
+	extension(Enum)
+	{
+		/// <summary>
+		/// Converts the specified object with an integer value to an enumeration member.
+		/// </summary>
+		/// <param name="value">The value convert to an enumeration member.</param>
+		/// <exception cref="T:System.ArgumentNullException">
+		/// <paramref name="value" /> is <see langword="null" />.
+		/// </exception>
+		/// <exception cref="T:System.ArgumentException">
+		/// <paramref name="value" /> is not type <see cref="sbyte" />, <see cref="short" />, <see cref="int" />, <see cref="long" />, <see cref="byte" />, <see cref="ushort" />, <see cref="uint" />, or <see cref="ulong" />.
+		/// </exception>
+		/// <returns>An enumeration object whose value is <paramref name="value" />.</returns>
+		public static T ToObject<T>(object value)
+			where T : struct, Enum
+			=> (T)Enum.ToObject(typeof(T), value);
+
+		/// <summary>
+		/// Converts the specified 8-bit signed integer to an enumeration member.
+		/// </summary>
+		/// <param name="value">The value to convert to an enumeration member.</param>
+		/// <returns>An instance of the enumeration set to <paramref name="value" />.</returns>
+		public static T ToObject<T>(byte value)
+			where T : struct, Enum
+			=> (T)Enum.ToObject(typeof(T), value);
+
+		/// <summary>
+		/// Converts the specified 16-bit signed integer to an enumeration member.
+		/// </summary>
+		/// <param name="value">The value to convert to an enumeration member.</param>
+		/// <returns>An instance of the enumeration set to <paramref name="value" />.</returns>
+		public static T ToObject<T>(short value)
+			where T : struct, Enum
+			=> (T)Enum.ToObject(typeof(T), value);
+
+		/// <summary>
+		/// Converts the specified 32-bit signed integer to an enumeration member.
+		/// </summary>
+		/// <param name="value">The value to convert to an enumeration member.</param>
+		/// <returns>An instance of the enumeration set to <paramref name="value" />.</returns>
+		public static T ToObject<T>(int value)
+			where T : struct, Enum
+			=> (T)Enum.ToObject(typeof(T), value);
+
+		/// <summary>
+		/// Converts the specified 64-bit signed integer to an enumeration member.
+		/// </summary>
+		/// <param name="value">The value to convert to an enumeration member.</param>
+		/// <returns>An instance of the enumeration set to <paramref name="value" />.</returns>
+		public static T ToObject<T>(long value)
+			where T : struct, Enum
+			=> (T)Enum.ToObject(typeof(T), value);
+	}
 
 	extension(Enum enm)
 	{
@@ -110,9 +164,10 @@ public static class EnumExtensions
 		/// Returns value with only flags existing in enum type.
 		/// </summary>
 		public T FilterExistingFlags()
-			=> Enum.GetValues<T>()
-				.Where(flag => enm.HasFlag(flag))
-				.Aggregate((long)0, (result, flag) => result | Convert.ToInt64(flag))
-				.ConvertTo<T>();
+			=> Enum.ToObject<T>(
+				Enum.GetValues<T>()
+					.Where(flag => enm.HasFlag(flag))
+					.Aggregate(0L, (result, flag) => result | Convert.ToInt64(flag))
+			);
 	}
 }

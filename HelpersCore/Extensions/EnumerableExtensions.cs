@@ -7,7 +7,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for enumerable and collections.
 /// </summary>
-[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
+[SuppressMessage("ReSharper", "InvokeAsExtensionMemberFromSameClass")]
 public static class EnumerableExtensions
 {
 	extension<T>(IEnumerable<T> source)

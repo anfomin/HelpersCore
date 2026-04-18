@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HelpersCore;
 
-[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
+[SuppressMessage("ReSharper", "InvokeAsExtensionMemberFromSameClass")]
 public static partial class ConsoleExtensions
 {
 	extension(Console)
@@ -23,7 +23,7 @@ public static partial class ConsoleExtensions
 				Console.WriteLine($@"{i + 1}. {displayFn(item)}");
 			Console.WriteLine();
 
-			int value = Read<int>(Strings.EnterSelection,
+			int value = Console.Read<int>(Strings.EnterSelection,
 				v => 0 < v && v <= items.Count ? null : Strings.EnterValidSelection
 			);
 			int index = value - 1;
@@ -43,7 +43,7 @@ public static partial class ConsoleExtensions
 		/// <param name="displayFn">Function used to display an item in the console.</param>
 		/// <returns>Selected item.</returns>
 		public static async Task<T> SelectByKeyAsync<T, TKey>(string name, IEnumerable<T> items, Func<T, TKey> keyFn, DisplayFn<T>? displayFn = null)
-			where TKey : notnull
+			where TKey : IParsable<TKey>
 		{
 			displayFn ??= x => x is null ? Strings.Null : x.ToString();
 			Console.Write(name);
@@ -57,7 +57,7 @@ public static partial class ConsoleExtensions
 			}
 			Console.WriteLine();
 
-			var selectedKey = Read<TKey>(Strings.EnterSelection,
+			var selectedKey = Console.Read<TKey>(Strings.EnterSelection,
 				key => dictionary.ContainsKey(key) ? null : Strings.EnterValidSelection
 			);
 			var selected = dictionary[selectedKey];
@@ -87,7 +87,7 @@ public static partial class ConsoleExtensions
 		/// <returns>Selected item.</returns>
 		public static Task<T?> SelectByKeyOrNullAsync<T, TKey>(string name, IEnumerable<T> items, Func<T, TKey> keyFn, DisplayFn<T?>? displayFn = null)
 			where T : class
-			where TKey : notnull
+			where TKey : IParsable<TKey>
 			=> SelectByKeyAsync(name,
 				items: items.Prepend(null),
 				keyFn: item => item is null ? default! : keyFn(item),

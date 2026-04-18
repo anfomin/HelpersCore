@@ -6,7 +6,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for <see cref="Console"/>.
 /// </summary>
-[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
+[SuppressMessage("ReSharper", "InvokeAsExtensionMemberFromSameClass")]
 public static partial class ConsoleExtensions
 {
 	extension(Console)

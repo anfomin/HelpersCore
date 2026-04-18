@@ -6,7 +6,7 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for <see cref="Size"/>.
 /// </summary>
-[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
+[SuppressMessage("ReSharper", "InvokeAsExtensionMemberFromSameClass")]
 public static class SizeExtensions
 {
 	extension(ref Size size)
@@ -22,7 +22,7 @@ public static class SizeExtensions
 		/// Multiplies size width and height by <paramref name="factor"/>.
 		/// </summary>
 		/// <param name="factor">Multiply factor.</param>
-		public void operator *= (double factor)
+		public void operator *=(double factor)
 		{
 			size.Width = (int)Math.Round(size.Width * factor);
 			size.Height = (int)Math.Round(size.Height * factor);
@@ -39,7 +39,7 @@ public static class SizeExtensions
 		/// Divides size width and height by <paramref name="divider"/>.
 		/// </summary>
 		/// <param name="divider">Division divider.</param>
-		public void operator /= (double divider)
+		public void operator /=(double divider)
 		{
 			size.Width = (int)Math.Round(size.Width / divider);
 			size.Height = (int)Math.Round(size.Height / divider);

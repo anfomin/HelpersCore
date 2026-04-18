@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-		<PackageReference Include="System.Linq.Async" Version="6.*" />
+		<PackageReference Include="System.Linq.Async" Version="7.*" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace HelpersCore;
@@ -6,7 +5,6 @@ namespace HelpersCore;
 /// <summary>
 /// Provides extensions for text representation.
 /// </summary>
-[SuppressMessage("ReSharper", "InvokeAsExtensionMember")]
 public static partial class TextExtensions
 {
 	extension(int value)
@@ -43,7 +41,7 @@ public static partial class TextExtensions
 		/// <param name="singular">Declination for singular value.</param>
 		/// <param name="plural">Declination for plural value.</param>
 		public string WithUnit(string singular, string plural)
-			=> value + "\u00a0" + GetUnit(value, singular, plural);
+			=> value + "\u00a0" + value.GetUnit(singular, plural);
 
 		/// <summary>
 		/// Returns <paramref name="value"/> with unit declination for specified <paramref name="value"/>.
@@ -52,7 +50,7 @@ public static partial class TextExtensions
 		/// <param name="two">Declination for value 2.</param>
 		/// <param name="five">Declination for value 5. If <c>null</c> then uses <paramref name="two"/>.</param>
 		public string WithUnit(string one, string two, string? five)
-			=> value + "\u00a0" + GetUnit(value, one, two, five);
+			=> value + "\u00a0" + value.GetUnit(one, two, five);
 
 		/// <summary>
 		/// Returns <paramref name="value"/> with unit declination for specified <paramref name="value"/>.
@@ -62,7 +60,7 @@ public static partial class TextExtensions
 		/// <param name="two">Declination for value 2.</param>
 		/// <param name="five">Declination for value 5. If <c>null</c> then uses <paramref name="two"/>.</param>
 		public string WithUnit(string? format, string one, string two, string? five)
-			=> value.ToString(format) + "\u00a0" + GetUnit(value, one, two, five);
+			=> value.ToString(format) + "\u00a0" + value.GetUnit(one, two, five);
 	}
 
 	extension(string source)
