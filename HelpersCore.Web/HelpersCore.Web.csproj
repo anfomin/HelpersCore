@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="../common.props" />
+
+	<PropertyGroup>
+		<AssemblyName>HelpersCore.Web</AssemblyName>
+		<PackageId>HelpersCore.Web</PackageId>
+		<PackageTags>helpers web</PackageTags>
+		<Description>Common used helper methods for ASP.NET Core.</Description>
+		<RootNamespace>HelpersCore</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<ProjectReference Include="../HelpersCore/HelpersCore.csproj" />
+	</ItemGroup>
+</Project>

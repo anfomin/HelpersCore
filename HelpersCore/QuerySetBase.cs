@@ -13,7 +13,6 @@ public abstract class QuerySetBase<TSelf, TItem> : IReadOnlySet<TItem>, ISpanPar
 	where TSelf : class, IReadOnlySet<TItem>, ISpanParsable<TSelf>, IEquatable<TSelf>, IQuerySetStatic<TSelf, TItem>, new()
 	where TItem : notnull
 {
-	const char Separator = '_';
 	readonly ImmutableSortedSet<TItem> _items;
 
 	public int Count => _items.Count;
@@ -75,13 +74,13 @@ public abstract class QuerySetBase<TSelf, TItem> : IReadOnlySet<TItem>, ISpanPar
 	/// Returns a <c>_</c>-separated string representation of the set or <c>null</c> if the set is empty.
 	/// </summary>
 	public override string? ToString()
-		=> _items.Count == 0 ? null : string.Join(Separator, _items.Select(TSelf.ConvertItemToString));
+		=> _items.Count == 0 ? null : string.Join(UrlHelper.ArraySeparator, _items.Select(TSelf.ConvertItemToString));
 
 	/// <summary>
 	/// Returns a <c>_</c>-separated string of specified <paramref name="items"/> or <c>null</c> if no items are provided.
 	/// </summary>
 	public static string? GetString(params IEnumerable<TItem>? items)
-		=> items == null || !items.Any() ? null : string.Join(Separator, items.Distinct().Order().Select(TSelf.ConvertItemToString));
+		=> items == null || !items.Any() ? null : string.Join(UrlHelper.ArraySeparator, items.Distinct().Order().Select(TSelf.ConvertItemToString));
 
 	/// <summary>
 	/// Tries to parse <c>_</c>-separated query string value into <typeparamref name="TItem"/> items set.
@@ -99,7 +98,7 @@ public abstract class QuerySetBase<TSelf, TItem> : IReadOnlySet<TItem>, ISpanPar
 
 		bool has = false;
 		List<TItem> items = [];
-		foreach (var range in s.Split(Separator))
+		foreach (var range in s.Split(UrlHelper.ArraySeparator))
 		{
 			var part = s[range];
 			if (part.IsEmpty || part.IsWhiteSpace())
@@ -145,7 +144,7 @@ public abstract class QuerySetBase<TSelf, TItem> : IReadOnlySet<TItem>, ISpanPar
 			return new();
 
 		List<TItem> items = [];
-		foreach (var range in s.Split(Separator))
+		foreach (var range in s.Split(UrlHelper.ArraySeparator))
 		{
 			var part = s[range];
 			if (part.IsEmpty || part.IsWhiteSpace())
