@@ -88,39 +88,47 @@ public sealed record Result<T> : Result
 
 	internal Result() { }
 
-	/// <summary>
-	/// Returns succeeded operation result.
-	/// </summary>
-	/// <param name="data">Result data.</param>
-	public new static Result<T> Success(T data) => new() { IsSuccess = true, Data = data };
-
-	/// <summary>
-	/// Returns pending operation result.
-	/// </summary>
-	public new static Result<T> Pending { get; } = new() { IsPending = true };
-
-	/// <summary>
-	/// Returns operation result with specified error messages.
-	/// </summary>
-	/// <param name="errors">Error messages.</param>
-	/// <exception cref="ArgumentException">If errors is empty.</exception>
-	public new static Result<T> Error(params IEnumerable<string> errors)
-	{
-		var errorMessages = errors.ToImmutableArray();
-		return errorMessages.Length == 0
-			? throw new ArgumentException("At least one error required", nameof(errors))
-			: new() { IsError = true, ErrorMessages = errorMessages };
-	}
-
-	/// <summary>
-	/// Returns operation result with <paramref name="ex"/> error message.
-	/// </summary>
-	/// <param name="ex">Exception for error message.</param>
-	public new static Result<T> Error(Exception ex) => new() { IsError = true, ErrorMessages = [ex.Message] };
+	internal new static Result<T> Pending { get; } = new() { IsPending = true };
 
 	/// <summary>
 	/// Converts data to succeeded operation result.
 	/// </summary>
 	/// <param name="data">Result data.</param>
 	public static implicit operator Result<T>(T data) => new() { IsSuccess = true, Data = data };
+}
+
+public static class ResultExtensions
+{
+	extension(Result)
+	{
+		/// <summary>
+		/// Returns succeeded operation result.
+		/// </summary>
+		/// <param name="data">Result data.</param>
+		public static Result<T> Success<T>(T data) => new() { IsSuccess = true, Data = data };
+
+		/// <summary>
+		/// Returns pending operation result.
+		/// </summary>
+		public static Result<T> Pending<T>() => Result<T>.Pending;
+
+		/// <summary>
+		/// Returns operation result with specified error messages.
+		/// </summary>
+		/// <param name="errors">Error messages.</param>
+		/// <exception cref="ArgumentException">If errors is empty.</exception>
+		public static Result<T> Error<T>(params IEnumerable<string> errors)
+		{
+			var errorMessages = errors.ToImmutableArray();
+			return errorMessages.Length == 0
+				? throw new ArgumentException("At least one error required", nameof(errors))
+				: new() { IsError = true, ErrorMessages = errorMessages };
+		}
+
+		/// <summary>
+		/// Returns operation result with <paramref name="ex"/> error message.
+		/// </summary>
+		/// <param name="ex">Exception for error message.</param>
+		public static Result<T> Error<T>(Exception ex) => new() { IsError = true, ErrorMessages = [ex.Message] };
+	}
 }
