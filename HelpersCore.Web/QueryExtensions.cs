@@ -17,20 +17,23 @@ public static class QueryExtensions
 	extension(QueryHelpers)
 	{
 		/// <summary>
-		/// Returns query string from the specified URL.
+		/// Returns query string from the specified URI.
 		/// </summary>
-		public static ReadOnlyMemory<char> GetFromUrl(string? url)
+		public static ReadOnlySpan<char> GetFromUri(ReadOnlySpan<char> uri)
 		{
-			if (url is null)
+			int start = uri.IndexOf('?');
+			if (start == -1)
 				return default;
 
-			var queryStartPos = url.IndexOf('?');
-			if (queryStartPos < 0)
-				return default;
-
-			var queryEndPos = url.IndexOf('#', queryStartPos);
-			return url.AsMemory(queryStartPos..(queryEndPos < 0 ? url.Length : queryEndPos));
+			int end = uri[start..].IndexOf('#');
+			return end == -1 ? uri[start..] : uri[start..end];
 		}
+
+		/// <summary>
+		/// Returns query string from the specified URI.
+		/// </summary>
+		public static ReadOnlySpan<char> GetFromUri(string? uri)
+			=> uri is null ? default : QueryHelpers.GetFromUri(uri.AsSpan());
 	}
 
 	extension(QueryString)
@@ -98,8 +101,8 @@ public static class QueryExtensions
 		IEnumerable enumerable => enumerable
 			.Cast<object?>()
 			.Select(v => GetValueString(v, enumAsInt))
-			.Join(UrlHelper.ArraySeparator),
+			.Join(Uri.QueryArraySeparator),
 		object => string.Format(CultureInfo.InvariantCulture, "{0}", value),
-		_ => UrlHelper.NullValue
+		_ => Uri.QueryNullValue
 	};
 }

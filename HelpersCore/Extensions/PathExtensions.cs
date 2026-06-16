@@ -13,7 +13,7 @@ public static class PathExtensions
 		public static string GetFullPath(params ReadOnlySpan<string> paths)
 		{
 			string combined = Path.Combine(paths);
-			return combined.StartsWith("~/") || combined.StartsWith(@"~\")
+			return combined.StartsWith("~/", StringComparison.Ordinal) || combined.StartsWith(@"~\", StringComparison.Ordinal)
 				? Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), combined[2..]))
 				: Path.GetFullPath(combined);
 		}
