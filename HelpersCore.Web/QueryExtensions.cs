@@ -32,8 +32,18 @@ public static class QueryExtensions
 		/// <summary>
 		/// Returns query string from the specified URI.
 		/// </summary>
-		public static ReadOnlySpan<char> GetFromUri(string? uri)
-			=> uri is null ? default : QueryHelpers.GetFromUri(uri.AsSpan());
+		public static ReadOnlyMemory<char> GetFromUri(string? uri)
+		{
+			if (uri is null)
+				return default;
+
+			int start = uri.IndexOf('?');
+			if (start == -1)
+				return default;
+
+			var end = uri.IndexOf('#', start);
+			return end == -1 ? uri.AsMemory(start) : uri.AsMemory(start..end);
+		}
 	}
 
 	extension(QueryString)
