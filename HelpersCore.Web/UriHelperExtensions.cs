@@ -19,7 +19,7 @@ public static class UriHelperExtensions
 		{
 			if (relativeUri == string.Empty)
 				return baseUri;
-			Uri @base = new(baseUri.EndsWith('/') ? baseUri : $"{baseUri}/");
+			Uri @base = new(baseUri.EndsWith('/') ? baseUri : $"{baseUri}/", UriKind.RelativeOrAbsolute);
 			string result = new Uri(@base, relativeUri).ToString();
 			return relativeUri.EndsWith('/') ? result : result.TrimEnd('/');
 		}
