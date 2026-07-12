@@ -42,7 +42,7 @@ public static partial class SKExtensions
 				using var temp = new SKBitmap(bitmap.Width, bitmap.Height, true);
 				using var canvas = new SKCanvas(temp);
 				canvas.Clear(SKColors.White);
-				canvas.DrawBitmap(bitmap, 0, 0);
+				canvas.DrawBitmap(bitmap, 0, 0, SKSamplingOptions.Default);
 				return temp.Encode(format, quality);
 			}
 			return bitmap.Encode(format, quality);
@@ -114,7 +114,7 @@ public static partial class SKExtensions
 				int left = (resultSize.Width - fitSize.Width) / 2;
 				int top = (resultSize.Height - fitSize.Height) / 2;
 				canvas.Clear(SKColors.Transparent);
-				canvas.DrawBitmap(resized, left, top);
+				canvas.DrawBitmap(resized, left, top, SKSamplingOptions.Default);
 			}
 			resized.Dispose();
 			return padBitmap;
@@ -151,7 +151,7 @@ public static partial class SKExtensions
 				canvas.Translate(0, rotated.Height);
 				canvas.RotateDegrees(-90);
 			}
-			canvas.DrawBitmap(bitmap, 0, 0);
+			canvas.DrawBitmap(bitmap, 0, 0, SKSamplingOptions.Default);
 			return rotated;
 		}
 
@@ -169,7 +169,7 @@ public static partial class SKExtensions
 					using (var surface = new SKCanvas(result))
 					{
 						surface.RotateDegrees(180, (float)bitmap.Width / 2, (float)bitmap.Height / 2);
-						surface.DrawBitmap(bitmap, 0, 0);
+						surface.DrawBitmap(bitmap, 0, 0, SKSamplingOptions.Default);
 					}
 					return result;
 				case SKEncodedOrigin.RightTop: // rotated 90 cw
@@ -178,7 +178,7 @@ public static partial class SKExtensions
 					{
 						surface.Translate(result.Width, 0);
 						surface.RotateDegrees(90);
-						surface.DrawBitmap(bitmap, 0, 0);
+						surface.DrawBitmap(bitmap, 0, 0, SKSamplingOptions.Default);
 					}
 					return result;
 				case SKEncodedOrigin.LeftBottom: // rotated 90 ccw
@@ -187,7 +187,7 @@ public static partial class SKExtensions
 					{
 						surface.Translate(0, result.Height);
 						surface.RotateDegrees(270);
-						surface.DrawBitmap(bitmap, 0, 0);
+						surface.DrawBitmap(bitmap, 0, 0, SKSamplingOptions.Default);
 					}
 					return result;
 				default:

@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../HelpersCore/HelpersCore.csproj" />
-    <PackageReference Include="SkiaSharp" Version="3.119.4" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.4" Condition="'$(OS)' == 'UNIX'" />
+    <PackageReference Include="SkiaSharp" Version="4.150.0" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.150.0" Condition="'$(OS)' == 'UNIX'" />
   </ItemGroup>
 </Project>
