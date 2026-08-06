@@ -7,6 +7,18 @@ namespace HelpersCore;
 /// </summary>
 public static class PointExtensions
 {
+	extension(Point point)
+	{
+		/// <summary>
+		/// Deconstructs point to X and Y.
+		/// </summary>
+		public void Deconstruct(out int x, out int y)
+		{
+			x = point.X;
+			y = point.Y;
+		}
+	}
+
 	extension(ref PointF point)
 	{
 		/// <summary>
@@ -46,6 +58,15 @@ public static class PointExtensions
 
 	extension(PointF point)
 	{
+		/// <summary>
+		/// Deconstructs point to X and Y.
+		/// </summary>
+		public void Deconstruct(out float x, out float y)
+		{
+			x = point.X;
+			y = point.Y;
+		}
+
 		/// <summary>
 		/// Returns distance from current points to <paramref name="other"/>.
 		/// </summary>

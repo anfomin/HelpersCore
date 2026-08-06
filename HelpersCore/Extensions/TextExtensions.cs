@@ -7,26 +7,26 @@ namespace HelpersCore;
 /// </summary>
 public static partial class TextExtensions
 {
-	extension(int value)
+	extension(int quantity)
 	{
 		/// <summary>
-		/// Provides unit declination for specified <paramref name="value"/>.
+		/// Provides unit declination for specified <paramref name="quantity"/>.
 		/// </summary>
 		/// <param name="singular">Declination for singular value.</param>
 		/// <param name="plural">Declination for plural value.</param>
 		public string GetUnit(string singular, string plural)
-			=> Math.Abs(value) == 1 ? singular : plural;
+			=> Math.Abs(quantity) == 1 ? singular : plural;
 
 		/// <summary>
-		/// Provides unit declination for specified <paramref name="value"/>.
+		/// Provides unit declination for specified <paramref name="quantity"/>.
 		/// </summary>
 		/// <param name="one">Declination for value 1.</param>
 		/// <param name="two">Declination for value 2.</param>
 		/// <param name="five">Declination for value 5. If <c>null</c> then uses <paramref name="two"/>.</param>
 		public string GetUnit(string one, string two, string? five)
 		{
-			value = Math.Abs(value);
-			int n = (value % 100 > 20) ? value % 10 : value % 20;
+			quantity = Math.Abs(quantity);
+			int n = (quantity % 100 > 20) ? quantity % 10 : quantity % 20;
 			return n switch
 			{
 				1 => one,
@@ -36,31 +36,31 @@ public static partial class TextExtensions
 		}
 
 		/// <summary>
-		/// Returns <paramref name="value"/> with unit declination for specified <paramref name="value"/>.
+		/// Returns <paramref name="quantity"/> with unit declination for specified <paramref name="quantity"/>.
 		/// </summary>
 		/// <param name="singular">Declination for singular value.</param>
 		/// <param name="plural">Declination for plural value.</param>
 		public string WithUnit(string singular, string plural)
-			=> value + "\u00a0" + value.GetUnit(singular, plural);
+			=> $"{quantity}\u00a0{quantity.GetUnit(singular, plural)}";
 
 		/// <summary>
-		/// Returns <paramref name="value"/> with unit declination for specified <paramref name="value"/>.
+		/// Returns <paramref name="quantity"/> with unit declination for specified <paramref name="quantity"/>.
 		/// </summary>
 		/// <param name="one">Declination for value 1.</param>
 		/// <param name="two">Declination for value 2.</param>
 		/// <param name="five">Declination for value 5. If <c>null</c> then uses <paramref name="two"/>.</param>
 		public string WithUnit(string one, string two, string? five)
-			=> value + "\u00a0" + value.GetUnit(one, two, five);
+			=> $"{quantity}\u00a0{quantity.GetUnit(one, two, five)}";
 
 		/// <summary>
-		/// Returns <paramref name="value"/> with unit declination for specified <paramref name="value"/>.
+		/// Returns <paramref name="quantity"/> with unit declination for specified <paramref name="quantity"/>.
 		/// </summary>
 		/// <param name="format">Format string for value.</param>
 		/// <param name="one">Declination for value 1.</param>
 		/// <param name="two">Declination for value 2.</param>
 		/// <param name="five">Declination for value 5. If <c>null</c> then uses <paramref name="two"/>.</param>
 		public string WithUnit(string? format, string one, string two, string? five)
-			=> value.ToString(format) + "\u00a0" + value.GetUnit(one, two, five);
+			=> $"{quantity.ToString(format)}\u00a0{quantity.GetUnit(one, two, five)}";
 	}
 
 	extension(string source)

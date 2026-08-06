@@ -49,6 +49,15 @@ public static class SizeExtensions
 	extension(Size size)
 	{
 		/// <summary>
+		/// Deconstructs size to width and height.
+		/// </summary>
+		public void Deconstruct(out int width, out int height)
+		{
+			width = size.Width;
+			height = size.Height;
+		}
+
+		/// <summary>
 		/// Returns string in <c>{width}x{height}</c> format.
 		/// </summary>
 		public string ToResolutionString()
