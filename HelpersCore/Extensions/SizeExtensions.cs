@@ -95,8 +95,8 @@ public static class SizeExtensions
 			double scaleWidth = width / (double)maxWidth;
 			double scaleHeight = height / (double)maxHeight;
 			double scale = mode == ResizeMode.Fit ? Math.Min(scaleWidth, scaleHeight) : Math.Max(scaleWidth, scaleHeight);
-			int resultWidth = (int)Math.Round(maxWidth * scale);
-			int resultHeight = (int)Math.Round(maxHeight * scale);
+			int resultWidth = (int)Math.Round(size.Width * scale);
+			int resultHeight = (int)Math.Round(size.Height * scale);
 			return new Size(Math.Min(resultWidth, width), Math.Min(resultHeight, height));
 		}
 
