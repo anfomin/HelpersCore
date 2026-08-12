@@ -1,3 +1,4 @@
+using System.Drawing;
 using NpgsqlTypes;
 
 namespace HelpersCore;
@@ -5,6 +6,16 @@ namespace HelpersCore;
 public static partial class NpgsqlExtensions
 {
 	const double EarthRadius = 6_378_137; // in meters
+
+	extension(Point point)
+	{
+		/// <summary>
+		/// Creates a new <see cref="NpgsqlPoint"/> from <see cref="Point"/>.
+		/// </summary>
+		/// <returns></returns>
+		public NpgsqlPoint ToNpgsql()
+			=> new(point.X, point.Y);
+	}
 
 	extension(NpgsqlPoint point)
 	{
@@ -57,6 +68,14 @@ public static partial class NpgsqlExtensions
 				circle.Center.Add(-circle.Radius, circle.Radius).ToGeoPoint(),
 				circle.Center.Add(circle.Radius, -circle.Radius).ToGeoPoint()
 			);
+
+		/// <summary>
+		/// Returns the distance from the circle edge to the specified <paramref name="point"/>.
+		/// </summary>
+		/// <param name="point">The point to calculate the distance to.</param>
+		/// <returns>The distance from the circle to the specified point, in meters.</returns>
+		public double GetDistanceTo(NpgsqlPoint point)
+			=> Math.Max(0, circle.Center.GetDistanceTo(point) - circle.Radius);
 	}
 
 	extension(NpgsqlPolygon polygon)

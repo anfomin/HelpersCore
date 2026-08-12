@@ -64,40 +64,51 @@ public static class SizeExtensions
 			=> $"{size.Width}x{size.Height}";
 
 		/// <summary>
-		/// Returns downscaled size saving original proportions.
+		/// Returns if <paramref name="size"/> and <paramref name="other"/> have the same aspect ratio.
 		/// </summary>
-		/// <param name="maxSize">Desired maximum width and height.</param>
-		public Size Downscale(Size maxSize, ResizeMode mode = ResizeMode.Fit)
-			=> size.Downscale(maxSize.Width, maxSize.Height, mode);
+		public bool AspectEquals(Size other)
+			=> (int)Math.Round((double)size.Width / other.Width * other.Height) == size.Height;
+
+		/// <summary>
+		/// Returns if <paramref name="size"/> fits in <paramref name="other"/>.
+		/// </summary>
+		public bool FitsIn(Size other)
+			=> size.Width <= other.Width && size.Height <= other.Height;
 
 		/// <summary>
 		/// Returns downscaled size saving original proportions.
 		/// </summary>
-		/// <param name="maxWidth">Desired maximum width.</param>
-		/// <param name="maxHeight">Desired maximum height.</param>
-		public Size Downscale(int maxWidth, int maxHeight, ResizeMode mode = ResizeMode.Fit)
+		/// <param name="desiredSize">Desired width and height.</param>
+		public Size Downscale(Size desiredSize, ResizeMode mode = ResizeMode.Fit)
+			=> size.Downscale(desiredSize.Width, desiredSize.Height, mode);
+
+		/// <summary>
+		/// Returns downscaled size saving original proportions.
+		/// </summary>
+		/// <param name="desiredWidth">Desired width. If zero then does not used.</param>
+		/// <param name="desiredHeight">Desired height. If zero then does not used.</param>
+		public Size Downscale(int desiredWidth, int desiredHeight, ResizeMode mode = ResizeMode.Fit)
 		{
-			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxWidth);
-			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxHeight);
-
+			ArgumentOutOfRangeException.ThrowIfNegative(desiredWidth);
+			ArgumentOutOfRangeException.ThrowIfNegative(desiredHeight);
 			if (size.IsEmpty)
-				return new Size(maxWidth, maxHeight);
-			if (mode == ResizeMode.Pad)
-				return new Size(size.Width == 0 ? maxWidth : size.Width, size.Height == 0 ? maxHeight : size.Height);
+				return new(desiredWidth, desiredHeight);
 
-			int width = Math.Min(maxWidth, size.Width);
-			int height = Math.Min(maxHeight, size.Height);
-			if (width == 0)
-				width = (int)Math.Round((double)maxWidth * height / maxHeight);
-			else if (height == 0)
-				height = (int)Math.Round((double)maxHeight * width / maxWidth);
+			if (desiredWidth == 0)
+				desiredWidth = size.Width;
+			if (desiredHeight == 0)
+				desiredHeight = size.Height;
 
-			double scaleWidth = width / (double)maxWidth;
-			double scaleHeight = height / (double)maxHeight;
-			double scale = mode == ResizeMode.Fit ? Math.Min(scaleWidth, scaleHeight) : Math.Max(scaleWidth, scaleHeight);
-			int resultWidth = (int)Math.Round(size.Width * scale);
-			int resultHeight = (int)Math.Round(size.Height * scale);
-			return new Size(Math.Min(resultWidth, width), Math.Min(resultHeight, height));
+			double scaleWidth = Math.Min((double)desiredWidth / size.Width, 1);
+			double scaleHeight = Math.Min((double)desiredHeight / size.Height, 1);
+			double scale = mode == ResizeMode.Fill
+				? Math.Max(scaleWidth, scaleHeight)
+				: Math.Min(scaleWidth, scaleHeight);
+			int resWidth = (int)Math.Round(size.Width * scale);
+			int resHeight = (int)Math.Round(size.Height * scale);
+			return mode == ResizeMode.Pad
+				? new(Math.Max(resWidth, desiredWidth), Math.Max(resHeight, desiredHeight))
+				: new(resWidth, resHeight);
 		}
 
 		/// <summary>

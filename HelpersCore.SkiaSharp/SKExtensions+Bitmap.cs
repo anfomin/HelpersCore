@@ -8,6 +8,11 @@ public static partial class SKExtensions
 	extension(SKBitmap bitmap)
 	{
 		/// <summary>
+		/// Returns <see cref="Size"/> for given <see cref="SKBitmap"/>.
+		/// </summary>
+		public Size Size => new(bitmap.Width, bitmap.Height);
+
+		/// <summary>
 		/// Decodes <see cref="SKBitmap"/> with RGBA8888 or BGRA8888 color type.
 		/// </summary>
 		/// <param name="stream">Image stream.</param>
@@ -76,48 +81,50 @@ public static partial class SKExtensions
 
 		/// <summary>
 		/// Creates downscaled <see cref="SKBitmap"/> saving original proportions.
-		/// Returns null if source bitmap size is the same as resized one.
+		/// Returns <c>null</c> if source bitmap size is the same as resized one.
+		/// For <see cref="ResizeMode.Fill"/> mode the result bitmap will be cropped to fit the specified size.
+		/// For <see cref="ResizeMode.Pad"/> mode the result bitmap will be padded with transparent pixels to fit the specified size.
 		/// </summary>
-		/// <param name="maxSize">Desired maximum width and height.</param>
+		/// <param name="maxSize">Maximum width and height.</param>
 		/// <param name="mode">Resize mode.</param>
 		/// <param name="sampling">Resize sampling.</param>
 		public SKBitmap? Downscale(Size maxSize, ResizeMode mode, SKSamplingOptions sampling)
 		{
-			var sourceSize = new Size(bitmap.Width, bitmap.Height);
+			var sourceSize = bitmap.Size;
 			var resultSize = maxSize.Downscale(bitmap.Width, bitmap.Height, mode);
 			if (sourceSize == resultSize)
 				return null;
 
-			if (mode == ResizeMode.Fill)
+			switch (mode)
 			{
-				double scaleWidth = (double)resultSize.Width / sourceSize.Width;
-				double scaleHeight = (double)resultSize.Height / sourceSize.Height;
-				double scale = Math.Max(scaleWidth, scaleHeight);
-				var fillSize = new Size((int)Math.Round(sourceSize.Width * scale), (int)Math.Round(sourceSize.Height * scale));
-				int left = (fillSize.Width - resultSize.Width) / 2;
-				int top = (fillSize.Height - resultSize.Height) / 2;
-				var rect = new SKRectI(left, top, left + resultSize.Width, top + resultSize.Height);
-				var fillBitmap = new SKBitmap(resultSize.Width, resultSize.Height);
-				using var filled = bitmap.Resize(fillSize, sampling);
-				filled.ExtractSubset(fillBitmap, rect);
-				return fillBitmap;
+				case ResizeMode.Fit:
+					return bitmap.Resize(resultSize, sampling);
+				case ResizeMode.Fill:
+				{
+					var clipSize = new Size(Math.Min(resultSize.Width, maxSize.Width), Math.Min(resultSize.Height, maxSize.Height));
+					int left = (resultSize.Width - clipSize.Width) / 2;
+					int top = (resultSize.Height - clipSize.Height) / 2;
+					var clipRect = new SKRectI(left, top, left + clipSize.Width, top + clipSize.Height);
+					using var filled = bitmap.Resize(resultSize, sampling);
+					var fillBitmap = new SKBitmap(clipSize.Width, clipSize.Height);
+					filled.ExtractSubset(fillBitmap, clipRect);
+					return fillBitmap;
+				}
+				case ResizeMode.Pad:
+				{
+					var fitSize = maxSize.Downscale(bitmap.Width, bitmap.Height);
+					using var resized = bitmap.Resize(fitSize, sampling);
+					var padBitmap = new SKBitmap(resultSize.Width, resultSize.Height);
+					using var canvas = new SKCanvas(padBitmap);
+					int left = (resultSize.Width - fitSize.Width) / 2;
+					int top = (resultSize.Height - fitSize.Height) / 2;
+					canvas.Clear(SKColors.Transparent);
+					canvas.DrawBitmap(resized, left, top, SKSamplingOptions.Default);
+					return padBitmap;
+				}
+				default:
+					throw new NotSupportedException();
 			}
-
-			var fitSize = maxSize.Downscale(bitmap.Width, bitmap.Height);
-			var resized = bitmap.Resize(fitSize, sampling);
-			if (mode == ResizeMode.Fit)
-				return resized;
-
-			var padBitmap = new SKBitmap(resultSize.Width, resultSize.Height);
-			using (var canvas = new SKCanvas(padBitmap))
-			{
-				int left = (resultSize.Width - fitSize.Width) / 2;
-				int top = (resultSize.Height - fitSize.Height) / 2;
-				canvas.Clear(SKColors.Transparent);
-				canvas.DrawBitmap(resized, left, top, SKSamplingOptions.Default);
-			}
-			resized.Dispose();
-			return padBitmap;
 		}
 
 		/// <summary>
