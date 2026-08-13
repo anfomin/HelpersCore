@@ -79,15 +79,23 @@ public static class SizeExtensions
 		/// Returns downscaled size saving original proportions.
 		/// </summary>
 		/// <param name="desiredSize">Desired width and height.</param>
-		public Size Downscale(Size desiredSize, ResizeMode mode = ResizeMode.Fit)
-			=> size.Downscale(desiredSize.Width, desiredSize.Height, mode);
+		/// <param name="fill">
+		/// If <c>false</c> then fits within the desired size.
+		/// If <c>true</c> then fills the desired size and resulting width or height can be greater that desired size.
+		/// </param>
+		public Size Downscale(Size desiredSize, bool fill = false)
+			=> size.Downscale(desiredSize.Width, desiredSize.Height, fill);
 
 		/// <summary>
 		/// Returns downscaled size saving original proportions.
 		/// </summary>
 		/// <param name="desiredWidth">Desired width. If zero then does not used.</param>
 		/// <param name="desiredHeight">Desired height. If zero then does not used.</param>
-		public Size Downscale(int desiredWidth, int desiredHeight, ResizeMode mode = ResizeMode.Fit)
+		/// <param name="fill">
+		/// If <c>false</c> then fits within the desired size.
+		/// If <c>true</c> then fills the desired size and resulting width or height can be greater that desired size.
+		/// </param>
+		public Size Downscale(int desiredWidth, int desiredHeight, bool fill = false)
 		{
 			ArgumentOutOfRangeException.ThrowIfNegative(desiredWidth);
 			ArgumentOutOfRangeException.ThrowIfNegative(desiredHeight);
@@ -101,14 +109,12 @@ public static class SizeExtensions
 
 			double scaleWidth = Math.Min((double)desiredWidth / size.Width, 1);
 			double scaleHeight = Math.Min((double)desiredHeight / size.Height, 1);
-			double scale = mode == ResizeMode.Fill
+			double scale = fill
 				? Math.Max(scaleWidth, scaleHeight)
 				: Math.Min(scaleWidth, scaleHeight);
 			int resWidth = (int)Math.Round(size.Width * scale);
 			int resHeight = (int)Math.Round(size.Height * scale);
-			return mode == ResizeMode.Pad
-				? new(Math.Max(resWidth, desiredWidth), Math.Max(resHeight, desiredHeight))
-				: new(resWidth, resHeight);
+			return new(resWidth, resHeight);
 		}
 
 		/// <summary>

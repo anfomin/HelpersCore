@@ -82,8 +82,6 @@ public static partial class SKExtensions
 		/// <summary>
 		/// Creates downscaled <see cref="SKBitmap"/> saving original proportions.
 		/// Returns <c>null</c> if source bitmap size is the same as resized one.
-		/// For <see cref="ResizeMode.Fill"/> mode the result bitmap will be cropped to fit the specified size.
-		/// For <see cref="ResizeMode.Pad"/> mode the result bitmap will be padded with transparent pixels to fit the specified size.
 		/// </summary>
 		/// <param name="maxSize">Maximum width and height.</param>
 		/// <param name="mode">Resize mode.</param>
@@ -91,7 +89,8 @@ public static partial class SKExtensions
 		public SKBitmap? Downscale(Size maxSize, ResizeMode mode, SKSamplingOptions sampling)
 		{
 			var sourceSize = bitmap.Size;
-			var resultSize = maxSize.Downscale(bitmap.Width, bitmap.Height, mode);
+			var resultSize = mode == ResizeMode.Pad ? maxSize
+				: sourceSize.Downscale(maxSize, fill: mode == ResizeMode.Fill);
 			if (sourceSize == resultSize)
 				return null;
 
@@ -105,9 +104,9 @@ public static partial class SKExtensions
 					int left = (resultSize.Width - clipSize.Width) / 2;
 					int top = (resultSize.Height - clipSize.Height) / 2;
 					var clipRect = new SKRectI(left, top, left + clipSize.Width, top + clipSize.Height);
-					using var filled = bitmap.Resize(resultSize, sampling);
+					using var resized = bitmap.Resize(resultSize, sampling);
 					var fillBitmap = new SKBitmap(clipSize.Width, clipSize.Height);
-					filled.ExtractSubset(fillBitmap, clipRect);
+					resized.ExtractSubset(fillBitmap, clipRect);
 					return fillBitmap;
 				}
 				case ResizeMode.Pad:
