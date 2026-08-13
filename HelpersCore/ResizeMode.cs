@@ -11,7 +11,7 @@ public enum ResizeMode
 	Fit,
 
 	/// <summary>
-	/// Resize to fill entire area centering image.
+	/// Resize to fill entire area, clipping and centering image.
 	/// </summary>
 	Fill,
 

@@ -100,7 +100,7 @@ public static partial class SKExtensions
 					return bitmap.Resize(resultSize, sampling);
 				case ResizeMode.Fill:
 				{
-					var clipSize = new Size(Math.Min(resultSize.Width, maxSize.Width), Math.Min(resultSize.Height, maxSize.Height));
+					var clipSize = resultSize.Clip(maxSize);
 					int left = (resultSize.Width - clipSize.Width) / 2;
 					int top = (resultSize.Height - clipSize.Height) / 2;
 					var clipRect = new SKRectI(left, top, left + clipSize.Width, top + clipSize.Height);

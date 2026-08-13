@@ -76,15 +76,32 @@ public static class SizeExtensions
 			=> size.Width <= other.Width && size.Height <= other.Height;
 
 		/// <summary>
+		/// Returns clipped size to <paramref name="maxWidth"/> and <paramref name="maxHeight"/>.
+		/// </summary>
+		/// <param name="maxWidth">Maximum width.</param>
+		/// <param name="maxHeight">Maximum height.</param>
+		/// <returns>Clipped size.</returns>
+		public Size Clip(int maxWidth, int maxHeight)
+			=> new(Math.Min(size.Width, maxWidth), Math.Min(size.Height, maxHeight));
+
+		/// <summary>
+		/// Returns clipped size to <paramref name="max"/> size.
+		/// </summary>
+		/// <param name="max">Maximum size.</param>
+		/// <returns>Clipped size.</returns>
+		public Size Clip(Size max)
+			=> size.Clip(max.Width, max.Height);
+
+		/// <summary>
 		/// Returns downscaled size saving original proportions.
 		/// </summary>
-		/// <param name="desiredSize">Desired width and height.</param>
+		/// <param name="desired">Desired width and height.</param>
 		/// <param name="fill">
 		/// If <c>false</c> then fits within the desired size.
 		/// If <c>true</c> then fills the desired size and resulting width or height can be greater that desired size.
 		/// </param>
-		public Size Downscale(Size desiredSize, bool fill = false)
-			=> size.Downscale(desiredSize.Width, desiredSize.Height, fill);
+		public Size Downscale(Size desired, bool fill = false)
+			=> size.Downscale(desired.Width, desired.Height, fill);
 
 		/// <summary>
 		/// Returns downscaled size saving original proportions.
@@ -116,6 +133,25 @@ public static class SizeExtensions
 			int resHeight = (int)Math.Round(size.Height * scale);
 			return new(resWidth, resHeight);
 		}
+
+		/// <summary>
+		/// Returns downscaled size saving original proportions and clipped to <paramref name="maxWidth"/> and <paramref name="maxHeight"/>.
+		/// </summary>
+		/// <param name="maxWidth">Maximum width.</param>
+		/// <param name="maxHeight">Maximum height.</param>
+		/// <param name="mode">Resize mode.</param>
+		/// <returns>Downscaled and clipped size.</returns>
+		public Size DownscaleAndClip(int maxWidth, int maxHeight, ResizeMode mode)
+			=> size.Downscale(maxWidth, maxHeight, fill: mode == ResizeMode.Fill).Clip(new Size(maxWidth, maxHeight));
+
+		/// <summary>
+		/// Returns downscaled size saving original proportions and clipped to <paramref name="max"/> size.
+		/// </summary>
+		/// <param name="max">Maximum size.</param>
+		/// <param name="mode">Resize mode.</param>
+		/// <returns>Downscaled and clipped size.</returns>
+		public Size DownscaleAndClip(Size max, ResizeMode mode)
+			=> size.Downscale(max, mode == ResizeMode.Fill).Clip(max);
 
 		/// <summary>
 		/// Tries to parse <see cref="Size"/> from <c>{width}x{height}</c> string.
@@ -162,5 +198,17 @@ public static class SizeExtensions
 		/// </summary>
 		public static Size Parse(string s)
 			=> Parse(s.AsSpan());
+	}
+
+	extension(SizeF size)
+	{
+		/// <summary>
+		/// Deconstructs size to width and height.
+		/// </summary>
+		public void Deconstruct(out float width, out float height)
+		{
+			width = size.Width;
+			height = size.Height;
+		}
 	}
 }
