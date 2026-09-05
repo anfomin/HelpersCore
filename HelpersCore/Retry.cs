@@ -28,13 +28,13 @@ public static class Retry
 			attempts++;
 			try
 			{
-				return await action(cancellationToken);
+				return await action(cancellationToken).ConfigureAwait(false);
 			}
 			catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
 			{
 				if (attempts <= retryCount && retryWhen(ex))
 				{
-					await Task.Delay(retryDelay, cancellationToken);
+					await Task.Delay(retryDelay, cancellationToken).ConfigureAwait(false);
 					continue;
 				}
 				throw;
@@ -52,15 +52,16 @@ public static class Retry
 	/// <param name="retryDelay">Delay before retrying the action.</param>
 	/// <param name="cancellationToken">Token to cancel the operation.</param>
 	/// <typeparam name="T">Action return type.</typeparam>
-	public static async Task<T> InvokeAsync<T>(
+	public static Task<T> InvokeAsync<T>(
 		Func<CancellationToken, Task<T>> action,
 		int retryCount,
 		TimeSpan retryDelay,
 		CancellationToken cancellationToken = default)
-		=> await InvokeAsync(
+		=> InvokeAsync(
 			action,
 			retryCount,
 			retryDelay,
 			_ => true,
-			cancellationToken);
+			cancellationToken
+		);
 }

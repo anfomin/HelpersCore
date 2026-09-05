@@ -18,7 +18,7 @@ public static class StreamExtensions
 		public async Task<MemoryStream> CopyToMemoryAsync(CancellationToken cancellationToken = default)
 		{
 			var ms = new MemoryStream();
-			await source.CopyToAsync(ms, cancellationToken);
+			await source.CopyToAsync(ms, cancellationToken).ConfigureAwait(false);
 			ms.Seek(0, SeekOrigin.Begin);
 			return ms;
 		}
@@ -53,9 +53,9 @@ public static class StreamExtensions
 			int read;
 			long total = 0;
 			var buffer = new byte[bufferSize];
-			while ((read = await source.ReadAsync(buffer, cancellationToken)) != 0)
+			while ((read = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) != 0)
 			{
-				await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+				await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
 				total += read;
 				progress(total);
 			}
@@ -73,11 +73,11 @@ public static class StreamExtensions
 			int read;
 			long total = 0;
 			var buffer = new byte[bufferSize];
-			while ((read = await source.ReadAsync(buffer, cancellationToken)) != 0)
+			while ((read = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) != 0)
 			{
-				await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+				await destination.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
 				total += read;
-				await progress(total);
+				await progress(total).ConfigureAwait(false);
 			}
 		}
 	}

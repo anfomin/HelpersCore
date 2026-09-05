@@ -22,7 +22,7 @@ public static partial class SKExtensions
 	/// <param name="content">HTTP content to decode.</param>
 	public static async Task<SKBitmap> ReadAsImageAsync(this HttpContent content, CancellationToken cancellationToken = default)
 	{
-		await using var stream = await content.ReadAsStreamAsync(cancellationToken);
+		await using var stream = await content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 		return SKBitmap.DecodeColored(stream);
 	}
 

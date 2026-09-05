@@ -26,7 +26,7 @@ public static class DictionaryExtensions
 		/// <param name="factory">Factory function to create value.</param>
 		public async ValueTask<TValue> GetOrCreateAsync(TKey key, Func<TKey, Task<TValue>> factory)
 			=> dictionary.TryGetValue(key, out TValue? value) ? value
-				: dictionary[key] = await factory(key);
+				: dictionary[key] = await factory(key).ConfigureAwait(false);
 
 		/// <summary>
 		/// Gets value by key. If key does not present then creates value using factory.
@@ -36,7 +36,7 @@ public static class DictionaryExtensions
 		/// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
 		public async ValueTask<TValue> GetOrCreateAsync(TKey key, Func<TKey, CancellationToken, Task<TValue>> factory, CancellationToken cancellationToken)
 			=> dictionary.TryGetValue(key, out TValue? value) ? value
-				: dictionary[key] = await factory(key, cancellationToken);
+				: dictionary[key] = await factory(key, cancellationToken).ConfigureAwait(false);
 
 		/// <summary>
 		/// Updates dictionary with key/values.
