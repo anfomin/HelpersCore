@@ -51,6 +51,21 @@ public static class TypeExtensions
 		);
 
 		/// <summary>
+		/// Gets property display name. If <see cref="DisplayAttribute"/> or <see cref="DisplayNameAttribute"/> is not set then uses property name.
+		/// </summary>
+		/// <param name="propertyPath">Path to property separated by '.' or '?.'.</param>
+		public string GetDisplayName(string propertyPath)
+		{
+			PropertyInfo? prop = null;
+			foreach (string key in propertyPath.Split(["?.", "."], StringSplitOptions.None))
+			{
+				var prevType = prop?.PropertyType ?? type;
+				prop = prevType.GetProperty(key) ?? throw new MissingFieldException(prevType.FullName, key);
+			}
+			return prop?.DisplayName ?? throw new MissingFieldException(type.FullName, propertyPath);
+		}
+
+		/// <summary>
 		/// Gets default value of the type.
 		/// This is runtime equivalent to <c>default</c>.
 		/// </summary>
