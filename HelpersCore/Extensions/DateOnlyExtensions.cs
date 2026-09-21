@@ -144,7 +144,7 @@ public static class DateOnlyExtensions
 			=> $"{begin.ToString(format, provider)} – {end.ToString(format, provider)}";
 
 		/// <summary>
-		/// Returns <c>{begin} - {end}</c> representation of the date range.
+		/// Returns <c>{begin} – {end}</c> representation of the date range.
 		/// If begin or end is <c>null</c>, <c>∞</c> is used.
 		/// </summary>
 		/// <param name="format">A standard or custom date format string.</param>
@@ -256,5 +256,40 @@ public static class DateOnlyExtensions
 		/// </summary>
 		public DateOnly GetToday()
 			=> GetToday(timeProvider.LocalTimeZone);
+	}
+
+	extension((DateOnly begin, DateOnly end) range)
+	{
+		/// <summary>
+		/// Returns <c>{begin} – {end}</c> representation of the date range.
+		/// </summary>
+		/// <param name="format">A standard or custom date format string.</param>
+		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
+		public string ToRangeString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
+			=> DateOnly.ToRangeString(range.begin, range.end, format, provider);
+	}
+
+	extension((DateOnly begin, DateOnly? end) range)
+	{
+		/// <summary>
+		/// Returns <c>{begin} – {end}</c> representation of the date range.
+		/// If end is <c>null</c>, <c>∞</c> is used.
+		/// </summary>
+		/// <param name="format">A standard or custom date format string.</param>
+		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
+		public string ToRangeString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
+			=> DateOnly.ToRangeString(range.begin, range.end, format, provider);
+	}
+
+	extension((DateOnly? begin, DateOnly? end) range)
+	{
+		/// <summary>
+		/// Returns <c>{begin} – {end}</c> representation of the date range.
+		/// If begin or end is <c>null</c>, <c>∞</c> is used.
+		/// </summary>
+		/// <param name="format">A standard or custom date format string.</param>
+		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
+		public string ToRangeString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
+			=> DateOnly.ToRangeString(range.begin, range.end, format, provider);
 	}
 }
