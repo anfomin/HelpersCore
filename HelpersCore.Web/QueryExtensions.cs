@@ -85,7 +85,7 @@ public static class QueryExtensions
 
 			var valueType = value.GetType();
 			valueType = Nullable.GetUnderlyingType(valueType) ?? valueType;
-			if (valueType.IsSimpleType()
+			if (valueType.IsSimpleType
 				|| value is IEnumerable
 				|| value is IFormattable)
 				yield return new(name, value);

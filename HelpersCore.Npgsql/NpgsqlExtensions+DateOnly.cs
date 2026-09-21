@@ -10,7 +10,7 @@ public static partial class NpgsqlExtensions
 		/// Creates a new <see cref="NpgsqlRange&lt;DateOnly&gt;"/> for hole month from <see cref="DateOnly"/>.
 		/// </summary>
 		public NpgsqlRange<DateOnly> ToMonthRange()
-			=> new(date.GetMonthBegin(), date.GetMonthEnd());
+			=> new(date.MonthBegin, date.MonthEnd);
 
 		/// <summary>
 		/// Creates a new <see cref="NpgsqlRange&lt;DateTime&gt;"/> for hole month converting
@@ -19,8 +19,8 @@ public static partial class NpgsqlExtensions
 		/// <param name="sourceTimeZone">Source timezone.</param>
 		public NpgsqlRange<DateTime> ToUniversalMonthRange(TimeZoneInfo sourceTimeZone)
 			=> new(
-				date.GetMonthBegin().ToUniversalTime(TimeOnly.MinValue, sourceTimeZone),
-				date.GetMonthEnd().ToUniversalTime(TimeOnly.MaxValue, sourceTimeZone)
+				date.MonthBegin.ToUniversalTime(TimeOnly.MinValue, sourceTimeZone),
+				date.MonthEnd.ToUniversalTime(TimeOnly.MaxValue, sourceTimeZone)
 			);
 
 		/// <summary>

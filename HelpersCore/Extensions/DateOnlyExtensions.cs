@@ -72,7 +72,7 @@ public static class DateOnlyExtensions
 		/// <param name="end">Inclusive end date.</param>
 		public static IEnumerable<DateOnly> EnumerateMonths(DateOnly begin, DateOnly end)
 		{
-			for (var d = begin.GetMonthBegin(); d <= end; d = d.AddMonths(1))
+			for (var d = begin.MonthBegin; d <= end; d = d.AddMonths(1))
 				yield return d;
 		}
 
@@ -134,6 +134,23 @@ public static class DateOnlyExtensions
 		/// <returns><c>True</c> if parse successful.</returns>
 		public static bool TryParseYearMonth([NotNullWhen(true)] string? s, out DateOnly result)
 			=> TryParseYearMonth(s.AsSpan(), out result);
+
+		/// <summary>
+		/// Returns <c>{begin} – {end}</c> representation of the date range.
+		/// </summary>
+		/// <param name="format">A standard or custom date format string.</param>
+		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
+		public static string ToRangeString(DateOnly begin, DateOnly end, [StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
+			=> $"{begin.ToString(format, provider)} – {end.ToString(format, provider)}";
+
+		/// <summary>
+		/// Returns <c>{begin} - {end}</c> representation of the date range.
+		/// If begin or end is <c>null</c>, <c>∞</c> is used.
+		/// </summary>
+		/// <param name="format">A standard or custom date format string.</param>
+		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
+		public static string ToRangeString(DateOnly? begin, DateOnly? end, [StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
+			=> $"{begin?.ToString(format, provider) ?? "∞"} – {end?.ToString(format, provider) ?? "∞"}";
 	}
 
 	extension(DateOnly date)
@@ -143,6 +160,30 @@ public static class DateOnlyExtensions
 		/// </summary>
 		public int DaysInMonth
 			=> DateTime.DaysInMonth(date.Year, date.Month);
+
+		/// <summary>
+		/// Gets the first day of the month.
+		/// </summary>
+		public DateOnly MonthBegin
+			=> new(date.Year, date.Month, 1);
+
+		/// <summary>
+		/// Gets the last day of the month.
+		/// </summary>
+		public DateOnly MonthEnd
+			=> new(date.Year, date.Month, date.DaysInMonth);
+
+		/// <summary>
+		/// Gets the first day of the year.
+		/// </summary>
+		public DateOnly YearBegin
+			=> new(date.Year, 1, 1);
+
+		/// <summary>
+		/// Gets the last day of the year.
+		/// </summary>
+		public DateOnly YearEnd
+			=> new(date.Year, 12, 31);
 
 		/// <summary>
 		/// Returns date in range of minimum and maximum.
@@ -159,30 +200,6 @@ public static class DateOnlyExtensions
 		/// </summary>
 		public bool IsMatchYearMonth(DateOnly other)
 			=> date.Year == other.Year && date.Month == other.Month;
-
-		/// <summary>
-		/// Gets the first day of the month.
-		/// </summary>
-		public DateOnly GetMonthBegin()
-			=> new(date.Year, date.Month, 1);
-
-		/// <summary>
-		/// Gets the last day of the month.
-		/// </summary>
-		public DateOnly GetMonthEnd()
-			=> new(date.Year, date.Month, date.DaysInMonth);
-
-		/// <summary>
-		/// Gets the first day of the year.
-		/// </summary>
-		public DateOnly GetYearBegin()
-			=> new(date.Year, 1, 1);
-
-		/// <summary>
-		/// Gets the last day of the year.
-		/// </summary>
-		public DateOnly GetYearEnd()
-			=> new(date.Year, 12, 31);
 
 		/// <summary>
 		/// Gets next <paramref name="dayOfWeek"/> after current date.

@@ -33,5 +33,5 @@ public readonly record struct XLTableColumn(int Index, PropertyInfo Property, XL
 	public string Name => Property.Name;
 
 	public override string ToString()
-		=> Attribute?.Header ?? Property.GetDisplayName();
+		=> Attribute?.Header ?? Property.DisplayName;
 }

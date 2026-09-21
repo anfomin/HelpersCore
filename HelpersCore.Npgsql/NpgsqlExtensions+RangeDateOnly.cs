@@ -36,11 +36,7 @@ public static partial class NpgsqlExtensions
 		/// <param name="format">A standard or custom date format string.</param>
 		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
 		public string ToDashString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
-		{
-			string begin = range.BeginOrNull?.ToString(format, provider) ?? "∞";
-			string end = range.EndOrNull?.ToString(format, provider) ?? "∞";
-			return $"{begin} – {end}";
-		}
+			=> DateOnly.ToRangeString(range.BeginOrNull, range.EndOrNull, format, provider);
 
 		/// <summary>
 		/// Returns <c>true</c> if both range bounds are finite.
@@ -100,10 +96,10 @@ public static partial class NpgsqlExtensions
 		/// Returns number of days in the range.
 		/// </summary>
 		/// <returns>Number of days or <c>zero</c> if range is empty or any bound is infinite.</returns>
-		public int GetDays()
+		public int? GetDays()
 			=> range is { BeginOrNull: { } begin, EndOrNull: { } end }
 				? end.DayNumber - begin.DayNumber + 1
-				: 0;
+				: null;
 
 		/// <summary>
 		/// Enumerate days in the period range.
@@ -124,32 +120,11 @@ public static partial class NpgsqlExtensions
 				yield break;
 			while (begin <= end)
 			{
-				var monthBegin = wholeMonths ? begin.GetMonthBegin() : begin;
-				var monthEnd = wholeMonths ? begin.GetMonthEnd() : DateOnly.Min(begin.GetMonthEnd(), end);
+				var monthBegin = wholeMonths ? begin.MonthBegin : begin;
+				var monthEnd = wholeMonths ? begin.MonthEnd : DateOnly.Min(begin.MonthEnd, end);
 				yield return new(monthBegin, monthEnd);
 				begin = monthEnd.AddDays(1);
 			}
 		}
 	}
-
-	/// <summary>
-	/// Returns <c>{lower} - {upper}</c> representation of the date range.
-	/// </summary>
-	/// <param name="format">A standard or custom date format string.</param>
-	/// <param name="provider">An object that supplies culture-specific formatting information.</param>
-	public static string ToDashString(this (DateOnly Begin, DateOnly End) range,
-		[StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null,
-		IFormatProvider? provider = null)
-		=> $"{range.Begin.ToString(format, provider)} – {range.End.ToString(format, provider)}";
-
-	/// <summary>
-	/// Returns <c>{lower} - {upper}</c> representation of the date range.
-	/// If upper bound is <c>null</c>, <c>∞</c> is used.
-	/// </summary>
-	/// <param name="format">A standard or custom date format string.</param>
-	/// <param name="provider">An object that supplies culture-specific formatting information.</param>
-	public static string ToDashString(this (DateOnly Begin, DateOnly? End) range,
-		[StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null,
-		IFormatProvider? provider = null)
-		=> $"{range.Begin.ToString(format, provider)} – {range.End?.ToString(format, provider) ?? "∞"}";
 }

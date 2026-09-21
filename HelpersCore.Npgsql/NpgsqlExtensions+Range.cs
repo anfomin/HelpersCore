@@ -6,6 +6,9 @@ public static partial class NpgsqlExtensions
 {
 	extension<T>(NpgsqlRange<T>)
 	{
+		/// <summary>
+		/// Returns an infinite range.
+		/// </summary>
 		public static NpgsqlRange<T> Infinite => new(
 			default, lowerBoundIsInclusive: true, lowerBoundInfinite: true,
 			default, upperBoundIsInclusive: true, upperBoundInfinite: true
@@ -46,6 +49,14 @@ public static partial class NpgsqlExtensions
 				range.UpperBoundInfinite || other.UpperBoundInfinite
 			);
 		}
+
+		/// <summary>
+		/// Determines whether a range overlaps another range.
+		/// </summary>
+		/// <param name="other">Range to check overlap with.</param>
+		/// <returns><c>True</c> if two ranges overlaps; otherwise <c>false</c>.</returns>
+		public bool OverlapsClient(NpgsqlRange<T> other)
+			=> !range.IntersectClient(other).IsEmpty;
 	}
 
 	extension<T>(NpgsqlRange<T> range) where T : struct, IComparable<T>
