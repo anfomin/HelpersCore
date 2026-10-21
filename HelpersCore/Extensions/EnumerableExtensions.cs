@@ -172,7 +172,7 @@ public static class EnumerableExtensions
 			);
 	}
 
-	extension<T>(IEnumerable<T> source) where T : class
+	extension<T>(IEnumerable<T?> source) where T : class
 	{
 		/// <summary>
 		/// Returns item if list contains just one item. Otherwise, null.
@@ -190,10 +190,7 @@ public static class EnumerableExtensions
 			}
 			return result;
 		}
-	}
 
-	extension<T>(IEnumerable<T?> source) where T : class
-	{
 		/// <summary>
 		/// Selects non-null elements.
 		/// </summary>

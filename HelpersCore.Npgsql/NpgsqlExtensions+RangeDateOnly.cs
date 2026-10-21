@@ -95,8 +95,15 @@ public static partial class NpgsqlExtensions
 		/// <summary>
 		/// Returns number of days in the range.
 		/// </summary>
+		/// <returns>Number of days.</returns>
+		public int Days
+			=> range.End.DayNumber - range.Begin.DayNumber + 1;
+
+		/// <summary>
+		/// Returns number of days in the range.
+		/// </summary>
 		/// <returns>Number of days or <c>zero</c> if range is empty or any bound is infinite.</returns>
-		public int? GetDays()
+		public int? DaysOrNull
 			=> range is { BeginOrNull: { } begin, EndOrNull: { } end }
 				? end.DayNumber - begin.DayNumber + 1
 				: null;
