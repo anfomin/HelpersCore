@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace HelpersCore;
@@ -56,11 +57,11 @@ public static class DateOnlyExtensions
 		/// <summary>
 		/// Enumerates days between two dates.
 		/// </summary>
-		/// <param name="begin">Starting date.</param>
+		/// <param name="start">Starting date.</param>
 		/// <param name="end">Inclusive end date.</param>
-		public static IEnumerable<DateOnly> EnumerateDays(DateOnly begin, DateOnly end)
+		public static IEnumerable<DateOnly> EnumerateDays(DateOnly start, DateOnly end)
 		{
-			for (var d = begin; d <= end; d = d.AddDays(1))
+			for (var d = start; d <= end; d = d.AddDays(1))
 				yield return d;
 		}
 
@@ -68,11 +69,11 @@ public static class DateOnlyExtensions
 		/// Enumerates months between two dates.
 		/// Yields first day of each month.
 		/// </summary>
-		/// <param name="begin">Starting date.</param>
+		/// <param name="start">Starting date.</param>
 		/// <param name="end">Inclusive end date.</param>
-		public static IEnumerable<DateOnly> EnumerateMonths(DateOnly begin, DateOnly end)
+		public static IEnumerable<DateOnly> EnumerateMonths(DateOnly start, DateOnly end)
 		{
-			for (var d = begin.MonthBegin; d <= end; d = d.AddMonths(1))
+			for (var d = start.MonthStart; d <= end; d = d.AddMonths(1))
 				yield return d;
 		}
 
@@ -136,21 +137,21 @@ public static class DateOnlyExtensions
 			=> TryParseYearMonth(s.AsSpan(), out result);
 
 		/// <summary>
-		/// Returns <c>{begin} – {end}</c> representation of the date range.
+		/// Returns <c>{start} – {end}</c> representation of the date range.
 		/// </summary>
 		/// <param name="format">A standard or custom date format string.</param>
 		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
-		public static string ToRangeString(DateOnly begin, DateOnly end, [StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
-			=> $"{begin.ToString(format, provider)} – {end.ToString(format, provider)}";
+		public static string ToRangeString(DateOnly start, DateOnly end, [StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
+			=> $"{start.ToString(format, provider)} – {end.ToString(format, provider)}";
 
 		/// <summary>
-		/// Returns <c>{begin} – {end}</c> representation of the date range.
-		/// If begin or end is <c>null</c>, <c>∞</c> is used.
+		/// Returns <c>{start} – {end}</c> representation of the date range.
+		/// If start or end is <c>null</c>, <c>∞</c> is used.
 		/// </summary>
 		/// <param name="format">A standard or custom date format string.</param>
 		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
-		public static string ToRangeString(DateOnly? begin, DateOnly? end, [StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
-			=> $"{begin?.ToString(format, provider) ?? "∞"} – {end?.ToString(format, provider) ?? "∞"}";
+		public static string ToRangeString(DateOnly? start, DateOnly? end, [StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
+			=> $"{start?.ToString(format, provider) ?? "∞"} – {end?.ToString(format, provider) ?? "∞"}";
 	}
 
 	extension(DateOnly date)
@@ -164,7 +165,7 @@ public static class DateOnlyExtensions
 		/// <summary>
 		/// Gets the first day of the month.
 		/// </summary>
-		public DateOnly MonthBegin
+		public DateOnly MonthStart
 			=> new(date.Year, date.Month, 1);
 
 		/// <summary>
@@ -176,7 +177,7 @@ public static class DateOnlyExtensions
 		/// <summary>
 		/// Gets the first day of the year.
 		/// </summary>
-		public DateOnly YearBegin
+		public DateOnly YearStart
 			=> new(date.Year, 1, 1);
 
 		/// <summary>
@@ -228,7 +229,7 @@ public static class DateOnlyExtensions
 		/// Returns date in 'yyyy-MM' format.
 		/// </summary>
 		public string ToYearMonthString()
-			=> date.ToString("yyyy-MM");
+			=> date.ToString("yyyy-MM", CultureInfo.InvariantCulture);
 	}
 
 	extension(TimeZoneInfo timeZone)
@@ -258,38 +259,38 @@ public static class DateOnlyExtensions
 			=> GetToday(timeProvider.LocalTimeZone);
 	}
 
-	extension((DateOnly begin, DateOnly end) range)
+	extension((DateOnly start, DateOnly end) range)
 	{
 		/// <summary>
-		/// Returns <c>{begin} – {end}</c> representation of the date range.
+		/// Returns <c>{start} – {end}</c> representation of the date range.
 		/// </summary>
 		/// <param name="format">A standard or custom date format string.</param>
 		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
 		public string ToRangeString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
-			=> DateOnly.ToRangeString(range.begin, range.end, format, provider);
+			=> DateOnly.ToRangeString(range.start, range.end, format, provider);
 	}
 
-	extension((DateOnly begin, DateOnly? end) range)
+	extension((DateOnly start, DateOnly? end) range)
 	{
 		/// <summary>
-		/// Returns <c>{begin} – {end}</c> representation of the date range.
+		/// Returns <c>{start} – {end}</c> representation of the date range.
 		/// If end is <c>null</c>, <c>∞</c> is used.
 		/// </summary>
 		/// <param name="format">A standard or custom date format string.</param>
 		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
 		public string ToRangeString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
-			=> DateOnly.ToRangeString(range.begin, range.end, format, provider);
+			=> DateOnly.ToRangeString(range.start, range.end, format, provider);
 	}
 
-	extension((DateOnly? begin, DateOnly? end) range)
+	extension((DateOnly? start, DateOnly? end) range)
 	{
 		/// <summary>
-		/// Returns <c>{begin} – {end}</c> representation of the date range.
-		/// If begin or end is <c>null</c>, <c>∞</c> is used.
+		/// Returns <c>{start} – {end}</c> representation of the date range.
+		/// If start or end is <c>null</c>, <c>∞</c> is used.
 		/// </summary>
 		/// <param name="format">A standard or custom date format string.</param>
 		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
 		public string ToRangeString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
-			=> DateOnly.ToRangeString(range.begin, range.end, format, provider);
+			=> DateOnly.ToRangeString(range.start, range.end, format, provider);
 	}
 }

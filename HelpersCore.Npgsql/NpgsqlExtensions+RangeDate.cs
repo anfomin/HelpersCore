@@ -8,13 +8,19 @@ public static partial class NpgsqlExtensions
 	extension(NpgsqlRange<DateOnly> range)
 	{
 		/// <summary>
+		/// Converts <see cref="NpgsqlRange&lt;DateOnly&gt;"/> to <see cref="DateRange"/>.
+		/// </summary>
+		public DateRange ToRange()
+			=> new(range.StartOrNull, range.EndOrNull);
+
+		/// <summary>
 		/// Converts <see cref="NpgsqlRange&lt;DateOnly&gt;"/> to <see cref="NpgsqlRange&lt;DateTime&gt;"/>
 		/// with specified <paramref name="kind"/>.
 		/// </summary>
 		/// <param name="kind">Date time kind.</param>
 		public NpgsqlRange<DateTime> ToDateTime(DateTimeKind kind = DateTimeKind.Utc)
 			=> NpgsqlRange.Create(
-				range.BeginOrNull?.ToDateTime(TimeOnly.MinValue, kind),
+				range.StartOrNull?.ToDateTime(TimeOnly.MinValue, kind),
 				range.EndOrNull?.ToDateTime(TimeOnly.MaxValue, kind)
 			);
 
@@ -25,7 +31,7 @@ public static partial class NpgsqlExtensions
 		/// <param name="sourceTimeZone">Source timezone.</param>
 		public NpgsqlRange<DateTime> ToUniversalTime(TimeZoneInfo sourceTimeZone)
 			=> NpgsqlRange.Create(
-				range.BeginOrNull?.ToUniversalTime(TimeOnly.MinValue, sourceTimeZone),
+				range.StartOrNull?.ToUniversalTime(TimeOnly.MinValue, sourceTimeZone),
 				range.EndOrNull?.ToUniversalTime(TimeOnly.MaxValue, sourceTimeZone)
 			);
 
@@ -36,7 +42,7 @@ public static partial class NpgsqlExtensions
 		/// <param name="format">A standard or custom date format string.</param>
 		/// <param name="provider">An object that supplies culture-specific formatting information.</param>
 		public string ToDashString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format = null, IFormatProvider? provider = null)
-			=> DateOnly.ToRangeString(range.BeginOrNull, range.EndOrNull, format, provider);
+			=> DateOnly.ToRangeString(range.StartOrNull, range.EndOrNull, format, provider);
 
 		/// <summary>
 		/// Returns <c>true</c> if both range bounds are finite.
@@ -60,7 +66,7 @@ public static partial class NpgsqlExtensions
 		/// Returns always inclusive lower <see cref="DateOnly"/> bound or <see cref="DateOnly.MinValue"/>
 		/// if lower bound is infinite or <c>default</c> if range is empty.
 		/// </summary>
-		public DateOnly Begin
+		public DateOnly Start
 			=> range.IsEmpty ? default
 				: range.LowerBoundInfinite ? DateOnly.MinValue
 				: range.LowerBoundIsInclusive ? range.LowerBound
@@ -79,7 +85,7 @@ public static partial class NpgsqlExtensions
 		/// <summary>
 		/// Returns always inclusive lower <see cref="DateOnly"/> bound or <c>null</c> if range is empty or lower bound is infinite.
 		/// </summary>
-		public DateOnly? BeginOrNull
+		public DateOnly? StartOrNull
 			=> range.IsEmpty || range.LowerBoundInfinite ? null
 				: range.LowerBoundIsInclusive ? range.LowerBound
 				: range.LowerBound.AddDays(1);
@@ -93,44 +99,51 @@ public static partial class NpgsqlExtensions
 				: range.UpperBound.AddDays(-1);
 
 		/// <summary>
-		/// Returns number of days in the range.
+		/// Gets if then range starts from the first day of month and ends on the last day of month.
+		/// </summary>
+		public bool IsHoleMonths
+			=> range is { LowerBoundInfinite: false, UpperBoundInfinite: false, Start.Day: 1 }
+				&& range.End.Day == range.End.DaysInMonth;
+
+		/// <summary>
+		/// Gets number of days in the range.
 		/// </summary>
 		/// <returns>Number of days.</returns>
 		public int Days
-			=> range.End.DayNumber - range.Begin.DayNumber + 1;
+			=> range.End.DayNumber - range.Start.DayNumber + 1;
 
 		/// <summary>
-		/// Returns number of days in the range.
+		/// Gets number of days in the range.
 		/// </summary>
-		/// <returns>Number of days or <c>zero</c> if range is empty or any bound is infinite.</returns>
+		/// <returns>Number of days or <c>null</c> if range is empty or any bound is infinite.</returns>
 		public int? DaysOrNull
-			=> range is { BeginOrNull: { } begin, EndOrNull: { } end }
-				? end.DayNumber - begin.DayNumber + 1
+			=> range is { StartOrNull: { } start, EndOrNull: { } end }
+				? end.DayNumber - start.DayNumber + 1
 				: null;
 
 		/// <summary>
-		/// Enumerate days in the period range.
+		/// Enumerates days in the range.
 		/// </summary>
 		/// <returns><see cref="IEnumerable{DateOnly}"/> for days in range or empty collection if range empty or any bound is infinite.</returns>
 		public IEnumerable<DateOnly> EnumerateDays()
-			=> range is { BeginOrNull: { } begin, EndOrNull: { } end }
-				? DateOnly.EnumerateDays(begin, end)
+			=> range is { StartOrNull: { } start, EndOrNull: { } end }
+				? DateOnly.EnumerateDays(start, end)
 				: [];
 
 		/// <summary>
-		/// Enumerate months in the period range.
+		/// Enumerates months in the range.
 		/// </summary>
-		/// <param name="wholeMonths"><c>True</c> to return whole months. <c>False</c> to return month in range only.</param>
+		/// <param name="wholeMonths"><c>True</c> to return whole months. <c>False</c> to return period in range only.</param>
 		public IEnumerable<NpgsqlRange<DateOnly>> EnumerateMonths(bool wholeMonths = false)
 		{
-			if (range is not { BeginOrNull: { } begin, EndOrNull: { } end })
+			if (range is not { StartOrNull: { } start, EndOrNull: { } end })
 				yield break;
-			while (begin <= end)
+			while (start <= end)
 			{
-				var monthBegin = wholeMonths ? begin.MonthBegin : begin;
-				var monthEnd = wholeMonths ? begin.MonthEnd : DateOnly.Min(begin.MonthEnd, end);
-				yield return new(monthBegin, monthEnd);
-				begin = monthEnd.AddDays(1);
+				var monthStart = wholeMonths ? start.MonthStart : start;
+				var monthEnd = wholeMonths ? start.MonthEnd : DateOnly.Min(start.MonthEnd, end);
+				yield return new(monthStart, monthEnd);
+				start = monthEnd.AddDays(1);
 			}
 		}
 	}

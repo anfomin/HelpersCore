@@ -1,6 +1,4 @@
-using NpgsqlTypes;
-
-namespace HelpersCore;
+namespace NpgsqlTypes;
 
 /// <summary>
 /// Provides helper methods to create <see cref="NpgsqlRange{T}"/>.

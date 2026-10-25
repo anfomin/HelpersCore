@@ -9,17 +9,17 @@ public static partial class NpgsqlExtensions
 		/// <summary>
 		/// Creates a new <see cref="NpgsqlRange&lt;DateOnly&gt;"/> for hole month from <see cref="DateOnly"/>.
 		/// </summary>
-		public NpgsqlRange<DateOnly> ToMonthRange()
-			=> new(date.MonthBegin, date.MonthEnd);
+		public NpgsqlRange<DateOnly> GetMonthNpgsqlRange()
+			=> new(date.MonthStart, date.MonthEnd);
 
 		/// <summary>
 		/// Creates a new <see cref="NpgsqlRange&lt;DateTime&gt;"/> for hole month converting
 		/// <see cref="DateOnly"/> from the specified <paramref name="sourceTimeZone"/> to UTC.
 		/// </summary>
 		/// <param name="sourceTimeZone">Source timezone.</param>
-		public NpgsqlRange<DateTime> ToUniversalMonthRange(TimeZoneInfo sourceTimeZone)
+		public NpgsqlRange<DateTime> GetUniversalMonthNpgsqlRange(TimeZoneInfo sourceTimeZone)
 			=> new(
-				date.MonthBegin.ToUniversalTime(TimeOnly.MinValue, sourceTimeZone),
+				date.MonthStart.ToUniversalTime(TimeOnly.MinValue, sourceTimeZone),
 				date.MonthEnd.ToUniversalTime(TimeOnly.MaxValue, sourceTimeZone)
 			);
 
@@ -30,7 +30,7 @@ public static partial class NpgsqlExtensions
 		/// <param name="sourceTimeZone">Source timezone.</param>
 		/// <param name="timeFrom">Lower bound time in <paramref name="sourceTimeZone"/>.</param>
 		/// <param name="timeTo">Upper bound time in <paramref name="sourceTimeZone"/>.</param>
-		public NpgsqlRange<DateTime> ToUniversalRange(TimeZoneInfo sourceTimeZone, TimeOnly? timeFrom = null, TimeOnly? timeTo = null)
+		public NpgsqlRange<DateTime> GetUniversalRange(TimeZoneInfo sourceTimeZone, TimeOnly? timeFrom = null, TimeOnly? timeTo = null)
 			=> new(
 				date.ToUniversalTime(timeFrom ?? TimeOnly.MinValue, sourceTimeZone),
 				date.ToUniversalTime(timeTo ?? TimeOnly.MaxValue, sourceTimeZone)
