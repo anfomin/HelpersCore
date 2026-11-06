@@ -20,6 +20,20 @@ public static class NpgsqlRange
 		);
 
 	/// <summary>
+	/// Creates a new <see cref="NpgsqlRange{T}"/>.
+	/// </summary>
+	/// <param name="lower">Range lower bound.</param>
+	/// <param name="upper">Range upper bound. If <c>null</c> then infinite.</param>
+	/// <param name="lowerInclusive"><c>True</c> if the lower bound is part of the range (i.e. inclusive); otherwise, <c>false</c>.</param>
+	/// <param name="upperInclusive"><c>True</c> if the upper bound is part of the range (i.e. inclusive); otherwise, <c>false</c>.</param>
+	public static NpgsqlRange<T> Create<T>(T lower, T? upper, bool lowerInclusive = true, bool upperInclusive = true)
+		where T : struct
+		=> new(
+			lower, lowerBoundIsInclusive: lowerInclusive, lowerBoundInfinite: false,
+			upper ?? default, upperBoundIsInclusive: upperInclusive, upperBoundInfinite: upper is null
+		);
+
+	/// <summary>
 	/// Creates a new <see cref="NpgsqlRange{T}"/> with infinite upper bound.
 	/// </summary>
 	/// <param name="lower">Range lower bound.</param>
