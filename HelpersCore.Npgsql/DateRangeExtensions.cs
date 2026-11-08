@@ -22,7 +22,7 @@ public static class DateRangeExtensions
 		/// </summary>
 		/// <returns>Number of days.</returns>
 		public int Days
-			=> range.End.DayNumber - range.Start.DayNumber + 1;
+			=> range.EndOrMax.DayNumber - range.StartOrMin.DayNumber + 1;
 
 		/// <summary>
 		/// Gets number of days in the range.
@@ -35,14 +35,14 @@ public static class DateRangeExtensions
 		/// Creates a new <see cref="DateRange"/> for the hole range months.
 		/// </summary>
 		public DateRange GetMonthRange()
-			=> new(range.Start.MonthStart, range.End.MonthEnd);
+			=> new(range.StartOrMin.MonthStart, range.EndOrMax.MonthEnd);
 
 		/// <summary>
 		/// Enumerates days in the range.
 		/// </summary>
 		/// <returns><see cref="IEnumerable{DateOnly}"/> for days in range or empty collection if range empty or any bound is infinite.</returns>
 		public IEnumerable<DateOnly> EnumerateDays()
-			=> range.IsFinite ? DateOnly.EnumerateDays(range.Start, range.End) : [];
+			=> range.IsFinite ? DateOnly.EnumerateDays(range.StartOrMin, range.EndOrMax) : [];
 
 		/// <summary>
 		/// Enumerates months in the range.
@@ -56,7 +56,7 @@ public static class DateRangeExtensions
 		/// </returns>
 		public IEnumerable<DateRange> EnumerateMonths(bool wholeMonths = false)
 		{
-			if (range is not { StartOrNull: { } start, EndOrNull: { } end })
+			if (range is not { Start: { } start, End: { } end })
 				yield break;
 			while (start <= end)
 			{
@@ -74,7 +74,7 @@ public static class DateRangeExtensions
 		/// <returns><see cref="IEnumerable{DateRange}"/> for weeks in range or empty collection if range empty or any bound is infinite.</returns>
 		public IEnumerable<DateRange> EnumerateWeeks()
 		{
-			if (range is not { StartOrNull: { } start, EndOrNull: { } end })
+			if (range is not { Start: { } start, End: { } end })
 				yield break;
 			while (start <= end)
 			{

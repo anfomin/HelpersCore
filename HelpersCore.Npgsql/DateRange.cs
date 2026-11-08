@@ -15,58 +15,76 @@ public struct DateRange
 	const char Separator = ':';
 
 	/// <summary>
+	/// Gets or sets range inclusive start date or <c>null</c> if it is infinite.
+	/// </summary>
+	public DateOnly? Start
+	{
+		get;
+		set => field = value == DateOnly.MinValue ? null : value;
+	}
+
+	/// <summary>
+	/// Gets or sets range inclusive end date or <c>null</c> if it is infinite.
+	/// </summary>
+	public DateOnly? End
+	{
+		get;
+		set => field = value == DateOnly.MaxValue ? null : value;
+	}
+
+	/// <summary>
 	/// Gets or sets range inclusive start date. If infinite, it is <see cref="DateOnly.MinValue"/>.
 	/// </summary>
-	[JsonRequired]
-	public DateOnly Start { get; set; }
+	[IgnoreDataMember, JsonIgnore]
+	public DateOnly StartOrMin
+	{
+		readonly get => Start ?? DateOnly.MinValue;
+		set => Start = value == DateOnly.MinValue ? null : value;
+	}
 
 	/// <summary>
 	/// Gets or sets range inclusive end date. If infinite, it is <see cref="DateOnly.MaxValue"/>.
 	/// </summary>
-	[JsonRequired]
-	public DateOnly End { get; set; }
-
-	/// <summary>
-	/// Gets range start date or <c>null</c> if it is infinite.
-	/// </summary>
 	[IgnoreDataMember, JsonIgnore]
-	public readonly DateOnly? StartOrNull => Start == DateOnly.MinValue ? null : Start;
-
-	/// <summary>
-	/// Gets range end date or <c>null</c> if it is infinite.
-	/// </summary>
-	[IgnoreDataMember, JsonIgnore]
-	public readonly DateOnly? EndOrNull => End == DateOnly.MaxValue ? null : End;
+	public DateOnly EndOrMax
+	{
+		readonly get => End ?? DateOnly.MaxValue;
+		set => End = value == DateOnly.MaxValue ? null : value;
+	}
 
 	/// <summary>
 	/// Gets if range start and end is finite.
 	/// </summary>
 	[IgnoreDataMember, JsonIgnore]
-	public bool IsFinite => Start != DateOnly.MinValue && End != DateOnly.MaxValue;
+	[MemberNotNullWhen(true, nameof(Start), nameof(End))]
+	public bool IsFinite => Start != null && End != null;
 
 	/// <summary>
 	/// Gets if range is infinite.
 	/// </summary>
 	[IgnoreDataMember, JsonIgnore]
-	public readonly bool IsInfinite => Start == DateOnly.MinValue && End == DateOnly.MaxValue;
+	public readonly bool IsInfinite => Start == null && End == null;
 
 	/// <summary>
 	/// Gets if range start or end is infinite.
 	/// </summary>
 	[IgnoreDataMember, JsonIgnore]
-	public readonly bool IsInfiniteAny => Start == DateOnly.MinValue || End == DateOnly.MaxValue;
+	[MemberNotNullWhen(false, nameof(Start), nameof(End))]
+	public readonly bool IsInfiniteAny => Start == null || End == null;
 
 	/// <summary>
 	/// Gets if range start is infinite.
 	/// </summary>
 	[IgnoreDataMember, JsonIgnore]
-	public readonly bool IsStartInfinite => Start == DateOnly.MinValue;
+	[MemberNotNullWhen(false, nameof(Start))]
+	public readonly bool IsStartInfinite => Start == null;
 
 	/// <summary>
 	/// Gets if range end is infinite.
 	/// </summary>
 	[IgnoreDataMember, JsonIgnore]
-	public readonly bool IsEndInfinite => End == DateOnly.MaxValue;
+	[MemberNotNullWhen(false, nameof(End))]
+	public readonly bool IsEndInfinite => End == null;
 
 	/// <summary>
 	/// Gets if range is infinite or empty.
@@ -78,19 +96,25 @@ public struct DateRange
 	/// Gets if the range represents a full month.
 	/// </summary>
 	[IgnoreDataMember, JsonIgnore]
-	public readonly bool IsMonth => Start.Day == 1 && Start.MonthEnd == End;
+	[MemberNotNullWhen(true, nameof(Start), nameof(End))]
+	public readonly bool IsMonth
+		=> Start is { } start && End is { } end && start.Day == 1 && start.MonthEnd == end;
 
 	/// <summary>
 	/// Gets if then range starts from the first day of month and ends on the last day of month.
 	/// </summary>
 	[IgnoreDataMember, JsonIgnore]
-	public readonly bool IsHoleMonths => Start.Day == 1 && End.Day == End.DaysInMonth;
+	[MemberNotNullWhen(true, nameof(Start), nameof(End))]
+	public readonly bool IsHoleMonths
+		=> Start is { } start && End is { } end && start.Day == 1 && end.Day == end.DaysInMonth;
 
 	/// <summary>
 	/// Gets if the range represents a single day.
 	/// </summary>
 	[IgnoreDataMember, JsonIgnore]
-	public readonly bool IsDay => Start == End;
+	[MemberNotNullWhen(true, nameof(Start), nameof(End))]
+	public readonly bool IsDay
+		=> Start is { } start && End is { } end && start == end;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DateRange"/> with the specified start and end dates.
@@ -99,8 +123,8 @@ public struct DateRange
 	/// <param name="end">The end date of the range.</param>
 	public DateRange(DateOnly? start, DateOnly? end)
 	{
-		Start = start ?? DateOnly.MinValue;
-		End = end ?? DateOnly.MaxValue;
+		Start = start;
+		End = end;
 	}
 
 	/// <summary>
@@ -117,8 +141,14 @@ public struct DateRange
 	/// </summary>
 	/// <param name="start">The start date of the range.</param>
 	/// <param name="end">The end date of the range.</param>
-	public readonly void Deconstruct(out DateOnly start, out DateOnly end)
+	public readonly void Deconstruct(out DateOnly? start, out DateOnly? end)
 		=> (start, end) = (Start, End);
+
+	/// <summary>
+	/// Deconstructs the <see cref="DateRange"/> into its start and end dates, returning inclusive bounds.
+	/// </summary>
+	public readonly (DateOnly Start, DateOnly End) ToMinMax()
+		=> (StartOrMin, EndOrMax);
 
 	public readonly override int GetHashCode()
 		=> Start.GetHashCode() ^ End.GetHashCode();
@@ -133,10 +163,10 @@ public struct DateRange
 		=> obj is DateRange other ? CompareTo(other) : throw new ArgumentException(@"Object is not DateRange", nameof(obj));
 
 	public readonly int CompareTo(DateRange other)
-		=> Start < other.Start ? -1
-			: Start > other.Start ? 1
-			: End < other.End ? -1
-			: End > other.End ? 1
+		=> StartOrMin < other.StartOrMin ? -1
+			: StartOrMin > other.StartOrMin ? 1
+			: EndOrMax < other.EndOrMax ? -1
+			: EndOrMax > other.EndOrMax ? 1
 			: 0;
 
 	/// <summary>
@@ -152,13 +182,13 @@ public struct DateRange
 	/// <returns>The value of the current instance in the specified format.</returns>
 	public readonly string ToString([StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string? format, IFormatProvider? provider) => format switch
 	{
-		_ when IsDay => Start.ToString(format, provider),
-		null or "Y" or "y" when IsMonth => Start.ToString("Y", provider),
-		null or "Y" or "y" when IsHoleMonths => $"{Start.ToString(Start.Year == End.Year ? "MMMM" : "Y", provider)} – {End.ToString("Y", provider)}",
+		_ when IsDay => Start.Value.ToString(format, provider),
+		null or "Y" or "y" when IsMonth => Start.Value.ToString("Y", provider),
+		null or "Y" or "y" when IsHoleMonths => $"{Start.Value.ToString(Start.Value.Year == End.Value.Year ? "MMMM" : "Y", provider)} – {End.Value.ToString("Y", provider)}",
 		"O" or "o" when IsEmpty => Separator.ToString(),
-		"O" or "o" when IsEndInfinite => string.Create(provider, $"{Start:format}{Separator}"),
-		"O" or "o" when IsStartInfinite => string.Create(provider, $"{Separator}{End:format}"),
-		"O" or "o" => string.Create(provider, $"{Start:format}{Separator}{End:format}"),
+		"O" or "o" when IsEndInfinite => $"{Start!.Value.ToString(format, provider)}{Separator}",
+		"O" or "o" when IsStartInfinite => $"{Separator}{End!.Value.ToString(format, provider)}",
+		"O" or "o" => $"{Start.Value.ToString(format, provider)}{Separator}{End.Value.ToString(format, provider)}",
 		_ => DateOnly.ToRangeString(Start, End, format, provider)
 	};
 
@@ -191,28 +221,28 @@ public struct DateRange
 	/// </summary>
 	/// <param name="date">The date to check for inclusion within the current range.</param>
 	public readonly bool Contains(DateOnly date)
-		=> Start <= date && date <= End;
+		=> StartOrMin <= date && date <= EndOrMax;
 
 	/// <summary>
 	/// Returns if <paramref name="other"/> is included in the range.
 	/// </summary>
 	/// <param name="other">The other range to check for inclusion within the current range.</param>
 	public readonly bool Contains(DateRange other)
-		=> Contains(other.Start) && Contains(other.End);
+		=> Contains(other.StartOrMin) && Contains(other.EndOrMax);
 
 	/// <summary>
 	/// Returns if <paramref name="other"/> intersects with the range.
 	/// </summary>
 	/// <param name="other">The other range to check for intersection with the current range.</param>
 	public readonly bool Overlaps(DateRange other)
-		=> Contains(other.Start) || Contains(other.End) || other.Contains(Start);
+		=> Contains(other.StartOrMin) || Contains(other.EndOrMax) || other.Contains(StartOrMin);
 
 	/// <summary>
 	/// Returns intersection of current range and <paramref name="other"/> range.
 	/// </summary>
 	/// <param name="other">The other range to intersect with the current range.</param>
 	public readonly DateRange Intersect(DateRange other)
-		=> new(DateOnly.Max(Start, other.Start), DateOnly.Min(End, other.End));
+		=> new(DateOnly.Max(StartOrMin, other.StartOrMin), DateOnly.Min(EndOrMax, other.EndOrMax));
 
 	/// <summary>
 	/// Excludes specified period from current period.
@@ -230,20 +260,20 @@ public struct DateRange
 	public readonly IEnumerable<DateRange> Exclude(IEnumerable<DateRange> ranges)
 	{
 		var res = this;
-		foreach (var r in ranges.OrderBy(r => r.Start))
+		foreach (var r in ranges.OrderBy(r => r.StartOrMin))
 		{
 			if (res.IsEmpty)
 				break;
 
-			if (r.Start <= res.Start && res.Start <= r.End)
-				res.Start = r.End.AddDays(1);
-			else if (r.Start <= res.End && res.End <= r.End)
-				res.End = r.Start.AddDays(-1);
-			else if (res.Start <= r.Start && r.End <= res.End)
+			if (r.StartOrMin <= res.StartOrMin && res.StartOrMin <= r.EndOrMax)
+				res.Start = r.EndOrMax.AddDays(1);
+			else if (r.StartOrMin <= res.EndOrMax && res.EndOrMax <= r.EndOrMax)
+				res.End = r.StartOrMin.AddDays(-1);
+			else if (res.StartOrMin <= r.StartOrMin && r.EndOrMax <= res.EndOrMax)
 			{
-				if (res.Start < r.Start)
-					yield return new DateRange(res.Start, r.Start.AddDays(-1));
-				res.Start = r.End.AddDays(1);
+				if (res.StartOrMin < r.StartOrMin)
+					yield return new DateRange(res.StartOrMin, r.StartOrMin.AddDays(-1));
+				res.Start = r.EndOrMax.AddDays(1);
 			}
 		}
 
@@ -255,8 +285,8 @@ public struct DateRange
 	/// Converts the <see cref="DateRange"/> to an equivalent <see cref="NpgsqlRange{DateOnly}"/>.
 	/// </summary>
 	public readonly NpgsqlRange<DateOnly> ToNpgsql() => new(
-		Start, true, IsStartInfinite,
-		End, true, IsEndInfinite
+		StartOrMin, true, IsStartInfinite,
+		EndOrMax, true, IsEndInfinite
 	);
 
 	/// <summary>
@@ -281,16 +311,16 @@ public struct DateRange
 		=> a.Start != b.Start || a.End != b.End;
 
 	public static bool operator <(DateRange a, DateRange b)
-		=> a.Start < b.Start || (a.Start == b.Start && a.End < b.End);
+		=> a.StartOrMin < b.StartOrMin || (a.StartOrMin == b.StartOrMin && a.EndOrMax < b.EndOrMax);
 
 	public static bool operator >(DateRange a, DateRange b)
-		=> a.Start > b.Start || (a.Start == b.Start && a.End > b.End);
+		=> a.StartOrMin > b.StartOrMin || (a.StartOrMin == b.StartOrMin && a.EndOrMax > b.EndOrMax);
 
 	public static bool operator <=(DateRange a, DateRange b)
-		=> a.Start < b.Start || (a.Start == b.Start && a.End <= b.End);
+		=> a.StartOrMin < b.StartOrMin || (a.StartOrMin == b.StartOrMin && a.EndOrMax <= b.EndOrMax);
 
 	public static bool operator >=(DateRange a, DateRange b)
-		=> a.Start > b.Start || (a.Start == b.Start && a.End >= b.End);
+		=> a.StartOrMin > b.StartOrMin || (a.StartOrMin == b.StartOrMin && a.EndOrMax >= b.EndOrMax);
 
 	/// <summary>
 	/// Creates a new <see cref="DateRange"/> for the specified month.
@@ -308,12 +338,15 @@ public struct DateRange
 		if (DateOnly.TryParse(s, provider, out var date))
 			return new(date);
 
-		int index = s.IndexOf(Separator);
+		int index = s.IndexOfAny(Separator, '–');
 		if (index == -1)
 			throw new FormatException($"DateRange string must contain separator '{Separator}'.");
+
+		var start = s[..index].Trim();
+		var end = s[(index + 1)..].Trim();
 		return new(
-			DateOnly.Parse(s[..index], provider),
-			DateOnly.Parse(s[(index + 1)..], provider)
+			start.IsEmpty ? null : DateOnly.Parse(start, provider),
+			end.IsEmpty ? null : DateOnly.Parse(end, provider)
 		);
 	}
 
@@ -358,13 +391,18 @@ public struct DateRange
 			result = new(date);
 			return true;
 		}
-		if (!s.IsEmpty
-			&& s.IndexOfAny(Separator, '–') is int index and not -1
-			&& DateOnly.TryParse(s[..index].Trim(), provider, out var start)
-			&& DateOnly.TryParse(s[(index + 1)..].Trim(), provider, out var end))
+		if (!s.IsEmpty && s.IndexOfAny(Separator, '–') is int index and not -1)
 		{
-			result = new(start, end);
-			return true;
+			var startSpan = s[..index].Trim();
+			var endSpan = s[(index + 1)..].Trim();
+			DateOnly start = DateOnly.MinValue;
+			DateOnly end = DateOnly.MaxValue;
+			if ((startSpan.IsEmpty || DateOnly.TryParse(startSpan, provider, out start))
+				&& (endSpan.IsEmpty || DateOnly.TryParse(endSpan, provider, out end)))
+			{
+				result = new(start, end);
+				return true;
+			}
 		}
 		result = default;
 		return false;
