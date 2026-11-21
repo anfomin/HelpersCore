@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HelpersCore;
 
+#if NET10_0
+
 /// <summary>
 /// Represents operation result with one of 3 states: success, pending or error.
 /// </summary>
@@ -132,3 +134,5 @@ public static class ResultExtensions
 		public static Result<T> Error<T>(Exception ex) => new() { IsError = true, ErrorMessages = [ex.Message] };
 	}
 }
+
+#endif

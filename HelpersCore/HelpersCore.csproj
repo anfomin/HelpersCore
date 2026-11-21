@@ -9,10 +9,6 @@
 		<RootNamespace>HelpersCore</RootNamespace>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-		<PackageReference Include="System.Linq.Async" Version="7.*" />
-	</ItemGroup>
-
 	<ItemGroup>
 	  <EmbeddedResource Update="Strings.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
