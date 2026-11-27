@@ -298,6 +298,9 @@ public struct DateRange
 	public static implicit operator DateRange(NpgsqlRange<DateOnly> range)
 		=> range.ToRange();
 
+	public static implicit operator DateRange?(NpgsqlRange<DateOnly> range)
+		=> range.IsEmpty ? null : range.ToRange();
+
 	public static implicit operator NpgsqlRange<DateOnly>(DateRange range)
 		=> range.ToNpgsql();
 
